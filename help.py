@@ -98,17 +98,17 @@ class HelpFollowLinkCommand(sublime_plugin.TextCommand):
 ###----------------------------------------------------------------------------
 
 
-class HelpSelectLinkCommand(sublime_plugin.TextCommand):
-    def run(self, edit, previous=False):
+class HelpNavLinkCommand(sublime_plugin.TextCommand):
+    def run(self, edit, prev=False):
         point = self.view.sel()[0].begin()
         targets = self.view.find_by_selector("meta.link")
-        fallback = targets[-1] if previous else targets[0]
+        fallback = targets[-1] if prev else targets[0]
 
         def pick(pos):
             other = pos.begin()
-            return (point < other) if not previous else (point > other)
+            return (point < other) if not prev else (point > other)
 
-        for pos in reversed(targets) if previous else targets:
+        for pos in reversed(targets) if prev else targets:
             if pick(pos):
                 return _help_focus(self.view, pos)
 

@@ -19,7 +19,7 @@
 
     {
         "keys": ["tab"],
-        "command": "help_select_link",
+        "command": "help_nav_link",
         "context": [
             { "key": "selector", "operator": "equal", "operand": "text.help"},
             { "key": "num_selections", "operator": "equal", "operand": 1 }
@@ -28,7 +28,7 @@
 
     {
         "keys": ["shift+tab"],
-        "command": "help_select_link", "args": {"previous": true},
+        "command": "help_nav_link", "args": {"prev": true},
         "context": [
             { "key": "selector", "operator": "equal", "operand": "text.help"},
             { "key": "num_selections", "operator": "equal", "operand": 1 }
