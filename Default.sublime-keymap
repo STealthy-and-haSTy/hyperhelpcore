@@ -1,0 +1,37 @@
+[
+    {
+        "keys": ["super+h"],
+        "command": "show_overlay",
+        "args": {
+            "overlay": "command_palette",
+            "text" : "HyperHelp: "
+        }
+    },
+
+    {
+        "keys": ["enter"],
+        "command": "help_follow_link",
+        "context": [
+            { "key": "selector", "operator": "equal", "operand": "text.help meta.link"},
+            { "key": "num_selections", "operator": "equal", "operand": 1 }
+        ]
+    },
+
+    {
+        "keys": ["tab"],
+        "command": "help_select_link",
+        "context": [
+            { "key": "selector", "operator": "equal", "operand": "text.help"},
+            { "key": "num_selections", "operator": "equal", "operand": 1 }
+        ]
+    },
+
+    {
+        "keys": ["shift+tab"],
+        "command": "help_select_link", "args": {"previous": true},
+        "context": [
+            { "key": "selector", "operator": "equal", "operand": "text.help"},
+            { "key": "num_selections", "operator": "equal", "operand": 1 }
+        ]
+    }
+]

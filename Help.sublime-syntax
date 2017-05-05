@@ -1,0 +1,53 @@
+%YAML 1.2
+---
+name: Help
+scope: text.help
+hidden: true
+contexts:
+  main:
+    # First line only
+    - match: '^(\*)([^*]*)(\*)\s+(.*)\s{3,}(.*)'
+      captures:
+        1: string.unquoted
+        2: string.unquoted meta.link-target
+        3: string.unquoted
+        4: storage.type.class meta.title
+        5: variable.language meta.date
+
+    # Jump to the body of the help now
+    - match: ''
+      push: body
+
+  body:
+    # Separators
+    - match: '^====+'
+      scope: storage meta.separator
+
+    # Normal link targets
+    - match: '(\*)([^*]+)(\*)'
+      captures:
+        1: string.unquoted
+        2: string.unquoted meta.link-target
+        3: string.unquoted
+
+    # Option link targets
+    - match: '('')([^'']+)('')'
+      captures:
+        1: entity.name
+        2: entity.name meta.link-target.option
+        3: entity.name
+
+    # Key bindings; they just syntax highlight to be nice
+    - match: '<[^>]*>'
+      scope: variable.language meta.key
+
+    # Code blocks; only inline
+    - match: '`[^`]*`'
+      scope: markup.raw meta.code
+
+    # Links
+    - match: '(\|''?)([^|'']*)(''?\|)'
+      captures:
+        1: storage
+        2: storage storage meta.link
+        3: storage
