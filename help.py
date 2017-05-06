@@ -14,54 +14,55 @@ def _help_focus(view, pos):
     view.sel().clear()
     view.sel().add(pos)
 
+    # Hack to make the view update properly.
+    view.run_command("move", {"by": "characters", "forward": False})
+
 
 ###----------------------------------------------------------------------------
 
 
 class HelpCommand(sublime_plugin.ApplicationCommand):
     def __init__(self):
-        self._package = __name__.split(".")[0]
-        self._prefix = "Packages/%s/doc/" % self._package
-
-        self._files = dict()
+        self._prefix = "Packages/%s/doc" % __name__.split(".")[0]
         self._loaded = False
+        self._toc = dict()
 
-    def _load_files(self):
-        if self._loaded:
-            return
+    def _load_toc(self):
+        if not self._loaded:
+            self._loaded = True
 
-        self._loaded = True
+            toc_file = "%s/index.json" % self._prefix
 
-        files = sublime.find_resources("*.txt")
-        for name in filter(lambda name: name.startswith(self._prefix), files):
-            root = name[len(self._prefix):]
-            self._files[root] = name
+            try:
+                json = sublime.load_resource(toc_file)
+                self._toc = sublime.decode_value(json)
 
-    def _get_help_content(self, root_name):
-        filename = self._files.get(root_name, None)
-        if filename is not None:
+            except:
+                print("Error loading help contents '%s'" % toc_file)
+
+    def _load_help(self, help_file):
+        if help_file is not None:
+            filename = "%s/%s" % (self._prefix, help_file)
             try:
                 return sublime.load_resource(filename)
+
             except:
-                pass
+                print("Unable to load help file %s" % filename)
+
         return None
 
-    def run(self, help_file="index.txt", topic=None):
-        self._load_files()
+    def _show_help_file(self, help_file):
         window = sublime.active_window()
-
         view = find_view(window, "HyperHelp")
+
         if view is not None:
             window.focus_view(view)
-
             current_file = view.settings().get("_hh_file", None)
+
             if current_file == help_file:
-                if topic is not None:
-                    view.run_command("help_follow_link", {"topic": topic})
+                return view
 
-                return
-
-        help_txt = self._get_help_content(help_file)
+        help_txt = self._load_help(help_file)
         if help_txt is None:
             return sublime.error_message("Unable to open help\n\n"
                                          "Error opening '%s'" % help_file)
@@ -71,37 +72,64 @@ class HelpCommand(sublime_plugin.ApplicationCommand):
                               help_txt,
                               syntax="Packages/HyperHelp/Help.sublime-syntax")
         view.settings().set("_hh_file", help_file)
+        return view
 
-        if topic is None:
-            _help_focus(view, sublime.Region(0))
-        else:
-            view.run_command("help_follow_link", {"topic": topic})
+    def _get_topic_file(self, topic):
+        self._load_toc()
+        return self._toc.get(topic, None)
+
+    def _display_topic(self, topic):
+        help_file = self._get_topic_file(topic)
+        if help_file is None:
+            return sublime.error_message("Unknown help topic: '%s'" % topic)
+
+        help_view = self._show_help_file(help_file)
+        if help_view is not None:
+            for pos in help_view.find_by_selector('meta.link-target'):
+                target = help_view.substr(pos)
+                if target == topic:
+                    return _help_focus(help_view, pos)
+
+        return sublime.error_message("Unable to find topic '%s' in '%s'" % (topic, help_file))
+
+    def _show_toc(self):
+        self._load_toc()
+        options = sorted([key for key in self._toc])
+
+        def pick(index):
+            if index >= 0:
+                self._display_topic(options[index])
+
+        sublime.active_window().show_quick_panel(options, pick)
+
+    def _get_view_topic(self):
+        view = sublime.active_window().active_view()
+        point = view.sel()[0].begin()
+
+        if view.match_selector(point, "text.help meta.link"):
+            return view.substr(view.extract_scope(point))
+
+        return None
+
+    def run(self, toc=False, topic=None):
+        if topic is None and not toc:
+            topic = self._get_view_topic()
+
+        if topic is None or toc:
+            return self._show_toc()
+
+        self._display_topic(topic)
 
 
 ###----------------------------------------------------------------------------
 
 
-class HelpFollowLinkCommand(sublime_plugin.TextCommand):
-    def run(self, edit, topic=None):
-        if topic is None:
-            point = self.view.sel()[0].begin()
-            topic = self.view.substr(self.view.extract_scope(point))
+class HelpNavLinkCommand(sublime_plugin.WindowCommand):
+    def run(self, prev=False):
+        view = self.window.active_view()
+        point = view.sel()[0].begin()
 
-        for pos in self.view.find_by_selector('meta.link-target'):
-            target = self.view.substr(pos)
-            if target == topic:
-                return _help_focus(self.view, pos)
-
-        sublime.run_command("help", {"help_file": topic})
-
-
-###----------------------------------------------------------------------------
-
-
-class HelpNavLinkCommand(sublime_plugin.TextCommand):
-    def run(self, edit, prev=False):
-        point = self.view.sel()[0].begin()
-        targets = self.view.find_by_selector("meta.link")
+        targets = view.find_by_selector("meta.link")
         fallback = targets[-1] if prev else targets[0]
 
         def pick(pos):
@@ -110,9 +138,9 @@ class HelpNavLinkCommand(sublime_plugin.TextCommand):
 
         for pos in reversed(targets) if prev else targets:
             if pick(pos):
-                return _help_focus(self.view, pos)
+                return _help_focus(view, pos)
 
-        _help_focus(self.view, fallback)
+        _help_focus(view, fallback)
 
 
 ###----------------------------------------------------------------------------

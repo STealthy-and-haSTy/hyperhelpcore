@@ -1,5 +1,3 @@
 [
-    { "caption": "HyperHelp: Open Index", "command": "help" },
-    { "caption": "HyperHelp: Open Index at target", "command": "help", "args": {"help_file": "index.txt", "topic": "target"} },
-    { "caption": "HyperHelp: Open Index at option", "command": "help", "args": {"help_file": "index.txt", "topic": "option"} }
+    { "caption": "HyperHelp: Open", "command": "help", "args": {"topic": "index.txt"} },
 ]

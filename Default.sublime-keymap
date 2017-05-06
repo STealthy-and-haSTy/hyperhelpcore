@@ -9,10 +9,28 @@
     },
 
     {
-        "keys": ["enter"],
-        "command": "help_follow_link",
+        "keys": ["?"],
+        "command": "help",
+        "args": { "toc": true },
         "context": [
-            { "key": "selector", "operator": "equal", "operand": "text.help meta.link"},
+            { "key": "selector", "operator": "equal", "operand": "text.help" },
+        ]
+    },
+
+    {
+        "keys": ["enter"],
+        "command": "help",
+        "context": [
+            { "key": "selector", "operator": "equal", "operand": "text.help meta.link" },
+            { "key": "num_selections", "operator": "equal", "operand": 1 }
+        ]
+    },
+
+    {
+        "keys": ["keypad_enter"],
+        "command": "help",
+        "context": [
+            { "key": "selector", "operator": "equal", "operand": "text.help meta.link" },
             { "key": "num_selections", "operator": "equal", "operand": 1 }
         ]
     },
@@ -21,7 +39,7 @@
         "keys": ["tab"],
         "command": "help_nav_link",
         "context": [
-            { "key": "selector", "operator": "equal", "operand": "text.help"},
+            { "key": "selector", "operator": "equal", "operand": "text.help" },
             { "key": "num_selections", "operator": "equal", "operand": 1 }
         ]
     },
@@ -30,7 +48,7 @@
         "keys": ["shift+tab"],
         "command": "help_nav_link", "args": {"prev": true},
         "context": [
-            { "key": "selector", "operator": "equal", "operand": "text.help"},
+            { "key": "selector", "operator": "equal", "operand": "text.help" },
             { "key": "num_selections", "operator": "equal", "operand": 1 }
         ]
     }
