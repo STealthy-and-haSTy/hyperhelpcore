@@ -1,4 +1,4 @@
-*index.txt*                    A Sample Help file                    May 3, 2017
+*index.txt*                    A Sample Help file                    May 5, 2017
 ================================================================================
 
 A simple help file format. Any text inside of two asterisks represents the
@@ -21,4 +21,5 @@ can create a link to a target with pipes. So for example |index.txt| jumps to
 the header of file, while |target| jumps to that target and |option| jumps to
 the option target.
 
-It's also possible to jump to another file, for example |other.txt|.
+It's also possible to jump to another file, for example |other.txt| or to jump
+to a target in another file such as |option2|.

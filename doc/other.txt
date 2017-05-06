@@ -1,4 +1,6 @@
-*other.txt*                  Yet Another Help File                   May 3, 2017
+*other.txt*                  Yet Another Help File                   May 5, 2017
 ================================================================================
 
-Nothing to see here, but you can jump back to |index.txt| though.
+Along with |option|, 'option2' is also supported.
+
+That's all there is see here, but you can jump back to |index.txt| though.

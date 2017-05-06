@@ -1,0 +1,10 @@
+{
+    // Key:   Link target
+    // Value: Help file it is contained in
+    "index.txt": "index.txt",
+    "target": "index.txt",
+    "option": "index.txt",
+
+    "other.txt": "other.txt",
+    "option2": "other.txt",
+}
