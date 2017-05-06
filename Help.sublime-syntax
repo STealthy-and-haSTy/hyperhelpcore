@@ -3,6 +3,7 @@
 name: Help
 scope: text.help
 hidden: true
+first_line_match: '^\*\w+\.\w+\*'
 contexts:
   main:
     # First line only
