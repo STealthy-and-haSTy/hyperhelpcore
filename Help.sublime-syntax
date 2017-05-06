@@ -50,5 +50,5 @@ contexts:
     - match: '(\|''?)([^|'']*)(''?\|)'
       captures:
         1: storage
-        2: storage storage meta.link
+        2: storage meta.link
         3: storage
