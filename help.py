@@ -7,6 +7,15 @@ from .output_view import find_view, output_to_view
 ###----------------------------------------------------------------------------
 
 
+def log(message, *args, status=False, dialog=False):
+    message = message % args
+    print("HyperHelp:", message)
+    if status:
+        sublime.status_message(message)
+    if dialog:
+        sublime.message_dialog(message)
+
+
 def _help_focus(view, pos):
     pos = sublime.Region(pos.end(), pos.begin())
 
@@ -26,13 +35,9 @@ def _help_focus(view, pos):
 class HelpCommand(sublime_plugin.ApplicationCommand):
     def __init__(self):
         self._prefix = "Packages/%s/doc" % __name__.split(".")[0]
-        self._loaded = False
-        self._toc = dict()
 
     def _load_toc(self):
-        if not self._loaded:
-            self._loaded = True
-
+        if not hasattr(self, "_toc"):
             toc_file = "%s/index.json" % self._prefix
 
             try:
@@ -40,7 +45,7 @@ class HelpCommand(sublime_plugin.ApplicationCommand):
                 self._toc = sublime.decode_value(json)
 
             except:
-                print("Error loading help contents '%s'" % toc_file)
+                log("Unable to load help index from %s", toc_file)
 
     def _load_help(self, help_file):
         if help_file is not None:
@@ -49,7 +54,7 @@ class HelpCommand(sublime_plugin.ApplicationCommand):
                 return sublime.load_resource(filename)
 
             except:
-                print("Unable to load help file %s" % filename)
+                log("Unable to load help file %s", filename)
 
         return None
 
@@ -66,8 +71,9 @@ class HelpCommand(sublime_plugin.ApplicationCommand):
 
         help_txt = self._load_help(help_file)
         if help_txt is None:
-            return sublime.error_message("Unable to open help\n\n"
-                                         "Error opening '%s'" % help_file)
+            return log("Can not display help\n\n"
+                       "Unable to load the help file '%s'", help_file,
+                       status=True, dialog=True)
 
         view = output_to_view(window,
                               "HyperHelp",
@@ -76,14 +82,14 @@ class HelpCommand(sublime_plugin.ApplicationCommand):
         view.settings().set("_hh_file", help_file)
         return view
 
-    def _get_topic_file(self, topic):
+    def _file_for_topic(self, topic):
         self._load_toc()
         return self._toc.get(topic, None)
 
     def _display_topic(self, topic):
-        help_file = self._get_topic_file(topic)
+        help_file = self._file_for_topic(topic)
         if help_file is None:
-            return sublime.error_message("Unknown help topic: '%s'" % topic)
+            return log("Unknown help topic '%s'", topic, status=True)
 
         help_view = self._show_help_file(help_file)
         if help_view is not None:
@@ -92,7 +98,8 @@ class HelpCommand(sublime_plugin.ApplicationCommand):
                 if target == topic:
                     return _help_focus(help_view, pos)
 
-        return sublime.error_message("Unable to find topic '%s' in '%s'" % (topic, help_file))
+        log("Unable to find topic '%s' in help file '%s'", topic, help_file,
+            status=True)
 
     def _show_toc(self):
         self._load_toc()
@@ -104,7 +111,7 @@ class HelpCommand(sublime_plugin.ApplicationCommand):
 
         sublime.active_window().show_quick_panel(options, pick)
 
-    def _get_view_topic(self):
+    def _topic_from_view(self):
         view = sublime.active_window().active_view()
         point = view.sel()[0].begin()
 
@@ -115,7 +122,7 @@ class HelpCommand(sublime_plugin.ApplicationCommand):
 
     def run(self, toc=False, topic=None):
         if topic is None and not toc:
-            topic = self._get_view_topic()
+            topic = self._topic_from_view()
 
         if topic is None or toc:
             return self._show_toc()
