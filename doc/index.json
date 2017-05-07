@@ -1,10 +1,30 @@
 {
-    // Key:   Link target
-    // Value: Help file it is contained in
-    "index.txt": "index.txt",
-    "target": "index.txt",
-    "option": "index.txt",
+    // This is the table of contents file for the HyperHelp demo.
+    //
+    // This special key specifies the list of topics that should be
+    // displayed when the table of contents of the help is displayed,
+    // and also sets the order of their display.
+    //
+    // This key is optional; if it is not here, it is synthesized by
+    // collecting the list of all other keys in the dictionary and
+    // sorting them.
+    "__toc": ["index.txt", "other.txt"],
 
+    // In this dictionary object, the keys are the names of all of
+    // the distinct help topics available from this contents file
+    // and the values are the name of the help file which contains
+    // that topic.
+    //
+    // At runtime when a topic is browsed to, the correct help file
+    // is displayed in the buffer if it is not already, and then the
+    // proper link target is focused.
+
+    // Targets in index.txt
+    "index.txt": "index.txt",
+    "target":    "index.txt",
+    "option":    "index.txt",
+
+    // Targets in other.txt
     "other.txt": "other.txt",
     "option2": "other.txt",
 }

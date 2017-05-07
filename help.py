@@ -37,14 +37,17 @@ class HelpCommand(sublime_plugin.ApplicationCommand):
         self._prefix = "Packages/%s/doc" % __name__.split(".")[0]
 
     def _load_toc(self):
-        if not hasattr(self, "_toc"):
+        if not hasattr(self, "_topics"):
             toc_file = "%s/index.json" % self._prefix
 
             try:
                 json = sublime.load_resource(toc_file)
-                self._toc = sublime.decode_value(json)
+                self._topics = sublime.decode_value(json)
+                self._toc = self._topics.pop("__toc", sorted(self._topics.keys()))
 
             except:
+                self._topics = dict()
+                self._toc = list()
                 log("Unable to load help index from %s", toc_file)
 
     def _load_help(self, help_file):
@@ -84,7 +87,7 @@ class HelpCommand(sublime_plugin.ApplicationCommand):
 
     def _file_for_topic(self, topic):
         self._load_toc()
-        return self._toc.get(topic, None)
+        return self._topics.get(topic, None)
 
     def _display_topic(self, topic):
         help_file = self._file_for_topic(topic)
@@ -103,7 +106,7 @@ class HelpCommand(sublime_plugin.ApplicationCommand):
 
     def _show_toc(self):
         self._load_toc()
-        options = sorted([key for key in self._toc])
+        options = self._toc
 
         def pick(index):
             if index >= 0:
