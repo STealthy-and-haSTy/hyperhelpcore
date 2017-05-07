@@ -40,6 +40,23 @@ class HelpCommand(sublime_plugin.ApplicationCommand):
         if not hasattr(self, "_topics"):
             toc_file = "%s/index.json" % self._prefix
 
+            def help_dict(topic_entry, help_file):
+                if isinstance(topic_entry, str):
+                    topic = topic_entry
+                    topic_entry = {
+                        "caption": topic_entry,
+                        "file": help_file
+                    }
+
+                else:
+                    topic = topic_entry.pop("topic", None)
+                    topic_entry["file"] = help_file
+
+                    if "caption" not in topic_entry:
+                        topic_entry["caption"] = help_file
+
+                return (topic, topic_entry)
+
             try:
                 json = sublime.load_resource(toc_file)
                 raw_dict = sublime.decode_value(json)
@@ -48,9 +65,14 @@ class HelpCommand(sublime_plugin.ApplicationCommand):
                 self._toc = raw_dict.pop("__toc", None)
 
                 for help_file in raw_dict:
-                    items = raw_dict[help_file]
-                    for help_topic in items:
-                        self._topics[help_topic] = help_file
+                    topic_list = raw_dict[help_file]
+
+                    for topic_entry in topic_list:
+                        topic, topic_entry = help_dict(topic_entry, help_file)
+                        if topic is None:
+                            return log("Entry missing topic: %s", str(topic_entry))
+
+                        self._topics[topic] = topic_entry
 
                 if self._toc is None:
                     self._toc = sorted(self._topics.keys())
@@ -97,7 +119,7 @@ class HelpCommand(sublime_plugin.ApplicationCommand):
 
     def _file_for_topic(self, topic):
         self._load_toc()
-        return self._topics.get(topic, None)
+        return self._topics.get(topic, {}).get("file", None)
 
     def _display_topic(self, topic):
         help_file = self._file_for_topic(topic)
@@ -116,11 +138,16 @@ class HelpCommand(sublime_plugin.ApplicationCommand):
 
     def _show_toc(self):
         self._load_toc()
-        options = self._toc
+        options = []
+        for topic in self._toc:
+            topic_data = self._topics.get(topic, None)
+            if topic_data is not None:
+                entry = [topic_data.get("caption", topic), topic]
+                options.append(entry)
 
         def pick(index):
             if index >= 0:
-                self._display_topic(options[index])
+                self._display_topic(options[index][1])
 
         sublime.active_window().show_quick_panel(options, pick)
 

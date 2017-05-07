@@ -14,20 +14,46 @@
     // the distinct help files and the values are a list of all of
     // the topics contained within that help file.
     //
+    // In the list of topics, the topics themselves can be just the
+    // topic string itself (the target that the help topic will
+    // jump to in the file) or it can be a dictionary with the
+    // following keys:
+    //    topic: the actual topic
+    //    caption: the caption to use in the TOV list
+    //
+    // Entries that are just strings are expanded to be dictionaries
+    // in which the topic and caption are both the topic string. In
+    // general you only need to specify the dict version of a target
+    // when it will appear in the table of contents and you want to
+    // dress it up.
+    //
     // The onus is on the developer to ensure that all of the help
     // targets in each file are properly listed, as the user will
     // be unable to navigate to a target if it's not in the list.
+    //
+    // Some checking is done at initialization time to ensure that
+    // topic dictionaries (where they are used) contain at least
+    // the topic key; if the caption key is missing, it will be
+    // synthesized.
 
     // Targets in index.txt
     "index.txt": [
-        "index.txt",
+        {
+            "topic": "index.txt",
+            "caption": "The Root Topic"
+        },
+
         "option",
-        "target",
+        "target"
     ],
 
     // Targets in other.txt
     "other.txt": [
-        "other.txt",
+        {
+            "topic": "other.txt",
+            "caption": "The other topic"
+        },
+
         "option2"
     ]
 }
