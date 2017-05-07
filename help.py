@@ -14,8 +14,10 @@ def _help_focus(view, pos):
     view.sel().clear()
     view.sel().add(pos)
 
-    # Hack to make the view update properly.
-    view.run_command("move", {"by": "characters", "forward": False})
+    # Hack to make the view update properly. See:
+    #    https://github.com/SublimeTextIssues/Core/issues/485
+    view.add_regions("_hh_rk", [], "", "", sublime.HIDDEN)
+    view.erase_regions("_hh_rk")
 
 
 ###----------------------------------------------------------------------------
