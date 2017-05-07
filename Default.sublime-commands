@@ -1,3 +1,4 @@
 [
     { "caption": "HyperHelp: Open", "command": "help", "args": {"topic": "index.txt"} },
+    { "caption": "HyperHelp: Table of Contents", "command": "help", "args": {"toc": true} },
 ]
