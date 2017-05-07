@@ -11,20 +11,23 @@
     "__toc": ["index.txt", "other.txt"],
 
     // In this dictionary object, the keys are the names of all of
-    // the distinct help topics available from this contents file
-    // and the values are the name of the help file which contains
-    // that topic.
+    // the distinct help files and the values are a list of all of
+    // the topics contained within that help file.
     //
-    // At runtime when a topic is browsed to, the correct help file
-    // is displayed in the buffer if it is not already, and then the
-    // proper link target is focused.
+    // The onus is on the developer to ensure that all of the help
+    // targets in each file are properly listed, as the user will
+    // be unable to navigate to a target if it's not in the list.
 
     // Targets in index.txt
-    "index.txt": "index.txt",
-    "target":    "index.txt",
-    "option":    "index.txt",
+    "index.txt": [
+        "index.txt",
+        "option",
+        "target",
+    ],
 
     // Targets in other.txt
-    "other.txt": "other.txt",
-    "option2": "other.txt",
+    "other.txt": [
+        "other.txt",
+        "option2"
+    ]
 }

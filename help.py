@@ -42,8 +42,18 @@ class HelpCommand(sublime_plugin.ApplicationCommand):
 
             try:
                 json = sublime.load_resource(toc_file)
-                self._topics = sublime.decode_value(json)
-                self._toc = self._topics.pop("__toc", sorted(self._topics.keys()))
+                raw_dict = sublime.decode_value(json)
+
+                self._topics = dict()
+                self._toc = raw_dict.pop("__toc", None)
+
+                for help_file in raw_dict:
+                    items = raw_dict[help_file]
+                    for help_topic in items:
+                        self._topics[help_topic] = help_file
+
+                if self._toc is None:
+                    self._toc = sorted(self._topics.keys())
 
             except:
                 self._topics = dict()
