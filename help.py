@@ -23,6 +23,13 @@ def log(message, *args, status=False, dialog=False):
 
 
 class HelpCommand(sublime_plugin.ApplicationCommand):
+    """
+    Open  the help system or focus the current help view. The command can
+    optionally open a panel with help topics, take the topic to jump to
+    directly, or collect the topic from the cursor location inside of a help
+    document.
+
+    """
     def __init__(self):
         self._prefix = "Packages/%s/doc" % __name__.split(".")[0]
         self._url_re = re.compile("^(https?|file)://")
@@ -178,6 +185,10 @@ class HelpCommand(sublime_plugin.ApplicationCommand):
 
 
 class HelpNavLinkCommand(sublime_plugin.WindowCommand):
+    """
+    Advance the cursor to the next or previous link based on the current
+    cursor location.
+    """
     def run(self, prev=False):
         view = self.window.active_view()
         point = view.sel()[0].begin()
@@ -194,6 +205,26 @@ class HelpNavLinkCommand(sublime_plugin.WindowCommand):
                 return HelpCommand.focus(view, pos)
 
         HelpCommand.focus(view, fallback)
+
+
+###----------------------------------------------------------------------------
+
+
+class HelpListener(sublime_plugin.EventListener):
+    """
+    Listen for double clicks in help files and, if they occur over links,
+    follow the link instead of selecting the text.
+    """
+    def on_text_command(self, view, command, args):
+        if command == "drag_select" and args.get("by", None) == "words":
+            event = args["event"]
+            point = view.window_to_text((event["x"], event["y"]))
+
+            if view.match_selector(point, "text.help meta.link"):
+                sublime.run_command("help")
+                return ("noop")
+
+        return None
 
 
 ###----------------------------------------------------------------------------
