@@ -40,7 +40,6 @@
         "command": "help_nav_link",
         "context": [
             { "key": "selector", "operator": "equal", "operand": "text.help" },
-            { "key": "num_selections", "operator": "equal", "operand": 1 }
         ]
     },
 
@@ -49,7 +48,6 @@
         "command": "help_nav_link", "args": {"prev": true},
         "context": [
             { "key": "selector", "operator": "equal", "operand": "text.help" },
-            { "key": "num_selections", "operator": "equal", "operand": 1 }
         ]
     }
 ]
