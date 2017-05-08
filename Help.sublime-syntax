@@ -21,7 +21,7 @@ contexts:
 
   body:
     # Separators
-    - match: '^====+'
+    - match: '([=-]){4,}'
       scope: storage meta.separator
 
     # Normal link targets
