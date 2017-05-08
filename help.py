@@ -16,19 +16,6 @@ def log(message, *args, status=False, dialog=False):
         sublime.message_dialog(message)
 
 
-def _help_focus(view, pos):
-    pos = sublime.Region(pos.end(), pos.begin())
-
-    view.show_at_center(pos)
-    view.sel().clear()
-    view.sel().add(pos)
-
-    # Hack to make the view update properly. See:
-    #    https://github.com/SublimeTextIssues/Core/issues/485
-    view.add_regions("_hh_rk", [], "", "", sublime.HIDDEN)
-    view.erase_regions("_hh_rk")
-
-
 ###----------------------------------------------------------------------------
 
 
@@ -36,122 +23,132 @@ class HelpCommand(sublime_plugin.ApplicationCommand):
     def __init__(self):
         self._prefix = "Packages/%s/doc" % __name__.split(".")[0]
 
-    def _load_toc(self):
-        if not hasattr(self, "_topics"):
-            toc_file = "%s/index.json" % self._prefix
+    @classmethod
+    def focus(cls, view, pos):
+        pos = sublime.Region(pos.end(), pos.begin())
 
-            def help_dict(topic_entry, help_file):
-                if isinstance(topic_entry, str):
-                    topic = topic_entry
-                    topic_entry = {
-                        "caption": topic_entry,
-                        "file": help_file
-                    }
+        view.show_at_center(pos)
+        view.sel().clear()
+        view.sel().add(pos)
 
-                else:
-                    topic = topic_entry.pop("topic", None)
-                    topic_entry["file"] = help_file
+        # Hack to make the view update properly. See:
+        #    https://github.com/SublimeTextIssues/Core/issues/485
+        view.add_regions("_hh_rk", [], "", "", sublime.HIDDEN)
+        view.erase_regions("_hh_rk")
 
-                    if "caption" not in topic_entry:
-                        topic_entry["caption"] = help_file
+    def load_json(self):
+        if hasattr(self, "_topics"):
+            return
 
-                return (topic, topic_entry)
+        def help_dict(topic_data, help_file):
+            if isinstance(topic_data, str):
+                return (topic_data, {
+                    "caption": topic_data,
+                    "file": help_file
+                })
 
-            try:
-                json = sublime.load_resource(toc_file)
-                raw_dict = sublime.decode_value(json)
+            topic = topic_data.pop("topic", None)
+            topic_data["file"] = help_file
+            if "caption" not in topic_data:
+                topic_data["caption"] = help_file
 
-                self._topics = dict()
-                self._toc = raw_dict.pop("__toc", None)
+            return (topic, topic_data)
 
-                for help_file in raw_dict:
-                    topic_list = raw_dict[help_file]
+        toc_file = "%s/index.json" % self._prefix
+        self._topics = dict()
+        self._toc = list()
 
-                    for topic_entry in topic_list:
-                        topic, topic_entry = help_dict(topic_entry, help_file)
-                        if topic is None:
-                            return log("Entry missing topic: %s", str(topic_entry))
+        try:
+            json = sublime.load_resource(toc_file)
+            raw_dict = sublime.decode_value(json)
 
-                        self._topics[topic] = topic_entry
+        except:
+            return log("Unable to load help index from '%s'", toc_file)
 
-                if self._toc is None:
-                    self._toc = sorted(self._topics.keys())
+        topics = dict()
+        toc = raw_dict.pop("__toc", None)
 
-            except:
-                self._topics = dict()
-                self._toc = list()
-                log("Unable to load help index from %s", toc_file)
+        for help_file in raw_dict:
+            topic_list = raw_dict[help_file]
 
-    def _load_help(self, help_file):
-        if help_file is not None:
-            filename = "%s/%s" % (self._prefix, help_file)
-            try:
-                return sublime.load_resource(filename)
+            for topic_entry in topic_list:
+                topic, topic_entry = help_dict(topic_entry, help_file)
+                if topic is None:
+                    return log("Entry missing topic: %s", str(topic_entry))
 
-            except:
-                log("Unable to load help file %s", filename)
+                topics[topic] = topic_entry
+
+        if toc is None:
+            toc = sorted(topics.keys())
+
+        self._topics = topics
+        self._toc = toc
+
+    def help_content(self, help_file):
+        filename = "%s/%s" % (self._prefix, help_file)
+        try:
+            return sublime.load_resource(filename)
+        except:
+            pass
 
         return None
 
-    def _show_help_file(self, help_file):
+    def topic_file(self, topic):
+        self.load_json()
+        return self._topics.get(topic, {}).get("file", None)
+
+    def show_file(self, help_file):
         window = sublime.active_window()
         view = find_view(window, "HyperHelp")
 
         if view is not None:
             window.focus_view(view)
-            current_file = view.settings().get("_hh_file", None)
-
-            if current_file == help_file:
+            if help_file == view.settings().get("_hh_file", None):
                 return view
 
-        help_txt = self._load_help(help_file)
-        if help_txt is None:
-            return log("Can not display help\n\n"
-                       "Unable to load the help file '%s'", help_file,
-                       status=True, dialog=True)
+        help_text = self.help_content(help_file)
+        if help_text is not None:
+            view = output_to_view(window,
+                                  "HyperHelp",
+                                  help_text,
+                                  syntax="Packages/HyperHelp/Help.sublime-syntax")
+            view.settings().set("_hh_file", help_file)
+            return view
 
-        view = output_to_view(window,
-                              "HyperHelp",
-                              help_txt,
-                              syntax="Packages/HyperHelp/Help.sublime-syntax")
-        view.settings().set("_hh_file", help_file)
-        return view
+        return None
 
-    def _file_for_topic(self, topic):
-        self._load_toc()
-        return self._topics.get(topic, {}).get("file", None)
-
-    def _display_topic(self, topic):
-        help_file = self._file_for_topic(topic)
+    def show_topic(self, topic):
+        help_file = self.topic_file(topic)
         if help_file is None:
             return log("Unknown help topic '%s'", topic, status=True)
 
-        help_view = self._show_help_file(help_file)
-        if help_view is not None:
-            for pos in help_view.find_by_selector('meta.link-target'):
-                target = help_view.substr(pos)
-                if target == topic:
-                    return _help_focus(help_view, pos)
+        help_view = self.show_file(help_file)
+        if help_view is None:
+            return log("Unable to load help file '%s'", help_file, status=True)
+
+        for pos in help_view.find_by_selector('meta.link-target'):
+            target = help_view.substr(pos)
+            if target == topic:
+                return self.focus(help_view, pos)
 
         log("Unable to find topic '%s' in help file '%s'", topic, help_file,
             status=True)
 
-    def _show_toc(self):
-        self._load_toc()
+    def show_toc(self):
+        self.load_json()
+
         options = []
         for topic in self._toc:
-            topic_data = self._topics.get(topic, None)
-            if topic_data is not None:
-                entry = [topic_data.get("caption", topic), topic]
-                options.append(entry)
+            data = self._topics.get(topic, None)
+            options.append([data.get("caption", topic), topic])
 
         def pick(index):
             if index >= 0:
-                self._display_topic(options[index][1])
+                self.show_topic(options[index][-1])
 
         sublime.active_window().show_quick_panel(options, pick)
 
-    def _topic_from_view(self):
+    def extract_topic(self):
         view = sublime.active_window().active_view()
         point = view.sel()[0].begin()
 
@@ -161,13 +158,13 @@ class HelpCommand(sublime_plugin.ApplicationCommand):
         return None
 
     def run(self, toc=False, topic=None):
-        if topic is None and not toc:
-            topic = self._topic_from_view()
+        if toc:
+            return self.show_toc()
 
-        if topic is None or toc:
-            return self._show_toc()
+        if topic is None:
+            topic = self.extract_topic() or "index.txt"
 
-        self._display_topic(topic)
+        self.show_topic(topic)
 
 
 ###----------------------------------------------------------------------------
@@ -187,9 +184,9 @@ class HelpNavLinkCommand(sublime_plugin.WindowCommand):
 
         for pos in reversed(targets) if prev else targets:
             if pick(pos):
-                return _help_focus(view, pos)
+                return HelpCommand.focus(view, pos)
 
-        _help_focus(view, fallback)
+        HelpCommand.focus(view, fallback)
 
 
 ###----------------------------------------------------------------------------
