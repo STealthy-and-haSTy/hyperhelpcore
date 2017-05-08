@@ -47,6 +47,10 @@
         "target"
     ],
 
+    "http://packagecontrol.io/packages/OverrideAudit": [
+        "OverrideAudit"
+    ],
+
     // Targets in other.txt
     "other.txt": [
         {

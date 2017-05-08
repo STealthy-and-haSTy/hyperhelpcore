@@ -1,6 +1,9 @@
 import sublime
 import sublime_plugin
 
+import re
+import webbrowser
+
 from .output_view import find_view, output_to_view
 
 
@@ -22,6 +25,7 @@ def log(message, *args, status=False, dialog=False):
 class HelpCommand(sublime_plugin.ApplicationCommand):
     def __init__(self):
         self._prefix = "Packages/%s/doc" % __name__.split(".")[0]
+        self._url_re = re.compile("^(https?|file)://")
 
     @classmethod
     def focus(cls, view, pos):
@@ -121,6 +125,9 @@ class HelpCommand(sublime_plugin.ApplicationCommand):
         help_file = self.topic_file(topic)
         if help_file is None:
             return log("Unknown help topic '%s'", topic, status=True)
+
+        if self._url_re.match(help_file):
+            return webbrowser.open_new_tab(help_file)
 
         help_view = self.show_file(help_file)
         if help_view is None:

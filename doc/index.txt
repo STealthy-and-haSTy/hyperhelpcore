@@ -2,7 +2,8 @@
 ================================================================================
 
 A simple help file format. Any text inside of two asterisks represents the
-*target* of a link.
+*target* of a link. Links can also be external, such as this one to the
+page for |OverrideAudit|.
 
 Another way to do the same thing is via single quotes, which works the same but
 is syntax highlighted differently to indicate that it is an 'option' instead of
