@@ -1,26 +1,51 @@
-*index.txt*                    A Sample Help file                    May 5, 2017
+*index.txt*                  HyperHelp: What is it?                  May 8, 2017
 ================================================================================
+| <?> TOC | <Enter> Follow Link | <Tab> Next Link |                            |
++---------+---------------------+-----------------+----------------------------+
 
-A simple help file format. Any text inside of two asterisks represents the
-*target* of a link. Links can also be external, such as this one to the
-page for |OverrideAudit|.
+This is an extremely simple prototype of a help system that could be implemented
+within a package to provide interactive, hyper linked help. If you're a student
+of the text editing sciences, you may recognize the help format as being very
+loosely based on the system used in vim.
 
-Another way to do the same thing is via single quotes, which works the same but
-is syntax highlighted differently to indicate that it is an 'option' instead of
-a general help target.
+Links are created by using text within asterisks or single quotes to mark the
+destination of the link. Text within vertical pipe characters (|) creates a link
+that jumps back to that target.
 
-Possibly you might want to talk about a key binding, in which case you can do
-something like this:
+An example of a target in asterisks is the first thing in this help file up in
+the header, while an example of using single quotes would look like 'this'.
 
-    Press <Alt+O> or <super+Shift+Up> to swap between overrides and their diffs
+A link that would jump back to the header for this file would be |index.txt|,
+while a link that jumps back to the previous paragraph would look like |this|.
 
-Just because it's cool, you can also do markdown style `code blocks` for that
-extra little bit of emphasis.
+You can follow either link by pressing <Enter> while the cursor is on it or by
+<Double Clicking> on it. Go ahead and try it!
 
-Since there are some link targets, you might want to actually follow them. You
-can create a link to a target with pipes. So for example |index.txt| jumps to
-the header of file, while |target| jumps to that target and |option| jumps to
-the option target.
+Just as an aside, it's also possible to create a link to an external web site,
+such as this incredibly shameless plug for a package of mine called
+|OverrideAudit|.
 
-It's also possible to jump to another file, for example |other.txt| or to jump
-to a target in another file such as |option2|.
+
++-----------+
+| Help Keys |
++-----------+
+
+While viewing help, the following key bindings are active to allow you to
+interact with the help. Since the help is just a regular text view, you can also
+navigate through the files as you normally would.
+
+    <?>                      View the Table of Contents
+    <Enter>/<Double Click>   Follow a link
+    <Tab>/<Shift+Tab>        Skip between the next or previous link
+
+
++-----------+
+| More Info |
++-----------+
+
+More information is available through the following help links, primarily to
+provide extra help files for this demo.
+
+|conventions.txt|   Conventions used in the help files
+|syntax.txt|        An outline of the syntax available for help
+|how.txt|           How everything hangs together

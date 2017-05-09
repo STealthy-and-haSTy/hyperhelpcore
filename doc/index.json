@@ -1,63 +1,92 @@
 {
-    // This is the table of contents file for the HyperHelp demo.
-    //
     // This special key specifies the list of topics that should be
     // displayed when the table of contents of the help is displayed,
     // and also sets the order of their display.
     //
     // This key is optional; if it is not here, it is synthesized by
-    // collecting the list of all other keys in the dictionary and
-    // sorting them.
-    "__toc": ["index.txt", "other.txt"],
+    // collecting the list of all topics in the dictionary and sorting
+    // them.
+    "__toc": ["index.txt", "conventions.txt", "syntax.txt", "how.txt"],
 
-    // In this dictionary object, the keys are the names of all of
-    // the distinct help files and the values are a list of all of
-    // the topics contained within that help file.
+    // The following specifies all of the link that the help system
+    // knows about. In this dictionary object, the keys are the names
+    // of the distinct help files or external web sites being linked
+    // to and the values are arrays of all of the topics contained
+    // within that file.
     //
-    // In the list of topics, the topics themselves can be just the
-    // topic string itself (the target that the help topic will
-    // jump to in the file) or it can be a dictionary with the
-    // following keys:
-    //    topic: the actual topic
-    //    caption: the caption to use in the TOV list
+    // Each topic in the list can be either just the topic itself
+    // (which is the target contained in the help files themselves) or
+    // they can be a dictionary with the following keys:
+    //    "topic": the actual topic
+    //    "caption": the caption to use in the TOV list
     //
-    // Entries that are just strings are expanded to be dictionaries
-    // in which the topic and caption are both the topic string. In
-    // general you only need to specify the dict version of a target
-    // when it will appear in the table of contents and you want to
-    // dress it up.
+    // When an entry is just a topic, it is expanded to a dictionary
+    // like the above, with the caption being a duplicate of the
+    // topic. Generally speaking only topics that appear in the table
+    // of contents need a caption.
     //
-    // The onus is on the developer to ensure that all of the help
-    // targets in each file are properly listed, as the user will
-    // be unable to navigate to a target if it's not in the list.
+    // In this demonstration, the onus is on the developer to ensure
+    // that all of the help targets in each file are properly listed,
+    // as the user will be unable to navigate to a target if it is not
+    // in the list.
     //
-    // Some checking is done at initialization time to ensure that
-    // topic dictionaries (where they are used) contain at least
-    // the topic key; if the caption key is missing, it will be
-    // synthesized.
+    // Note also that at load time the file is flipped "inside out"
+    // into a dictionary with topics and keys, which means that topics
+    // must be unique throughout the help system. This is due to the
+    // link syntax not providing any context for where the link
+    // actually goes.
 
     // Targets in index.txt
     "index.txt": [
         {
             "topic": "index.txt",
-            "caption": "A Sample Help File"
+            "caption": "HyperHelp: What is it?"
         },
 
-        "option",
-        "target"
+        "this"
     ],
 
-    "http://packagecontrol.io/packages/OverrideAudit": [
-        "OverrideAudit"
-    ],
-
-    // Targets in other.txt
-    "other.txt": [
+    // Targets in conventions.txt
+    "conventions.txt": [
         {
-            "topic": "other.txt",
-            "caption": "Yet Another Help File"
+            "topic": "conventions.txt",
+            "caption": "Help File Conventions"
+        }
+    ],
+
+    // Targets in syntax.txt
+    "syntax.txt": [
+        {
+            "topic": "syntax.txt",
+            "caption": "Help File Syntax"
         },
 
-        "option2"
+        "header",
+        "targets",
+        "standard",
+        "option",
+        "links",
+        "keys"
+    ],
+
+    // Targets in how.txt
+    "how.txt": [
+        {
+            "topic": "how.txt",
+            "caption": "How It Works"
+        },
+        "help.files",
+        "help.index",
+        "help.toc",
+        "help.toc.captions",
+        "help.command"
+    ],
+
+    // This is an example of an external link. The help file is given
+    // as the full URL of the external page to link to, and all of
+    // the topics within it will link to this page.
+    "https://packagecontrol.io/packages/OverrideAudit":
+    [
+        "OverrideAudit"
     ]
 }

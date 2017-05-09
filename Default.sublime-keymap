@@ -7,7 +7,6 @@
             "text" : "HyperHelp: "
         }
     },
-
     {
         "keys": ["?"],
         "command": "help",
@@ -16,7 +15,6 @@
             { "key": "selector", "operator": "equal", "operand": "text.help" },
         ]
     },
-
     {
         "keys": ["enter"],
         "command": "help",
@@ -25,7 +23,6 @@
             { "key": "num_selections", "operator": "equal", "operand": 1 }
         ]
     },
-
     {
         "keys": ["keypad_enter"],
         "command": "help",
@@ -34,7 +31,6 @@
             { "key": "num_selections", "operator": "equal", "operand": 1 }
         ]
     },
-
     {
         "keys": ["tab"],
         "command": "help_nav_link",
@@ -42,12 +38,24 @@
             { "key": "selector", "operator": "equal", "operand": "text.help" },
         ]
     },
-
     {
         "keys": ["shift+tab"],
         "command": "help_nav_link", "args": {"prev": true},
         "context": [
             { "key": "selector", "operator": "equal", "operand": "text.help" },
         ]
-    }
+    },
+
+    // For use while authoring help; otherwise the bindings above get in the
+    // way.
+    {
+        "keys": ["ctrl+k", "?"],
+        "command": "insert",
+        "args": {"characters": "?"}
+    },
+    {
+        "keys": ["ctrl+k", "tab"],
+        "command": "insert",
+        "args": {"characters": "\t"}
+    },
 ]
