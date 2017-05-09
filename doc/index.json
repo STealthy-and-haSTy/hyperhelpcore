@@ -82,11 +82,29 @@
         "help.command"
     ],
 
+    // This is an example of opening a package file. This allows you
+    // to open any file from any package. If there is no override, the
+    // data from the sublime-package is loaded instead.
+    "Packages/Default/delete_word.py":
+    [
+        "Packages/Default/delete_word.py"
+    ],
+
+    // When a link to a package file is going to use the name of the
+    // file as the link text (as in the example above), as a shortcut
+    // you can specify true as the value. You cannot do this if you
+    // want to have multiple links to the same file, however.
+    "Packages/Default/exec.py": true,
+
     // This is an example of an external link. The help file is given
     // as the full URL of the external page to link to, and all of
     // the topics within it will link to this page.
     "https://packagecontrol.io/packages/OverrideAudit":
     [
         "OverrideAudit"
-    ]
+    ],
+
+    // The short form also works well for URL's that you want to post
+    // "bare".
+    "https://packagecontrol.io/packages/PackageResourceViewer": true
 }

@@ -52,6 +52,9 @@ class HelpCommand(sublime_plugin.ApplicationCommand):
             return
 
         def help_dict(topic_data, help_file):
+            if isinstance(topic_data, bool):
+                topic_data = help_file
+
             if isinstance(topic_data, str):
                 return (topic_data, {
                     "caption": topic_data,
@@ -81,6 +84,9 @@ class HelpCommand(sublime_plugin.ApplicationCommand):
 
         for help_file in raw_dict:
             topic_list = raw_dict[help_file]
+
+            if isinstance(topic_list, (bool, str)):
+                topic_list = [topic_list]
 
             for topic_entry in topic_list:
                 topic, topic_entry = help_dict(topic_entry, help_file)
@@ -135,6 +141,11 @@ class HelpCommand(sublime_plugin.ApplicationCommand):
 
         if self._url_re.match(help_file):
             return webbrowser.open_new_tab(help_file)
+
+        if help_file.startswith("Packages/"):
+            help_file = help_file.replace("Packages/", "${packages}/")
+            window = sublime.active_window()
+            return window.run_command("open_file", {"file": help_file})
 
         help_view = self.show_file(help_file)
         if help_view is None:

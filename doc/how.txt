@@ -44,15 +44,36 @@ consequence all help targets must be unique amongst all of the available help
 files.
 
     +----------------------------------------------------------------------+
-    | TIP: In the `index.json` file, you can specify an http or https URL  |
-    | and include one or more targets inside as if it was a regular file.  |
+    | TIP: In the `index.json` file, you can specify an http/https URL or  |
+    | the name of a package file as the help file and then include targets |
+    | as if it was a regular file.                                         |
     |                                                                      |
-    | When one of these targets is followed, the URL will be loaded in the |
-    | system default browser.                                              |
+    | WHen one of these targets is followed, the URL will be loaded in the |
+    | system default browser (for URL's) or the package file will be found |
+    | and displayed.                                                       |
     |                                                                      |
-    | This allows you to link to external web pages from within your help, |
-    | such as this link to |OverrideAudit|.                                |
+    | This allows you to do think like allow people to open a package file |
+    | for reference (like |Packages/Default/delete_word.py|) or to link to |
+    | a web page from your help, such as this link to |OverrideAudit|.     |
     +----------------------------------------------------------------------+
+
+As a helpful shortcut for topics (generally external files and URLs) for which
+you want to have only a single target that shares the name of the external
+resource, you can just use the value `true` for the help file key in
+`index.json` to save time. For example:
+
+    "https://packagecontrol.io/packages/PackageResourceViewer": true,
+    "Packages/Default/exec.py": true,
+
+Which allows you to use the name of the external resource as the link text
+directly:
+
+   |Packages/Default/exec.py|
+   |https://packagecontrol.io/packages/PackageResourceViewer|
+
+This trick also works for help files that only contain a single link target that
+shares their name. Note however that in all cases you have to go the long way
+around if you want to include a caption in the |help.toc|.
 
 
   Help TOC [*help.toc*]
