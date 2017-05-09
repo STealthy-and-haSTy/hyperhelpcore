@@ -57,11 +57,12 @@ class HelpCommand(sublime_plugin.ApplicationCommand):
 
             if isinstance(topic_data, str):
                 return (topic_data, {
+                    "topic": topic_data,
                     "caption": topic_data,
                     "file": help_file
                 })
 
-            topic = topic_data.pop("topic", None)
+            topic = topic_data.get("topic", None)
             topic_data["file"] = help_file
             if "caption" not in topic_data:
                 topic_data["caption"] = help_file
@@ -99,7 +100,9 @@ class HelpCommand(sublime_plugin.ApplicationCommand):
             toc = sorted(topics.keys())
 
         self._topics = topics
-        self._toc = toc
+        self._toc = []
+        for topic in toc:
+            self._toc.append(topics.get(topic))
 
     def help_content(self, help_file):
         filename = "%s/%s" % (self._prefix, help_file)
@@ -162,16 +165,13 @@ class HelpCommand(sublime_plugin.ApplicationCommand):
     def show_toc(self):
         self.load_json()
 
-        options = []
-        for topic in self._toc:
-            data = self._topics.get(topic, None)
-            options.append([data.get("caption", topic), topic])
+        items = [[item["caption"], item["topic"]] for item in self._toc]
 
         def pick(index):
             if index >= 0:
-                self.show_topic(options[index][-1])
+                self.show_topic(items[index][-1])
 
-        sublime.active_window().show_quick_panel(options, pick)
+        sublime.active_window().show_quick_panel(items, pick)
 
     def extract_topic(self):
         view = sublime.active_window().active_view()
