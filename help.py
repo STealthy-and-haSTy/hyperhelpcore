@@ -204,7 +204,7 @@ class HelpNavLinkCommand(sublime_plugin.WindowCommand):
         view = self.window.active_view()
         point = view.sel()[0].begin()
 
-        targets = view.find_by_selector("meta.link")
+        targets = view.find_by_selector("meta.link | meta.link-target")
         fallback = targets[-1] if prev else targets[0]
 
         def pick(pos):
