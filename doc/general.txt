@@ -10,18 +10,22 @@ Example Plugins                                                *example.plugins*
 Several pre-made plugins come with Sublime Text, you can find them in the
 Default package:
 
-  |Packages/Default/delete_word.py| Deletes a word to the left or right of the
-                                    cursor
-  |Packages/Default/duplicate_line.py| Duplicates the current line
-  |Packages/Default/exec.py| Uses phantoms to display errors inline
-  |Packages/Default/font.py| Shows how to work with settings
-  |Packages/Default/goto_line.py| Prompts the user for input, then updates the
-                                  selection
-  |Packages/Default/mark.py| Uses `add_regions()` to add an icon to the gutter
-  |Packages/Default/show_scope_name.py| Uses a popup to show the scope names at
-                                        the caret
-  |Packages/Default/trim_trailing_whitespace.py| Modifies a buffer just before
-                                                 its saved
+  |Packages/Default/delete_word.py|
+      Deletes a word to the left or right of the cursor
+  |Packages/Default/duplicate_line.py|
+      Duplicates the current line
+  |Packages/Default/exec.py|
+      Uses phantoms to display errors inline
+  |Packages/Default/font.py|
+      Shows how to work with settings
+  |Packages/Default/goto_line.py|
+      Prompts the user for input, then updates the selection
+  |Packages/Default/mark.py|
+      Uses `add_regions()` to add an icon to the gutter
+  |Packages/Default/show_scope_name.py|
+      Uses a popup to show the scope names at the caret
+  |Packages/Default/trim_trailing_whitespace.py|
+      Modifies a buffer just before its saved
 
 
 --------------------------------------------------------------------------------
