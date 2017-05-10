@@ -51,6 +51,6 @@
   "Packages/Default/show_scope_name.py": true,
   "Packages/Default/trim_trailing_whitespace.py": true,
 
-    "http://www.sublimetext.com/docs/3/minihtml.html": "minihtml"
-
+  "http://www.sublimetext.com/docs/3/api_reference.html": true,
+  "http://www.sublimetext.com/docs/3/minihtml.html": "minihtml"
 }
