@@ -6,7 +6,28 @@
     // This key is optional; if it is not here, it is synthesized by
     // collecting the list of all topics in the dictionary and sorting
     // them.
-    "__toc": ["index.txt", "conventions.txt", "syntax.txt", "how.txt"],
+    //
+    // If you specify this yourself, it should be a list of tables
+    // with the keys "caption" and "topic" to provide choices for the
+    // user.
+    "__toc": [
+        {
+            "topic": "index.txt",
+            "caption": "HyperHelp: What is it?"
+        },
+        {
+            "topic": "conventions.txt",
+            "caption": "Help File Conventions"
+        },
+        {
+            "topic": "syntax.txt",
+            "caption": "Help File Syntax"
+        },
+        {
+            "topic": "how.txt",
+            "caption": "How It Works"
+        }
+    ],
 
     // The following specifies all of the link that the help system
     // knows about. In this dictionary object, the keys are the names
@@ -14,16 +35,27 @@
     // to and the values are arrays of all of the topics contained
     // within that file.
     //
-    // Each topic in the list can be either just the topic itself
-    // (which is the target contained in the help files themselves) or
-    // they can be a dictionary with the following keys:
+    // If there is only going to be a single target in the help file,
+    // as a shorthand you can specify it directly as the value without
+    // having to wrap it in an array.
+    //
+    // Additionally, specifying a value of true for a help file will
+    // create a single implicit topic with the same name as the
+    // help file, allowing you to easily link to external files and
+    // URL's with their full names.
+    //
+    // When a list of topics is provided, each topic in the list can
+    // be either just the topic itself (which is the target contained
+    // in the help files themselves) or they can be a dictionary with
+    // the following keys:
     //    "topic": the actual topic
-    //    "caption": the caption to use in the TOV list
+    //    "caption": the caption to use in the TOC list
     //
     // When an entry is just a topic, it is expanded to a dictionary
     // like the above, with the caption being a duplicate of the
     // topic. Generally speaking only topics that appear in the table
-    // of contents need a caption.
+    // of contents need a caption, and the caption is only used if you
+    // do not specify your own specify your own __toc key (see above).
     //
     // In this demonstration, the onus is on the developer to ensure
     // that all of the help targets in each file are properly listed,
@@ -38,29 +70,16 @@
 
     // Targets in index.txt
     "index.txt": [
-        {
-            "topic": "index.txt",
-            "caption": "HyperHelp: What is it?"
-        },
-
+        "index.txt",
         "this"
     ],
 
     // Targets in conventions.txt
-    "conventions.txt": [
-        {
-            "topic": "conventions.txt",
-            "caption": "Help File Conventions"
-        }
-    ],
+    "conventions.txt": true,
 
     // Targets in syntax.txt
     "syntax.txt": [
-        {
-            "topic": "syntax.txt",
-            "caption": "Help File Syntax"
-        },
-
+        "syntax.txt",
         "header",
         "targets",
         "standard",
@@ -71,10 +90,7 @@
 
     // Targets in how.txt
     "how.txt": [
-        {
-            "topic": "how.txt",
-            "caption": "How It Works"
-        },
+        "how.txt",
         "help.files",
         "help.index",
         "help.toc",

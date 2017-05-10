@@ -97,12 +97,10 @@ class HelpCommand(sublime_plugin.ApplicationCommand):
                 topics[topic] = topic_entry
 
         if toc is None:
-            toc = sorted(topics.keys())
+            toc = [topics.get(topic) for topic in sorted(topics.keys())]
 
         self._topics = topics
-        self._toc = []
-        for topic in toc:
-            self._toc.append(topics.get(topic))
+        self._toc = toc
 
     def help_content(self, help_file):
         filename = "%s/%s" % (self._prefix, help_file)
