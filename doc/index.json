@@ -1,152 +1,56 @@
 {
-    // This special key specifies the list of topics that should be
-    // displayed when the table of contents of the help is displayed,
-    // and also sets the order of their display.
-    //
-    // This key is optional; if it is not here, it is synthesized by
-    // collecting the list of all topics in the dictionary and sorting
-    // them.
-    //
-    // If you specify this yourself, it should be a list of tables
-    // with the keys "caption" and "topic" to provide choices for the
-    // user.
     "__toc": [
         {
             "topic": "index.txt",
-            "caption": "HyperHelp: What is it?"
+            "caption": "Sublime Text 3 API Documentation"
         },
         {
-            "topic": "conventions.txt",
-            "caption": "Help File Conventions"
-        },
-        {
-            "topic": "syntax.txt",
-            "caption": "Help File Syntax",
+            "topic": "general.txt",
+            "caption": "General Information",
             "children": [
                 {
-                    "topic": "syntax.txt",
-                    "caption": "Overview"
+                    "topic": "example.plugins",
+                    "caption": "Example Plugins"
                 },
                 {
-                    "topic": "header",
-                    "caption": "File Header"
+                    "topic": "plugin.lifecycle",
+                    "caption": "Plugin Lifecycle"
                 },
                 {
-                    "topic": "targets",
-                    "caption": "Link Targets"
+                    "topic": "threading",
+                    "caption": "Threading"
                 },
                 {
-                    "topic": "links",
-                    "caption": "Links"
+                    "topic": "units.and.coordinates",
+                    "caption": "Units and Coordinates"
                 },
                 {
-                    "topic": "keys",
-                    "caption": "Key Specifications"
-                },
-                {
-                    "topic": "code",
-                    "caption": "Code Blocks"
+                    "topic": "types",
+                    "caption": "Types"
                 },
             ]
-        },
-        {
-            "topic": "how.txt",
-            "caption": "How It Works"
         }
     ],
 
-    // The following specifies all of the link that the help system
-    // knows about. In this dictionary object, the keys are the names
-    // of the distinct help files or external web sites being linked
-    // to and the values are arrays of all of the topics contained
-    // within that file.
-    //
-    // If there is only going to be a single target in the help file,
-    // as a shorthand you can specify it directly as the value without
-    // having to wrap it in an array.
-    //
-    // Additionally, specifying a value of true for a help file will
-    // create a single implicit topic with the same name as the
-    // help file, allowing you to easily link to external files and
-    // URL's with their full names.
-    //
-    // When a list of topics is provided, each topic in the list can
-    // be either just the topic itself (which is the target contained
-    // in the help files themselves) or they can be a dictionary with
-    // the following keys:
-    //    "topic": the actual topic
-    //    "caption": the caption to use in the TOC list
-    //
-    // When an entry is just a topic, it is expanded to a dictionary
-    // like the above, with the caption being a duplicate of the
-    // topic. Generally speaking only topics that appear in the table
-    // of contents need a caption, and the caption is only used if you
-    // do not specify your own specify your own __toc key (see above).
-    //
-    // In this demonstration, the onus is on the developer to ensure
-    // that all of the help targets in each file are properly listed,
-    // as the user will be unable to navigate to a target if it is not
-    // in the list.
-    //
-    // Note also that at load time the file is flipped "inside out"
-    // into a dictionary with topics and keys, which means that topics
-    // must be unique throughout the help system. This is due to the
-    // link syntax not providing any context for where the link
-    // actually goes.
-
-    // Targets in index.txt
-    "index.txt": [
-        "index.txt",
-        "this"
+    "index.txt": true,
+    "general.txt": [
+        "general.txt",
+        "example.plugins",
+        "plugin.lifecycle",
+        "threading",
+        "units.and.coordinates",
+        "types"
     ],
 
-    // Targets in conventions.txt
-    "conventions.txt": true,
+  "Packages/Default/delete_word.py": true,
+  "Packages/Default/duplicate_line.py": true,
+  "Packages/Default/exec.py": true,
+  "Packages/Default/font.py": true,
+  "Packages/Default/goto_line.py": true,
+  "Packages/Default/mark.py": true,
+  "Packages/Default/show_scope_name.py": true,
+  "Packages/Default/trim_trailing_whitespace.py": true,
 
-    // Targets in syntax.txt
-    "syntax.txt": [
-        "syntax.txt",
-        "header",
-        "targets",
-        "standard",
-        "option",
-        "links",
-        "keys"
-    ],
+    "http://www.sublimetext.com/docs/3/minihtml.html": "minihtml"
 
-    // Targets in how.txt
-    "how.txt": [
-        "how.txt",
-        "help.files",
-        "help.index",
-        "help.toc",
-        "help.toc.captions",
-        "help.command"
-    ],
-
-    // This is an example of opening a package file. This allows you
-    // to open any file from any package. If there is no override, the
-    // data from the sublime-package is loaded instead.
-    "Packages/Default/delete_word.py":
-    [
-        "Packages/Default/delete_word.py"
-    ],
-
-    // When a link to a package file is going to use the name of the
-    // file as the link text (as in the example above), as a shortcut
-    // you can specify true as the value. You cannot do this if you
-    // want to have multiple links to the same file, however.
-    "Packages/Default/exec.py": true,
-
-    // This is an example of an external link. The help file is given
-    // as the full URL of the external page to link to, and all of
-    // the topics within it will link to this page.
-    "https://packagecontrol.io/packages/OverrideAudit":
-    [
-        "OverrideAudit"
-    ],
-
-    // The short form also works well for URL's that you want to post
-    // "bare".
-    "https://packagecontrol.io/packages/PackageResourceViewer": true
 }
