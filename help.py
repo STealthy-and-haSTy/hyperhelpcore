@@ -112,7 +112,6 @@ class HelpCommand(sublime_plugin.ApplicationCommand):
         return None
 
     def topic_file(self, topic):
-        self.load_json()
         return self._topics.get(topic, {}).get("file", None)
 
     def show_file(self, help_file):
@@ -160,16 +159,34 @@ class HelpCommand(sublime_plugin.ApplicationCommand):
         log("Unable to find topic '%s' in help file '%s'", topic, help_file,
             status=True)
 
-    def show_toc(self):
-        self.load_json()
+    def select_toc_item(self, items, stack, index):
+        if index >= 0:
+            # When stack is not empty, first item takes us back
+            if index == 0 and len(stack) > 0:
+                items = stack.pop()
+                return self.show_toc(items, stack)
 
-        items = [[item["caption"], item["topic"]] for item in self._toc]
+            # Compensate for the ".." entry on a non-empty stack
+            if len(stack) > 0:
+                index -= 1
 
-        def pick(index):
-            if index >= 0:
-                self.show_topic(items[index][-1])
+            entry = items[index]
+            children = entry.get("children", None)
 
-        sublime.active_window().show_quick_panel(items, pick)
+            if children is not None:
+                stack.append(items)
+                return self.show_toc(children, stack)
+
+            self.show_topic(entry["topic"])
+
+    def show_toc(self, items, stack):
+        captions = [[item["caption"], item["topic"]] for item in items]
+        if len(stack) > 0:
+            captions.insert(0, ["..", "Go back"])
+
+        sublime.active_window().show_quick_panel(
+            captions,
+            on_select=lambda index: self.select_toc_item(items, stack, index))
 
     def extract_topic(self):
         view = sublime.active_window().active_view()
@@ -181,8 +198,10 @@ class HelpCommand(sublime_plugin.ApplicationCommand):
         return None
 
     def run(self, toc=False, topic=None):
+        self.load_json()
+
         if toc:
-            return self.show_toc()
+            return self.show_toc(self._toc, [])
 
         if topic is None:
             topic = self.extract_topic() or "index.txt"

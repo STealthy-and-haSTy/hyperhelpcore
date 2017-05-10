@@ -21,7 +21,33 @@
         },
         {
             "topic": "syntax.txt",
-            "caption": "Help File Syntax"
+            "caption": "Help File Syntax",
+            "children": [
+                {
+                    "topic": "syntax.txt",
+                    "caption": "Overview"
+                },
+                {
+                    "topic": "header",
+                    "caption": "File Header"
+                },
+                {
+                    "topic": "targets",
+                    "caption": "Link Targets"
+                },
+                {
+                    "topic": "links",
+                    "caption": "Links"
+                },
+                {
+                    "topic": "keys",
+                    "caption": "Key Specifications"
+                },
+                {
+                    "topic": "code",
+                    "caption": "Code Blocks"
+                },
+            ]
         },
         {
             "topic": "how.txt",
