@@ -1,4 +1,13 @@
 {
+    // Help files should strive to be no more than 80 characters
+    // wide
     "word_wrap": false,
+    "wrap_width": 80,
     "rulers": [],
+
+    // These options are set to avoid distractions while viewing
+    // help.
+    "fade_fold_buttons": true,
+    "match_selection": false,
+    "draw_indent_guides": false,
 }
