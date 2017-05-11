@@ -1,7 +1,5 @@
 *general.txt*                 General Information                   May 10, 2017
 --------------------------------------------------------------------------------
-                                              | Help Text © Sublime HQ Pty Ltd |
-                                              +--------------------------------+
 
 
 Example Plugins                                                *example.plugins*
@@ -76,18 +74,22 @@ This documentation generally refers to simply Python data types. Some type names
 are classes documented herein, however there are also a few custom type names
 that refer to construct with specific semantics:
 
- * `location`: a tuple of `(str, str, (int, int))` that contains information about
+ * *location*: a tuple of `(str, str, (int, int))` that contains information about
    a location of a symbol. The first string is the absolute file path, the
    second is the file path relative to the project, the third element is a
    two-element tuple of the row and column.
 
- * `point`: an `int` that represents the offset from the beginning of the editor
+ * *point*: an `int` that represents the offset from the beginning of the editor
    buffer. The `View` methods `text_point()` and `rowcol()` allow converting to
    and from this format.
 
- * `value`: any of the Python data types `bool`, `int`, `float`, `str`, `list`
+ * *value*: any of the Python data types `bool`, `int`, `float`, `str`, `list`
    or `dict`.
 
- * `dip`: a `float` that represents a device-independent pixel.
+ * *dip*: a `float` that represents a device-independent pixel.
 
- * `vector`: a tuple of `(dip, dip)` representing `x` and `y` coordinates.
+ * *vector*: a tuple of `(dip, dip)` representing `x` and `y` coordinates.
+
+
+--------------------------------------------------------------------------------
+API Help Copyright © Sublime HQ Pty Ltd                     |api_reference.html|
