@@ -41,12 +41,12 @@ sublime Module                                                         *sublime*
 
 
 *sublime.yes_no_cancel_dialog*(string, <yes_title>, <no_title>)
-      Returns: int
+    Returns: int
 
-        Displays a yes / no / cancel question dialog to the user. If `yes_title`
-        and/or `no_title` are provided, they will be used as the text on the
-        corresponding buttons on some platforms. Returns `sublime.DIALOG_YES`,
-        `sublime.DIALOG_NO` or `sublime.DIALOG_CANCEL`.
+      Displays a yes / no / cancel question dialog to the user. If `yes_title`
+      and/or `no_title` are provided, they will be used as the text on the
+      corresponding buttons on some platforms. Returns `sublime.DIALOG_YES`,
+      `sublime.DIALOG_NO` or `sublime.DIALOG_CANCEL`.
 
 
 *sublime.load_resource*(name)
@@ -913,7 +913,6 @@ sorted order.
     Returns True iff the given `region` is a subset.
 
 
-
 --------------------------------------------------------------------------------
 
 
@@ -923,92 +922,92 @@ Region Class                                                            *Region*
 Represents an area of the buffer. Empty regions, where a == b are valid.
 
 
-  Constructors
-  ------------
-  *Region*(a, b)
+Constructors
+------------
+*Region*(a, b)
 
     Creates a Region with initial values a and b.
 
 
-  Properties
-  ----------
+Properties
+----------
 
-  *Region.a*
-    Type: int
+*Region.a*
+  Type: int
 
-      The first end of the region.
-
-
-  *Region.b*
-    Type: int
-
-      The second end of the region. May be less that a, in which case the region
-      is a reversed one.
+    The first end of the region.
 
 
-  *Region.xpos*
-    Type: int
+*Region.b*
+  Type: int
 
-      The target horizontal position of the region, or `-1` if undefined.
-      Effects behavior when pressing the up or down keys.
-
-
-  Methods
-  -------
-
-  *Region.begin*()
-    Returns: int
-
-      Returns the minimum of a and b.
+    The second end of the region. May be less that a, in which case the region
+    is a reversed one.
 
 
-  *Region.end*()
-    Returns: int
+*Region.xpos*
+  Type: int
 
-      Returns the maximum of a and b.
-
-
-  *Region.size*()
-    Returns: int
-
-      Returns the number of characters spanned by the region. Always >= 0.
+    The target horizontal position of the region, or `-1` if undefined. Effects
+    behavior when pressing the up or down keys.
 
 
-  *Region.empty*()
-    Returns: bool
+Methods
+-------
 
-      Returns `True` iff `begin()` == `end()`.
+*Region.begin*()
+  Returns: int
 
-
-  *Region.cover*(region)
-    Returns: |Region|
-
-      Returns a Region spanning both this and the given regions.
+    Returns the minimum of a and b.
 
 
-  *Region.intersection*(region)
-    Returns: |Region|
+*Region.end*()
+  Returns: int
 
-      Returns the set intersection of the two regions.
-
-
-  *Region.intersects*(region)
-    Returns: bool
-
-      Returns `True` iff self == `region` or both include one or more positions in
-      common.
+    Returns the maximum of a and b.
 
 
-  *Region.contains*(region)
-    Returns: bool
+*Region.size*()
+  Returns: int
 
-      Returns `True` iff the given `region` is a subset.
+    Returns the number of characters spanned by the region. Always >= 0.
 
 
-  *Region.contains*(point)
-    Returns: bool
+*Region.empty*()
+  Returns: bool
 
-      Returns `True` iff `begin()` <= `point` <= `end()`.
+    Returns `True` iff `begin()` == `end()`.
+
+
+*Region.cover*(region)
+  Returns: |Region|
+
+    Returns a Region spanning both this and the given regions.
+
+
+*Region.intersection*(region)
+  Returns: |Region|
+
+    Returns the set intersection of the two regions.
+
+
+*Region.intersects*(region)
+  Returns: bool
+
+    Returns `True` iff self == `region` or both include one or more positions in
+    common.
+
+
+*Region.contains*(region)
+  Returns: bool
+
+    Returns `True` iff the given `region` is a subset.
+
+
+*Region.contains*(point)
+  Returns: bool
+
+    Returns `True` iff `begin()` <= `point` <= `end()`.
 
 
 --------------------------------------------------------------------------------
@@ -1023,27 +1022,27 @@ Phantom has been constructed and added to the View, changes to the attributes
 will have no effect.
 
 
-  Constructors
-  ------------
+Constructors
+------------
 
-  *Phantom*(region, content, layout, <on_navigate>)
+*Phantom*(region, content, layout, <on_navigate>)
 
-    Creates a phantom attached to a region. The content is HTML to be processed
-    by |minihtml|.
+  Creates a phantom attached to a region. The content is HTML to be processed
+  by |minihtml|.
 
-    layout must be one of:
+  layout must be one of:
 
-    * `sublime.LAYOUT_INLINE`: Display the phantom in between the `region` and
-      the point following.
+  * `sublime.LAYOUT_INLINE`: Display the phantom in between the `region` and
+    the point following.
 
-    * `sublime.LAYOUT_BELOW`: Display the phantom in space below the current
-      line, left-aligned with the `region`.
+  * `sublime.LAYOUT_BELOW`: Display the phantom in space below the current
+    line, left-aligned with the `region`.
 
-    * `sublime.LAYOUT_BLOCK`: Display the phantom in space below the current
-      line, left-aligned with the beginning of the line.
+  * `sublime.LAYOUT_BLOCK`: Display the phantom in space below the current
+    line, left-aligned with the beginning of the line.
 
-    `on_navigate` is an optional callback that should accept a single string
-    parameter, that is the `href` attribute of the link clicked.
+  `on_navigate` is an optional callback that should accept a single string
+  parameter, that is the `href` attribute of the link clicked.
 
 
 --------------------------------------------------------------------------------
@@ -1056,26 +1055,26 @@ A collection that manages Phantoms and the process of adding them, updating them
 and removing them from the View.
 
 
-  Constructors
-  ------------
+Constructors
+------------
 
-  *PhantomSet*(view, <key>)
+*PhantomSet*(view, <key>)
 
-    Creates a PhantomSet attached to a `view`. `key` is a string to group
-    Phantoms together.
+  Creates a PhantomSet attached to a `view`. `key` is a string to group
+  Phantoms together.
 
 
-  Methods
-  -------
+Methods
+-------
 
-  *PhantomSet.update*(phantoms)
-    Returns: None
+*PhantomSet.update*(phantoms)
+  Returns: None
 
-      phantoms should be a list of phantoms.
+    phantoms should be a list of phantoms.
 
-      The `.region` attribute of each existing phantom in the set will be
-      updated. New phantoms will be added to the view and phantoms not in
-      `phantoms` list will be deleted.
+    The `.region` attribute of each existing phantom in the set will be updated.
+    New phantoms will be added to the view and phantoms not in `phantoms` list
+    will be deleted.
 
 
 --------------------------------------------------------------------------------
@@ -1438,45 +1437,43 @@ Settings Class                                                        *Settings*
 ==============
 
 
-  *Settings.get*(name, <default>)
-    Returns: |value|
+*Settings.get*(name, <default>)
+  Returns: |value|
 
-      Returns the named setting, or `default` if it's not defined. If not
-      passed, `default` will have a value of `None`.
-
-
-  *Settings.set*(name, value)
-    Returns: None
-
-      Sets the named setting. Only primitive types, lists, and dicts are
-      accepted.
+    Returns the named setting, or `default` if it's not defined. If not passed,
+    `default` will have a value of `None`.
 
 
-  *Settings.erase*(name)
-    Returns: None
+*Settings.set*(name, value)
+  Returns: None
 
-      Removes the named setting. Does not remove it from any parent Settings.
-
-
-  *Settings.has*(name)
-    Returns: bool
-
-      Returns `True` iff the named option exists in this set of Settings or one of
-      its parents.
+    Sets the named setting. Only primitive types, lists, and dicts are accepted.
 
 
-  *Settings.add_on_change*(key, on_change)
-    Returns: None
+*Settings.erase*(name)
+  Returns: None
 
-      Register a callback to be run whenever a setting in this object is
-      changed.
+    Removes the named setting. Does not remove it from any parent Settings.
 
 
-  *Settings.clear_on_change*(key)
-    Returns: None
+*Settings.has*(name)
+  Returns: bool
 
-      Remove all callbacks registered with the given `key`.
+    Returns `True` iff the named option exists in this set of Settings or one of
+    its parents.
 
+
+*Settings.add_on_change*(key, on_change)
+  Returns: None
+
+    Register a callback to be run whenever a setting in this object is
+    changed.
+
+
+*Settings.clear_on_change*(key)
+  Returns: None
+
+    Remove all callbacks registered with the given `key`.
 
 
 --------------------------------------------------------------------------------
