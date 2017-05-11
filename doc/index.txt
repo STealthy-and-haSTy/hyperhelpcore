@@ -17,4 +17,4 @@ General Information        Core Components      Plugin Extension Points
 
 
 --------------------------------------------------------------------------------
-Sublime HQ Pty Ltd        |http://www.sublimetext.com/docs/3/api_reference.html|
+API Help Copyright © Sublime HQ Pty Ltd                     |api_reference.html|
