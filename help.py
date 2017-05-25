@@ -239,11 +239,11 @@ class HelpNavLinkCommand(sublime_plugin.WindowCommand):
 
 
 class HelpListener(sublime_plugin.EventListener):
-    """
-    Listen for double clicks in help files and, if they occur over links,
-    follow the link instead of selecting the text.
-    """
     def on_text_command(self, view, command, args):
+        """
+        Listen for double clicks in help files and, if they occur over links,
+        follow the link instead of selecting the text.
+        """
         if command == "drag_select" and args.get("by", None) == "words":
             event = args["event"]
             point = view.window_to_text((event["x"], event["y"]))
@@ -253,6 +253,26 @@ class HelpListener(sublime_plugin.EventListener):
                 return ("noop")
 
         return None
+
+    def on_query_context(self, view, key, operator, operand, match_all):
+        """
+        Allow key bindings in help windows to detect if they are currently in
+        help "authoring" mode so that it is possible to edit files without
+        the bindings getting in the way.
+        """
+        if key != "help_author_mode":
+            return None
+
+        lhs = view.is_read_only() == False
+        rhs = bool(operand)
+
+        if operator == sublime.OP_EQUAL:
+            return lhs == rhs
+        elif operator == sublime.OP_NOT_EQUAL:
+            return lhs != rhs
+
+        return None
+
 
 
 ###----------------------------------------------------------------------------

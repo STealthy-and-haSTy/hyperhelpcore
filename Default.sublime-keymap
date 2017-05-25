@@ -13,7 +13,7 @@
         "args": { "toc": true },
         "context": [
             { "key": "selector", "operator": "equal", "operand": "text.help" },
-            { "key": "setting._hh_edit", "operator": "equal", "operand": false}
+            { "key": "help_author_mode", "operator": "equal", "operand": false}
         ]
     },
     {
@@ -22,7 +22,7 @@
         "context": [
             { "key": "selector", "operator": "equal", "operand": "text.help meta.link" },
             { "key": "num_selections", "operator": "equal", "operand": 1 },
-            { "key": "setting._hh_edit", "operator": "equal", "operand": false}
+            { "key": "help_author_mode", "operator": "equal", "operand": false}
         ]
     },
     {
@@ -31,7 +31,7 @@
         "context": [
             { "key": "selector", "operator": "equal", "operand": "text.help meta.link" },
             { "key": "num_selections", "operator": "equal", "operand": 1 },
-            { "key": "setting._hh_edit", "operator": "equal", "operand": false}
+            { "key": "help_author_mode", "operator": "equal", "operand": false}
         ]
     },
     {
@@ -39,7 +39,7 @@
         "command": "help_nav_link",
         "context": [
             { "key": "selector", "operator": "equal", "operand": "text.help" },
-            { "key": "setting._hh_edit", "operator": "equal", "operand": false}
+            { "key": "help_author_mode", "operator": "equal", "operand": false}
         ]
     },
     {
@@ -47,7 +47,7 @@
         "command": "help_nav_link", "args": {"prev": true},
         "context": [
             { "key": "selector", "operator": "equal", "operand": "text.help" },
-            { "key": "setting._hh_edit", "operator": "equal", "operand": false}
+            { "key": "help_author_mode", "operator": "equal", "operand": false}
         ]
     }
 ]
