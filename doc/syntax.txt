@@ -1,0 +1,80 @@
+*syntax.txt*                    Help File Syntax                     May 8, 2017
+================================================================================
+| <?> TOC | <Enter> Follow Link | <Tab> Next Link |        Back to |index.txt| |
++---------+---------------------+-----------------+----------------------------+
+
+As currently written, the syntax for the help files shown here is purposefully
+simple in nature, and I am by no means an expert in this particular field of
+package development.
+
+You should probably consider what is here as a jumping off point for your own
+system. I would recommend starting by generating actual help and seeing what
+constructs you think you want to include for the style of help that you are
+trying to generate.
+
+The following constructs are available in the demo syntax. With the sole
+exception of the header line of every help file, the scopes applied to
+everything is based entirely on visible markup and not contextual clues in order
+to keep everything simple.
+
+
+File Header [*header*]
+======================
+
+The syntax includes a rule that triggers only for the first line in every help
+file and is responsible for providing syntax highlighting for a single link
+target in the first position, a title in the second position and a date in the
+third position.
+
+The only requirements here are that the target is a valid target (see |targets|
+below) and that there be a single whitespace character between the target and
+the title and two spaces between the title and the date.
+
+
+Link Targets [*targets*]
+========================
+
+There are two styles of link targets, *standard* and 'option'. Functionally,
+both are identical and the only difference between them is the color they are
+represented as and the characters used to define them.
+
+The `option` style is an offshoot of the vim help syntax, which uses something
+similar for links that represent topics talking about options specifically. You
+could use this for something different if desired, though.
+
+In both cases, a valid link target is comprised of any characters except spaces
+appearing between a pair of asterisks or single quotes and wholly contained on
+the same line.
+
+
+Links [*links*]
+===============
+
+Regardless of the style of link target you use to specify the destination of a
+link (the two being |standard| and |option|), a link is always created by
+wrapping the name of the link target with vertical pipe characters.
+
+Since spaces are not allowed in |targets|, they are also not allowed in |links|.
+
+
+Key Specifications [*keys*]
+===========================
+
+As shown in the |header| of the page, any text which begins with a `<` and ends
+with a `>` is represented in an alternate color and can be used to provide extra
+emphasis and visual distinction for a key binding.
+
+In this case, spaces are allowed but both must appear together on the same line
+in order for them to match. This allows you to do things like indicate that it is
+possible to follow a link with a mouse <Double Click>, for example.
+
+
+Code Blocks [*code*]
+====================
+
+As witnessed above in the |keys| section, the syntax supports a very simple form
+of inline code blocks delimited with back ticks, `like this`.
+
+The specification for this is very simple, so much like a key binding both of
+the back ticks must appear on the same line in order to be matched, and there is
+no facility for quoting a single back tick.

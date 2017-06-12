@@ -1,20 +1,51 @@
-*index.txt*             Sublime Text 3 API Documentation            May 10, 2017
---------------------------------------------------------------------------------
+*index.txt*                  HyperHelp: What is it?                  May 8, 2017
+================================================================================
+| <?> TOC | <Enter> Follow Link | <Tab> Next Link |                            |
++---------+---------------------+-----------------+----------------------------+
+
+This is an extremely simple prototype of a help system that could be implemented
+within a package to provide interactive, hyper linked help. If you're a student
+of the text editing sciences, you may recognize the help format as being very
+loosely based on the system used in vim.
+
+Links are created by using text within asterisks or single quotes to mark the
+destination of the link. Text within vertical pipe characters (|) creates a link
+that jumps back to that target.
+
+An example of a target in asterisks is the first thing in this help file up in
+the header, while an example of using single quotes would look like 'this'.
+
+A link that would jump back to the header for this file would be |index.txt|,
+while a link that jumps back to the previous paragraph would look like |this|.
+
+You can follow either link by pressing <Enter> while the cursor is on it or by
+<Double Clicking> on it. Go ahead and try it!
+
+Just as an aside, it's also possible to create a link to an external web site,
+such as this incredibly shameless plug for a package of mine called
+|OverrideAudit|.
 
 
-General Information        Core Components      Plugin Extension Points
--------------------        ---------------      -----------------------
- |example.plugins|         |sublime| module     |sublime_plugin| Module
- |plugin.lifecycle|        |Sheet| Class        |EventListener| Class
- |threading|               |View| Class         |ViewEventListener| Class
- |units.and.coordinates|   |Selection| Class    |ApplicationCommand| Class
- |types|                   |Region| Class       |WindowCommand| Class
-                           |Phantom| Class      |TextCommand| Class
-                           |PhantomSet| Class
-                           |Edit| Class
-                           |Window| Class
-                           |Settings| Class
++-----------+
+| Help Keys |
++-----------+
+
+While viewing help, the following key bindings are active to allow you to
+interact with the help. Since the help is just a regular text view, you can also
+navigate through the files as you normally would.
+
+    <?>                      View the Table of Contents
+    <Enter>/<Double Click>   Follow a link
+    <Tab>/<Shift+Tab>        Skip between the next or previous link
 
 
---------------------------------------------------------------------------------
-API Help Copyright © Sublime HQ Pty Ltd                     |api_reference.html|
++-----------+
+| More Info |
++-----------+
+
+More information is available through the following help links, primarily to
+provide extra help files for this demo.
+
+|conventions.txt|   Conventions used in the help files
+|syntax.txt|        An outline of the syntax available for help
+|how.txt|           How everything hangs together

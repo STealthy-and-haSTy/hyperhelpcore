@@ -1,0 +1,184 @@
+*how.txt*                         How It Works                       May 8, 2017
+================================================================================
+| <?> TOC | <Enter> Follow Link | <Tab> Next Link |        Back to |index.txt| |
++---------+---------------------+-----------------+----------------------------+
+
+This help page outlines all of the parts of this example code and how they all
+fit together. Keep in mind that as this is just an example you can (and should)
+extend this to better fit your own needs for help.
+
+
+Help Files [*help.files*]
+=========================
+
+The first thing that is needed is at least a single help file so that your help
+system has something to actually display. Information on the syntax you can use
+to create your help is in |syntax.txt|. You can also refer to these help files
+as well.
+
+As mentioned in |conventions.txt| it is recommended that your main help file be
+named |index.txt| as that is the default help topic if someone should execute
+the help command without specifying what topic they want to see. This default
+can be changed in the code if desired, naturally.
+
+As written, all help files need to be stored in a `doc` subdirectory of your
+package, such as `Packages/MyPackage/doc/index.txt` for example. This allows you
+to keep your help files out of the way of the rest of the package.
+
+
+Help Index [*help.index*]
+=========================
+
+At plugin load time, the special resource file `doc/index.json` is loaded from
+the package containing the help command. This file is what tells the help system
+the complete list of |targets| that are available and in what file they can be
+found.
+
+The simplest possible `index.json` is a dictionary file in which the keys are
+the names of your |help.files| (without any path prefix) and the values are
+arrays of all of the targets which can be found in that file.
+
+When the file is loaded, it's flipped "inside out" so that the keys are the
+targets and the values represent the file in which that topic is contained. As a
+consequence all help targets must be unique amongst all of the available help
+files.
+
+    +----------------------------------------------------------------------+
+    | TIP: In the `index.json` file, you can specify an http/https URL or  |
+    | the name of a package file as the help file and then include targets |
+    | as if it was a regular file.                                         |
+    |                                                                      |
+    | WHen one of these targets is followed, the URL will be loaded in the |
+    | system default browser (for URL's) or the package file will be found |
+    | and displayed.                                                       |
+    |                                                                      |
+    | This allows you to do think like allow people to open a package file |
+    | for reference (like |Packages/Default/delete_word.py|) or to link to |
+    | a web page from your help, such as this link to |OverrideAudit|.     |
+    +----------------------------------------------------------------------+
+
+As a helpful shortcut for topics (generally external files and URLs) for which
+you want to have only a single target that shares the name of the external
+resource, you can just use the value `true` for the help file key in
+`index.json` to save time. For example:
+
+    "https://packagecontrol.io/packages/PackageResourceViewer": true,
+    "Packages/Default/exec.py": true,
+
+Which allows you to use the name of the external resource as the link text
+directly:
+
+   |Packages/Default/exec.py|
+   |https://packagecontrol.io/packages/PackageResourceViewer|
+
+This trick also works for help files that only contain a single link target that
+shares their name. Note however that in all cases you have to go the long way
+around if you want to include a caption in the |help.toc|.
+
+
+  Help TOC [*help.toc*]
+  ---------------------
+
+  The |help.index| file can contain a special key named `__toc` to specify the
+  topics that should appear in the table of contents when it is displayed. If
+  this key is present, it should be an array that lists the topics that should
+  appear in the table of contents, in the order that they should appear.
+
+  When the key is not present, it is synthesized by collecting all of the help
+  targets from all files and sorting them alphabetically.
+
+
+  Help Captions [*help.toc.captions*]
+  -----------------------------------
+
+  When the table of contents is displayed, it is displayed in a quick panel
+  which shows the topics available (either all of them or just those provided in
+  the |help.toc|.)
+
+  In order to be more informative, any of the topics in the `index.json` file
+  can be specified in an alternate dictionary format in order to provide a
+  `caption` to be used in the table of contents.
+
+  For example, in the |index.txt| file in this help, the entry for all of the
+  |targets| in the file could be specified as:
+
+      // Targets in index.txt
+      "index.txt": [
+          "index.txt",
+          "this"
+      ]
+
+  In this case, the file would appear in the table of contents as "index.txt".
+  This is not very informative, so it could instead be entered as:
+
+      // Targets in index.txt
+      "index.txt": [
+          {
+              "topic": index.txt",
+              "caption": "HyperHelp: What is it?"
+          },
+          "this"
+      ]
+
+  This still specifies that the file `index.txt` includes a target named
+  `index.txt`, but now when it appears in the table of contents it will display
+  with the text `HyperHelp: What is it?` instead.
+
+  Only help topics that appear in the table of contents need to have a caption
+  set, as it is otherwise not visible.
+
+
+Help Command [*help.command*]
+=============================
+
+The bulk of the code in `help.py` implements an `ApplicationCommand` which
+exposes a command named `help`. As an `ApplicationCommand` only one instance of
+the command is ever created.
+
+The class lazily loads the |help.index| the first time that it is needed and
+then keeps the data in memory. If you're actively working on your help system
+and making changes to the file, you need to force the package to reload so that
+the `index.json` file will get reloaded.
+
+The `help` command takes two arguments:
+
+  `"toc"`:  true/false (default: false)
+  `"topic"` string     (default: None)
+
+When `toc` is set to true, the command will display the table of contents and
+allow you to select a help topic, which will then be displayed.
+
+The command may also be invoked with `topic` set to a link target that exists
+somewhere in the help system. In this case the appropriate help file will be
+loaded and displayed, and the cursor will be jumped to the appropriate target.
+
+If `toc` is false and `topic` is not provided, one of two things will happen:
+
+  1. If the currently focused file view is a help view and the cursor is
+     currently inside of one of the |links| in the file, that topic is the
+     one that is selected to be viewed.
+
+  2. As a fallback, the topic is assumed to be |index.txt| and that help file is
+     loaded and displayed.
+
+
+Internally, the help is displayed by performing the following steps:
+
+  1. Use the provided `topic` and check the |help.index| to determine what file
+     the topic is contained in.
+
+  2. If the file is a url, open the URL and leave.
+
+  3. Try to find the view in the current window which represents the help
+     system. If no view is found, a new view is created to hold the help.
+
+  4. Load the help file into the help view. If an existing help view already
+     existed and contains the help file requested, the existing content is
+     used instead of reloading it.
+
+  5. The view is scrolled to bring the link target into view and the target is
+     selected
+
+
+When the |help.toc| is being displayed, this set of steps is followed if the
+user selects a help topic.
