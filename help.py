@@ -180,7 +180,10 @@ class HelpCommand(sublime_plugin.ApplicationCommand):
             self.show_topic(entry["topic"])
 
     def show_toc(self, items, stack):
-        captions = [[item["caption"], item["topic"]] for item in items]
+        captions = [[item["caption"], item["topic"] +
+            (" ({} topics)".format(len(item["children"])) if "children" in item else "")]
+            for item in items]
+
         if len(stack) > 0:
             captions.insert(0, ["..", "Go back"])
 
