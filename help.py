@@ -31,7 +31,7 @@ class HelpCommand(sublime_plugin.ApplicationCommand):
 
     """
     def __init__(self):
-        self._prefix = "Packages/%s/doc" % __name__.split(".")[0]
+        self._prefix = "Packages/%s/" % __name__.split(".")[0]
         self._url_re = re.compile("^(https?|file)://")
 
     @classmethod
@@ -69,7 +69,7 @@ class HelpCommand(sublime_plugin.ApplicationCommand):
 
             return (topic, topic_data)
 
-        toc_file = "%s/index.json" % self._prefix
+        toc_file = "%s/hyperhelp.json" % self._prefix
         self._topics = dict()
         self._toc = list()
 
@@ -103,7 +103,7 @@ class HelpCommand(sublime_plugin.ApplicationCommand):
         self._toc = toc
 
     def help_content(self, help_file):
-        filename = "%s/%s" % (self._prefix, help_file)
+        filename = "%s/doc/%s" % (self._prefix, help_file)
         try:
             return sublime.load_resource(filename)
         except:
