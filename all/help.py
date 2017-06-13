@@ -28,7 +28,6 @@ class HelpCommand(sublime_plugin.ApplicationCommand):
     optionally open a panel with help topics, take the topic to jump to
     directly, or collect the topic from the cursor location inside of a help
     document.
-
     """
     def __init__(self):
         self._prefix = "Packages/%s/" % __name__.split(".")[0]
@@ -128,7 +127,7 @@ class HelpCommand(sublime_plugin.ApplicationCommand):
             view = output_to_view(window,
                                   "HyperHelp",
                                   help_text,
-                                  syntax="Packages/HyperHelp/Help.sublime-syntax")
+                                  syntax="Packages/hyperhelp/all/Help.sublime-syntax")
             view.settings().set("_hh_file", help_file)
             return view
 
