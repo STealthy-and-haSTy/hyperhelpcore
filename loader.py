@@ -1,7 +1,8 @@
 ###----------------------------------------------------------------------------
 
 
-from hyperhelp.all import HelpCommand, HelpNavLinkCommand, HelpListener
+from hyperhelp.all import HyperHelpCommand, HyperHelpNavigateCommand
+from hyperhelp.all import HyperHelpListener
 
 
 ###----------------------------------------------------------------------------

@@ -132,15 +132,15 @@ Help Command [*help.command*]
 =============================
 
 The bulk of the code in `help.py` implements an `ApplicationCommand` which
-exposes a command named `help`. As an `ApplicationCommand` only one instance of
-the command is ever created.
+exposes a command named `hyper_help`. As an `ApplicationCommand` only one
+instance of the command is ever created.
 
 The class lazily loads the |help.index| the first time that it is needed and
 then keeps the data in memory. If you're actively working on your help system
 and making changes to the file, you need to force the package to reload so that
 the `index.json` file will get reloaded.
 
-The `help` command takes two arguments:
+The `hyper_help` command takes two arguments:
 
   `"toc"`:  true/false (default: false)
   `"topic"` string     (default: None)

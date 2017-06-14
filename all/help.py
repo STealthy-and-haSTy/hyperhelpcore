@@ -118,7 +118,7 @@ def load_index_json(package):
 ###----------------------------------------------------------------------------
 
 
-class HelpCommand(sublime_plugin.ApplicationCommand):
+class HyperHelpCommand(sublime_plugin.ApplicationCommand):
     """
     This command is the core of the help system, and can open a view, follow a
     link target to a new location, or display topic lists.
@@ -250,7 +250,7 @@ class HelpCommand(sublime_plugin.ApplicationCommand):
 ###----------------------------------------------------------------------------
 
 
-class HelpNavLinkCommand(sublime_plugin.WindowCommand):
+class HyperHelpNavigateCommand(sublime_plugin.WindowCommand):
     """
     Advance the cursor to the next or previous link/link target in the document,
     wrapping around the buffer as needed.
@@ -276,7 +276,7 @@ class HelpNavLinkCommand(sublime_plugin.WindowCommand):
 ###----------------------------------------------------------------------------
 
 
-class HelpListener(sublime_plugin.EventListener):
+class HyperHelpListener(sublime_plugin.EventListener):
     def on_text_command(self, view, command, args):
         """
         Listen for double clicks in help files and, if they occur over links,
@@ -287,7 +287,7 @@ class HelpListener(sublime_plugin.EventListener):
             point = view.window_to_text((event["x"], event["y"]))
 
             if view.match_selector(point, "text.help meta.link"):
-                sublime.run_command("help")
+                sublime.run_command("hyper_help")
                 return ("noop")
 
         return None

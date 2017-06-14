@@ -1,15 +1,7 @@
 [
     {
-        "keys": ["super+h"],
-        "command": "show_overlay",
-        "args": {
-            "overlay": "command_palette",
-            "text" : "HyperHelp: "
-        }
-    },
-    {
         "keys": ["?"],
-        "command": "help",
+        "command": "hyper_help",
         "args": { "toc": true },
         "context": [
             { "key": "selector", "operator": "equal", "operand": "text.help" },
@@ -18,7 +10,7 @@
     },
     {
         "keys": ["enter"],
-        "command": "help",
+        "command": "hyper_help",
         "context": [
             { "key": "selector", "operator": "equal", "operand": "text.help meta.link" },
             { "key": "num_selections", "operator": "equal", "operand": 1 },
@@ -27,7 +19,7 @@
     },
     {
         "keys": ["keypad_enter"],
-        "command": "help",
+        "command": "hyper_help",
         "context": [
             { "key": "selector", "operator": "equal", "operand": "text.help meta.link" },
             { "key": "num_selections", "operator": "equal", "operand": 1 },
@@ -36,7 +28,7 @@
     },
     {
         "keys": ["tab"],
-        "command": "help_nav_link",
+        "command": "hyper_help_navigate",
         "context": [
             { "key": "selector", "operator": "equal", "operand": "text.help" },
             { "key": "help_author_mode", "operator": "equal", "operand": false}
@@ -44,7 +36,7 @@
     },
     {
         "keys": ["shift+tab"],
-        "command": "help_nav_link", "args": {"prev": true},
+        "command": "hyper_help_navigate", "args": {"prev": true},
         "context": [
             { "key": "selector", "operator": "equal", "operand": "text.help" },
             { "key": "help_author_mode", "operator": "equal", "operand": false}
