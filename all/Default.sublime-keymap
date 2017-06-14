@@ -28,7 +28,7 @@
     },
     {
         "keys": ["tab"],
-        "command": "hyper_help_navigate",
+        "command": "hyper_help_navigate", "args": {"nav": "link", "prev": false},
         "context": [
             { "key": "selector", "operator": "equal", "operand": "text.help" },
             { "key": "help_author_mode", "operator": "equal", "operand": false}
@@ -36,7 +36,7 @@
     },
     {
         "keys": ["shift+tab"],
-        "command": "hyper_help_navigate", "args": {"prev": true},
+        "command": "hyper_help_navigate", "args": {"nav": "link", "prev": true},
         "context": [
             { "key": "selector", "operator": "equal", "operand": "text.help" },
             { "key": "help_author_mode", "operator": "equal", "operand": false}

@@ -252,10 +252,17 @@ class HyperHelpCommand(sublime_plugin.ApplicationCommand):
 
 class HyperHelpNavigateCommand(sublime_plugin.WindowCommand):
     """
-    Advance the cursor to the next or previous link/link target in the document,
-    wrapping around the buffer as needed.
+    Perform all help navigation (with the exception of opening a new help
+    topic).
     """
-    def run(self, prev=False):
+    def run(self, nav, prev=False):
+        #TODO: Extend to allow navigation among links, targets or both
+        if nav == "link":
+            return self.focus_link(prev)
+
+        log("Unknown help navigation directive '%s'", nav)
+
+    def focus_link(self, prev):
         view = self.window.active_view()
         point = view.sel()[0].begin()
 
