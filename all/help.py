@@ -11,6 +11,11 @@ from .output_view import find_view, output_to_view
 
 
 def log(message, *args, status=False, dialog=False):
+    """
+    A simple logic facility to ensure that all console output is prefixed with
+    the package name so the source is clear. Can also optionally send the output
+    to the status line and/or a message dialog.
+    """
     message = message % args
     print("HyperHelp:", message)
     if status:
@@ -19,32 +24,35 @@ def log(message, *args, status=False, dialog=False):
         sublime.message_dialog(message)
 
 
+def focus_on_position(view, position):
+    """
+    Focus the provided view on the given position. Includes some hacks to work
+    around a bug in sublime that can sometimes cause it to not properly update
+    the window visually.
+    """
+    position = sublime.Region(position.end(), position.begin())
+
+    view.show_at_center(position)
+    view.sel().clear()
+    view.sel().add(position)
+
+    # Hack to make the view update properly. See:
+    #    https://github.com/SublimeTextIssues/Core/issues/485
+    view.add_regions("_hh_rk", [], "", "", sublime.HIDDEN)
+    view.erase_regions("_hh_rk")
+
+
 ###----------------------------------------------------------------------------
 
 
 class HelpCommand(sublime_plugin.ApplicationCommand):
     """
-    Open  the help system or focus the current help view. The command can
-    optionally open a panel with help topics, take the topic to jump to
-    directly, or collect the topic from the cursor location inside of a help
-    document.
+    This command is the core of the help system, and can open a view, follow a
+    link target to a new location, or display topic lists.
     """
     def __init__(self):
         self._prefix = "Packages/%s/" % __name__.split(".")[0]
         self._url_re = re.compile("^(https?|file)://")
-
-    @classmethod
-    def focus(cls, view, pos):
-        pos = sublime.Region(pos.end(), pos.begin())
-
-        view.show_at_center(pos)
-        view.sel().clear()
-        view.sel().add(pos)
-
-        # Hack to make the view update properly. See:
-        #    https://github.com/SublimeTextIssues/Core/issues/485
-        view.add_regions("_hh_rk", [], "", "", sublime.HIDDEN)
-        view.erase_regions("_hh_rk")
 
     def load_json(self):
         if hasattr(self, "_topics"):
@@ -153,7 +161,7 @@ class HelpCommand(sublime_plugin.ApplicationCommand):
         for pos in help_view.find_by_selector('meta.link-target'):
             target = help_view.substr(pos)
             if target == topic:
-                return self.focus(help_view, pos)
+                return focus_on_position(help_view, pos)
 
         log("Unable to find topic '%s' in help file '%s'", topic, help_file,
             status=True)
@@ -216,8 +224,8 @@ class HelpCommand(sublime_plugin.ApplicationCommand):
 
 class HelpNavLinkCommand(sublime_plugin.WindowCommand):
     """
-    Advance the cursor to the next or previous link based on the current
-    cursor location.
+    Advance the cursor to the next or previous link/link target in the document,
+    wrapping around the buffer as needed.
     """
     def run(self, prev=False):
         view = self.window.active_view()
@@ -232,9 +240,9 @@ class HelpNavLinkCommand(sublime_plugin.WindowCommand):
 
         for pos in reversed(targets) if prev else targets:
             if pick(pos):
-                return HelpCommand.focus(view, pos)
+                return focus_on_position(view, pos)
 
-        HelpCommand.focus(view, fallback)
+        focus_on_position(view, fallback)
 
 
 ###----------------------------------------------------------------------------
