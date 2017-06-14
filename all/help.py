@@ -53,6 +53,7 @@ def load_index_json(package):
     the list of topics it contains, and the table of contents, unless there
     is an error loading or parsing the JSON file.
     """
+    log("Loading help index for package %s", package)
     def make_help_dict(topic_data, help_file):
         """
         Convert an incoming topic into a dictionary if it's not already.
@@ -123,19 +124,11 @@ class HelpCommand(sublime_plugin.ApplicationCommand):
     link target to a new location, or display topic lists.
     """
     def __init__(self):
-        self._prefix = "Packages/%s/" % __name__.split(".")[0]
         self._url_re = re.compile("^(https?|file)://")
+        self._help_list = dict()
 
-    def load_json(self):
-        if hasattr(self, "_topics"):
-            return
-
-        result = load_index_json("hyperhelp")
-        self._topics = result.topics if result is not None else dict()
-        self._toc = result.toc if result is not None else list()
-
-    def help_content(self, help_file):
-        filename = "%s/doc/%s" % (self._prefix, help_file)
+    def help_content(self, pkg_info, help_file):
+        filename = "Packages/%s/doc/%s" % (pkg_info.package, help_file)
         try:
             return sublime.load_resource(filename)
         except:
@@ -143,10 +136,10 @@ class HelpCommand(sublime_plugin.ApplicationCommand):
 
         return None
 
-    def topic_file(self, topic):
-        return self._topics.get(topic, {}).get("file", None)
+    def topic_file(self, pkg_info, topic):
+        return pkg_info.topics.get(topic, {}).get("file", None)
 
-    def show_file(self, help_file):
+    def show_file(self, pkg_info, help_file):
         window = sublime.active_window()
         view = find_view(window, "HyperHelp")
 
@@ -155,19 +148,20 @@ class HelpCommand(sublime_plugin.ApplicationCommand):
             if help_file == view.settings().get("_hh_file", None):
                 return view
 
-        help_text = self.help_content(help_file)
+        help_text = self.help_content(pkg_info, help_file)
         if help_text is not None:
             view = output_to_view(window,
                                   "HyperHelp",
                                   help_text,
                                   syntax="Packages/hyperhelp/all/Help.sublime-syntax")
             view.settings().set("_hh_file", help_file)
+            view.settings().set("_hh_package", pkg_info.package)
             return view
 
         return None
 
-    def show_topic(self, topic):
-        help_file = self.topic_file(topic)
+    def show_topic(self, pkg_info, topic):
+        help_file = self.topic_file(pkg_info, topic)
         if help_file is None:
             return log("Unknown help topic '%s'", topic, status=True)
 
@@ -179,7 +173,7 @@ class HelpCommand(sublime_plugin.ApplicationCommand):
             window = sublime.active_window()
             return window.run_command("open_file", {"file": help_file})
 
-        help_view = self.show_file(help_file)
+        help_view = self.show_file(pkg_info, help_file)
         if help_view is None:
             return log("Unable to load help file '%s'", help_file, status=True)
 
@@ -191,12 +185,12 @@ class HelpCommand(sublime_plugin.ApplicationCommand):
         log("Unable to find topic '%s' in help file '%s'", topic, help_file,
             status=True)
 
-    def select_toc_item(self, items, stack, index):
+    def select_toc_item(self, pkg_info, items, stack, index):
         if index >= 0:
             # When stack is not empty, first item takes us back
             if index == 0 and len(stack) > 0:
                 items = stack.pop()
-                return self.show_toc(items, stack)
+                return self.show_toc(pkg_info, items, stack)
 
             # Compensate for the ".." entry on a non-empty stack
             if len(stack) > 0:
@@ -207,11 +201,11 @@ class HelpCommand(sublime_plugin.ApplicationCommand):
 
             if children is not None:
                 stack.append(items)
-                return self.show_toc(children, stack)
+                return self.show_toc(pkg_info, children, stack)
 
-            self.show_topic(entry["topic"])
+            self.show_topic(pkg_info, entry["topic"])
 
-    def show_toc(self, items, stack):
+    def show_toc(self, pkg_info, items, stack):
         captions = [[item["caption"], item["topic"] +
             (" ({} topics)".format(len(item["children"])) if "children" in item else "")]
             for item in items]
@@ -221,7 +215,7 @@ class HelpCommand(sublime_plugin.ApplicationCommand):
 
         sublime.active_window().show_quick_panel(
             captions,
-            on_select=lambda index: self.select_toc_item(items, stack, index))
+            on_select=lambda index: self.select_toc_item(pkg_info, items, stack, index))
 
     def extract_topic(self):
         view = sublime.active_window().active_view()
@@ -232,16 +226,25 @@ class HelpCommand(sublime_plugin.ApplicationCommand):
 
         return None
 
-    def run(self, toc=False, topic=None):
-        self.load_json()
+    def run(self, package="hyperhelp", toc=False, topic=None):
+        # Get the information on the package to display help for. If it's not
+        # known already, try to load it now.
+        pkg_info = self._help_list.get(package, None)
+        if pkg_info is None:
+            result = load_index_json(package)
+            if result is not None:
+                self._help_list[package] = result
+                pkg_info = result
+            else:
+                return
 
         if toc:
-            return self.show_toc(self._toc, [])
+            return self.show_toc(pkg_info, pkg_info.toc, [])
 
         if topic is None:
             topic = self.extract_topic() or "index.txt"
 
-        self.show_topic(topic)
+        self.show_topic(pkg_info, topic)
 
 
 ###----------------------------------------------------------------------------
