@@ -3,26 +3,14 @@ import sublime_plugin
 
 import re
 import webbrowser
-import collections
 
 from .output_view import find_view, output_to_view
 
+from .operations import log
+from .operations import HelpData, load_index_json
+from .operations import package_help_scan
 
 ###----------------------------------------------------------------------------
-
-
-def log(message, *args, status=False, dialog=False):
-    """
-    A simple logic facility to ensure that all console output is prefixed with
-    the package name so the source is clear. Can also optionally send the output
-    to the status line and/or a message dialog.
-    """
-    message = message % args
-    print("HyperHelp:", message)
-    if status:
-        sublime.status_message(message)
-    if dialog:
-        sublime.message_dialog(message)
 
 
 def focus_on_position(view, position):
@@ -41,78 +29,6 @@ def focus_on_position(view, position):
     #    https://github.com/SublimeTextIssues/Core/issues/485
     view.add_regions("_hh_rk", [], "", "", sublime.HIDDEN)
     view.erase_regions("_hh_rk")
-
-
-HelpData = collections.namedtuple("HelpData", ["package", "topics", "toc"])
-def load_index_json(package):
-    """
-    Load a hyperhelp.json file for the given package, which should be in the
-    root of the package structure (can be packed or unpacked).
-
-    The return value is a HelpData tuple containing the name of the package,
-    the list of topics it contains, and the table of contents, unless there
-    is an error loading or parsing the JSON file.
-    """
-    log("Loading help index for package %s", package)
-    def make_help_dict(topic_data, help_file):
-        """
-        Convert an incoming topic into a dictionary if it's not already.
-        """
-        # Boolean topics are a shortcut for something whose sole help file is
-        # itself.
-        if isinstance(topic_data, bool):
-            topic_data = help_file
-
-        # String topics use themselves as a caption but link to the given file.
-        if isinstance(topic_data, str):
-            return (topic_data, {
-                "topic": topic_data,
-                "caption": topic_data,
-                "file": help_file
-            })
-
-        # Already a dictionary; fill out with the help file and make sure there
-        # is a caption.
-        topic = topic_data.get("topic", None)
-        topic_data["file"] = help_file
-        if "caption" not in topic_data:
-            topic_data["caption"] = help_file
-
-        return (topic, topic_data)
-
-    toc_file = "Packages/%s/hyperhelp.json" % package
-    try:
-        json = sublime.load_resource(toc_file)
-        raw_dict = sublime.decode_value(json)
-
-    except:
-        return log("Unable to load help index from '%s'", toc_file)
-
-    # Extract all top level dictionary keys that are not considered to be a
-    # help file.
-    toc = raw_dict.pop("__toc", None)
-    topics = dict()
-
-    # TODO: Validate children in the TOC
-
-    for help_file in raw_dict:
-        topic_list = raw_dict[help_file]
-
-        if isinstance(topic_list, (bool, str)):
-            topic_list = [topic_list]
-
-        for topic_entry in topic_list:
-            topic, topic_entry = make_help_dict(topic_entry, help_file)
-            if topic is None:
-                return log("Entry missing topic in package %s: %s",
-                           package, str(topic_entry))
-
-            topics[topic] = topic_entry
-
-    if toc is None:
-        toc = [topics.get(topic) for topic in sorted(topics.keys())]
-
-    return HelpData(package, topics, toc)
 
 
 ###----------------------------------------------------------------------------
@@ -226,17 +142,14 @@ class HyperHelpCommand(sublime_plugin.ApplicationCommand):
 
         return None
 
-    def run(self, package="hyperhelp", toc=False, topic=None):
-        # Get the information on the package to display help for. If it's not
-        # known already, try to load it now.
+    def run(self, package=None, toc=False, topic=None):
+        if package is None:
+            package_help_scan(self._help_list)
+            package = "hyperhelp"
+
         pkg_info = self._help_list.get(package, None)
         if pkg_info is None:
-            result = load_index_json(package)
-            if result is not None:
-                self._help_list[package] = result
-                pkg_info = result
-            else:
-                return
+            return log("No help availabie for package %s", package, status=True)
 
         if toc:
             return self.show_toc(pkg_info, pkg_info.toc, [])
