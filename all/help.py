@@ -126,6 +126,10 @@ class HyperHelpCommand(sublime_plugin.ApplicationCommand):
             (" ({} topics)".format(len(item["children"])) if "children" in item else "")]
             for item in items]
 
+        if len(captions) == 0 and len(stack) == 0:
+            return log("No table of contents defined for %s", pkg_info.package,
+                       status=True)
+
         if len(stack) > 0:
             captions.insert(0, ["..", "Go back"])
 
@@ -135,11 +139,12 @@ class HyperHelpCommand(sublime_plugin.ApplicationCommand):
 
     def select_package_item(self, pkg_list, index):
         if index >= 0:
-            self.run(pkg_list[index][0], True)
+            self.run(pkg_list[index][1], True)
 
     def select_package(self):
         pkg_list = sorted([key for key in self._help_list if key != "__scanned"])
-        captions = [[self._help_list[key].package, "Package Description"]
+        captions = [[self._help_list[key].description,
+                     self._help_list[key].package]
             for key in pkg_list]
 
         sublime.active_window().show_quick_panel(

@@ -7,7 +7,8 @@ import collections
 ###----------------------------------------------------------------------------
 
 
-HelpData = collections.namedtuple("HelpData", ["package", "topics", "toc"])
+HelpData = collections.namedtuple("HelpData",
+    ["package", "description", "topics", "toc"])
 
 
 ###----------------------------------------------------------------------------
@@ -76,6 +77,7 @@ def load_index_json(package, index_file):
     #
     # TODO: Validate children in the TOC
     toc = raw_dict.pop("__toc", None)
+    description = raw_dict.pop("__description", "No description available")
 
     topics = dict()
 
@@ -96,7 +98,7 @@ def load_index_json(package, index_file):
     if toc is None:
         toc = [topics.get(topic) for topic in sorted(topics.keys())]
 
-    return HelpData(package, topics, toc)
+    return HelpData(package, description, topics, toc)
 
 
 ###----------------------------------------------------------------------------
