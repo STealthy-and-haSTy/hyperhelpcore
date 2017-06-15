@@ -118,6 +118,8 @@ def package_help_scan(help_list):
             if result is not None:
                 help_list[result.package] = result
 
+    help_list["__scanned"] = True
+
 
 
 ###----------------------------------------------------------------------------

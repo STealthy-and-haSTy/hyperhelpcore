@@ -133,6 +133,19 @@ class HyperHelpCommand(sublime_plugin.ApplicationCommand):
             captions,
             on_select=lambda index: self.select_toc_item(pkg_info, items, stack, index))
 
+    def select_package_item(self, pkg_list, index):
+        if index >= 0:
+            self.run(pkg_list[index][0], True)
+
+    def select_package(self):
+        pkg_list = sorted([key for key in self._help_list if key != "__scanned"])
+        captions = [[self._help_list[key].package, "Package Description"]
+            for key in pkg_list]
+
+        sublime.active_window().show_quick_panel(
+            captions,
+            on_select=lambda index: self.select_package_item(captions, index))
+
     def extract_topic(self):
         view = sublime.active_window().active_view()
         point = view.sel()[0].begin()
@@ -143,9 +156,14 @@ class HyperHelpCommand(sublime_plugin.ApplicationCommand):
         return None
 
     def run(self, package=None, toc=False, topic=None):
-        if package is None:
+        if "__scanned" not in self._help_list:
             package_help_scan(self._help_list)
-            package = "hyperhelp"
+
+        if package is None:
+            if len(self._help_list) <= 1:
+                return log("No packages with help are currently installed", status=True)
+
+            return self.select_package()
 
         pkg_info = self._help_list.get(package, None)
         if pkg_info is None:
