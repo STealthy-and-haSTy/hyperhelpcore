@@ -52,9 +52,6 @@ class HyperHelpCommand(sublime_plugin.ApplicationCommand):
 
         return None
 
-    def topic_file(self, pkg_info, topic):
-        return pkg_info.topics.get(topic, {}).get("file", None)
-
     def show_file(self, pkg_info, help_file):
         window = sublime.active_window()
         view = find_view(window, "HyperHelp")
@@ -77,7 +74,7 @@ class HyperHelpCommand(sublime_plugin.ApplicationCommand):
         return None
 
     def show_topic(self, pkg_info, topic):
-        help_file = self.topic_file(pkg_info, topic)
+        help_file = pkg_info.topics.get(topic, {}).get("file", None)
         if help_file is None:
             return log("Unknown help topic '%s'", topic, status=True)
 
