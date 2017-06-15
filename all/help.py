@@ -139,15 +139,15 @@ class HyperHelpCommand(sublime_plugin.ApplicationCommand):
 
     def select_package_item(self, pkg_list, index):
         if index >= 0:
-            self.run(pkg_list[index][1], True)
+            self.run(pkg_list[index][0], True)
 
     def select_package(self):
         if len(self._help_list) <= 1:
             return log("No packages with help are currently installed", status=True)
 
         pkg_list = sorted([key for key in self._help_list if key != "__scanned"])
-        captions = [[self._help_list[key].description,
-                     self._help_list[key].package]
+        captions = [[self._help_list[key].package,
+                     self._help_list[key].description]
             for key in pkg_list]
 
         sublime.active_window().show_quick_panel(
