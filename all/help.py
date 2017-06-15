@@ -200,6 +200,17 @@ class HyperHelpCommand(sublime_plugin.ApplicationCommand):
         # Show the given topic from within this help package
         self.show_topic(pkg_info, topic)
 
+    def is_enabled(self, package=None, toc=False, topic=None):
+        # Always enable unless we're told to display the TOC and:
+        #   1) no package is given
+        #   2) No help view is currently available to get one from
+        if toc == True:
+            help_view = find_view(sublime.active_window(), "HyperHelp")
+            if package is None and help_view is None:
+                return False
+
+        return True
+
 
 ###----------------------------------------------------------------------------
 
