@@ -58,7 +58,10 @@ class HyperHelpCommand(sublime_plugin.ApplicationCommand):
 
         if view is not None:
             window.focus_view(view)
-            if help_file == view.settings().get("_hh_file", None):
+            current_pkg = view.settings().get("_hh_package", None)
+            current_file = view.settings().get("_hh_file", None)
+
+            if help_file == current_file and pkg_info.package == current_pkg:
                 return view
 
         help_text = self.help_content(pkg_info, help_file)
