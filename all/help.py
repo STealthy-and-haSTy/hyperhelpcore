@@ -44,7 +44,7 @@ class HyperHelpCommand(sublime_plugin.ApplicationCommand):
         self._help_list = dict()
 
     def help_content(self, pkg_info, help_file):
-        filename = "Packages/%s/doc/%s" % (pkg_info.package, help_file)
+        filename = "%s/%s" % (pkg_info.doc_root, help_file)
         try:
             return sublime.load_resource(filename)
         except:

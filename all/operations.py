@@ -1,14 +1,16 @@
 import sublime
 
-import os
 import collections
+
+# Package paths are always portrayed as a unix path
+import posixpath as path
 
 
 ###----------------------------------------------------------------------------
 
 
 HelpData = collections.namedtuple("HelpData",
-    ["package", "description", "topics", "toc"])
+    ["package", "description", "doc_root", "topics", "toc"])
 
 
 ###----------------------------------------------------------------------------
@@ -63,7 +65,6 @@ def load_index_json(package, index_file):
     On success, the return value is a HelpData tuple containing the loaded
     information.
     """
-
     try:
         log("Loading help index for package %s", package)
         json = sublime.load_resource(index_file)
@@ -76,8 +77,14 @@ def load_index_json(package, index_file):
     # help file.
     #
     # TODO: Validate children in the TOC
-    toc = raw_dict.pop("__toc", None)
     description = raw_dict.pop("__description", "No description available")
+    doc_root = raw_dict.pop("__root", None)
+    toc = raw_dict.pop("__toc", None)
+
+    if doc_root is None:
+        doc_root = path.split(index_file)[0]
+    else:
+        doc_root = path.normpath("Packages/%s/%s" % (package, doc_root))
 
     topics = dict()
 
@@ -98,7 +105,7 @@ def load_index_json(package, index_file):
     if toc is None:
         toc = [topics.get(topic) for topic in sorted(topics.keys())]
 
-    return HelpData(package, description, topics, toc)
+    return HelpData(package, description, doc_root, topics, toc)
 
 
 ###----------------------------------------------------------------------------
@@ -113,7 +120,7 @@ def package_help_scan(help_list):
     package is unlikely to contain a help index.
     """
     for index_file in sublime.find_resources("hyperhelp.json"):
-        pkg_name = os.path.split(index_file)[0].split("/")[1]
+        pkg_name = path.split(index_file)[0].split("/")[1]
 
         if pkg_name not in help_list:
             result = load_index_json(pkg_name, index_file)
