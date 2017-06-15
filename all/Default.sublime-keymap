@@ -10,7 +10,7 @@
     },
     {
         "keys": ["enter"],
-        "command": "hyper_help",
+        "command": "hyper_help_navigate", "args": {"nav": "follow"},
         "context": [
             { "key": "selector", "operator": "equal", "operand": "text.help meta.link" },
             { "key": "num_selections", "operator": "equal", "operand": 1 },
@@ -19,7 +19,7 @@
     },
     {
         "keys": ["keypad_enter"],
-        "command": "hyper_help",
+        "command": "hyper_help_navigate", "args": {"nav": "follow"},
         "context": [
             { "key": "selector", "operator": "equal", "operand": "text.help meta.link" },
             { "key": "num_selections", "operator": "equal", "operand": 1 },

@@ -154,15 +154,6 @@ class HyperHelpCommand(sublime_plugin.ApplicationCommand):
             captions,
             on_select=lambda index: self.select_package_item(captions, index))
 
-    def extract_topic(self):
-        view = sublime.active_window().active_view()
-        point = view.sel()[0].begin()
-
-        if view.match_selector(point, "text.help meta.link"):
-            return view.substr(view.extract_scope(point))
-
-        return None
-
     def run(self, package=None, toc=False, topic=None):
         if "__scanned" not in self._help_list:
             package_help_scan(self._help_list)
@@ -193,9 +184,8 @@ class HyperHelpCommand(sublime_plugin.ApplicationCommand):
             return self.show_toc(pkg_info, pkg_info.toc, [])
 
         # We have a package and we're not displaying the toc; if there is not
-        # a topic, find one under the cursor or use a default.
-        if topic is None:
-            topic = self.extract_topic() or "index.txt"
+        # a topic, use a default.
+        topic = topic or "index.txt"
 
         # Show the given topic from within this help package
         self.show_topic(pkg_info, topic)
@@ -225,7 +215,17 @@ class HyperHelpNavigateCommand(sublime_plugin.WindowCommand):
         if nav == "link":
             return self.focus_link(prev)
 
+        if nav == "follow":
+            return self.follow_link()
+
         log("Unknown help navigation directive '%s'", nav)
+
+    def follow_link(self):
+        topic = self.extract_topic()
+        if topic is not None:
+            return sublime.run_command("hyper_help", {"topic": topic})
+
+        log("Cannot follow link; no link found under the cursor")
 
     def focus_link(self, prev):
         view = self.window.active_view()
@@ -244,6 +244,14 @@ class HyperHelpNavigateCommand(sublime_plugin.WindowCommand):
 
         focus_on_position(view, fallback)
 
+    def extract_topic(self):
+        view = self.window.active_view()
+        point = view.sel()[0].begin()
+
+        if view.match_selector(point, "text.help meta.link"):
+            return view.substr(view.extract_scope(point))
+
+        return None
 
 ###----------------------------------------------------------------------------
 
@@ -259,7 +267,7 @@ class HyperHelpListener(sublime_plugin.EventListener):
             point = view.window_to_text((event["x"], event["y"]))
 
             if view.match_selector(point, "text.help meta.link"):
-                sublime.run_command("hyper_help")
+                view.window().run_command("hyper_help_navigate", {"nav": "follow"})
                 return ("noop")
 
         return None
