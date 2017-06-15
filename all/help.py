@@ -142,6 +142,9 @@ class HyperHelpCommand(sublime_plugin.ApplicationCommand):
             self.run(pkg_list[index][1], True)
 
     def select_package(self):
+        if len(self._help_list) <= 1:
+            return log("No packages with help are currently installed", status=True)
+
         pkg_list = sorted([key for key in self._help_list if key != "__scanned"])
         captions = [[self._help_list[key].description,
                      self._help_list[key].package]
@@ -164,22 +167,37 @@ class HyperHelpCommand(sublime_plugin.ApplicationCommand):
         if "__scanned" not in self._help_list:
             package_help_scan(self._help_list)
 
-        if package is None:
-            if len(self._help_list) <= 1:
-                return log("No packages with help are currently installed", status=True)
-
+        # When there are no arguments at all, respond by showing all available
+        # help packages for the user to select from.
+        if package is None and topic is None and toc == False:
             return self.select_package()
 
+        # When there is no package, try to get it from the help file in the
+        # current window; if there is no help yet, select the help package
+        # instead.
+        if package is None:
+            view = find_view(sublime.active_window(), "HyperHelp")
+            if view is not None:
+                package = view.settings().get("_hh_package")
+            else:
+                return self.select_package()
+
+        # Get the help information for the selected package; if there is none
+        # we can't display any help.
         pkg_info = self._help_list.get(package, None)
         if pkg_info is None:
             return log("No help availabie for package %s", package, status=True)
 
+        # Display the table of contents for this help if asked to do that.
         if toc:
             return self.show_toc(pkg_info, pkg_info.toc, [])
 
+        # We have a package and we're not displaying the toc; if there is not
+        # a topic, find one under the cursor or use a default.
         if topic is None:
             topic = self.extract_topic() or "index.txt"
 
+        # Show the given topic from within this help package
         self.show_topic(pkg_info, topic)
 
 
