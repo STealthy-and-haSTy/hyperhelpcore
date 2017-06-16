@@ -10,7 +10,7 @@ import posixpath as path
 
 
 HelpData = collections.namedtuple("HelpData",
-    ["package", "description", "doc_root", "topics", "toc"])
+    ["package", "description", "index", "doc_root", "topics", "toc"])
 
 
 ###----------------------------------------------------------------------------
@@ -105,7 +105,7 @@ def load_index_json(package, index_file):
     if toc is None:
         toc = [topics.get(topic) for topic in sorted(topics.keys())]
 
-    return HelpData(package, description, doc_root, topics, toc)
+    return HelpData(package, description, index_file, doc_root, topics, toc)
 
 
 ###----------------------------------------------------------------------------
@@ -114,10 +114,7 @@ def load_index_json(package, index_file):
 def package_help_scan(help_list):
     """
     Update the provided help_list by finding and loading the hyperhelp.json
-    index file for any package not already contained in the help list.
-
-    This scans only for user installed packages under the theory that a shipped
-    package is unlikely to contain a help index.
+    index file for any package not already contained in the provided list.
     """
     for index_file in sublime.find_resources("hyperhelp.json"):
         pkg_name = path.split(index_file)[0].split("/")[1]
@@ -128,7 +125,31 @@ def package_help_scan(help_list):
                 help_list[result.package] = result
 
     help_list["__scanned"] = True
+    return help_list
 
+def package_help_reload(help_list, package):
+    """
+    Given a package name that has already had its help loaded, reload its index
+    file so that changes take effect. If no package is provided, a complete
+    fresh package scan is done instead.
+
+    This returns the help list, which may be a brand new object based on the
+    input parameters.
+    """
+    if package is None:
+        log("Rescanning all help index files")
+        return package_help_scan(dict())
+
+    pkg_info = help_list.get(package, None)
+    if pkg_info is None:
+        log("Package '%s' not previously loaded; cannot reload", package)
+    else:
+        log("Reloading help index for package '%s'", package)
+        result = load_index_json(pkg_info.package, pkg_info.index)
+        if result is not None:
+            help_list[result.package] = result
+
+    return help_list
 
 
 ###----------------------------------------------------------------------------

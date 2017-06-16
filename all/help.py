@@ -8,7 +8,7 @@ from .output_view import find_view, output_to_view
 
 from .operations import log
 from .operations import HelpData, load_index_json
-from .operations import package_help_scan
+from .operations import package_help_scan, package_help_reload
 
 ###----------------------------------------------------------------------------
 
@@ -76,6 +76,23 @@ class HyperHelpCommand(sublime_plugin.ApplicationCommand):
 
         return None
 
+    def reload_current_topic(self):
+        window = sublime.active_window()
+        view = find_view(window, "HyperHelp")
+
+        if view is None:
+            return log("No help topic visible to reload")
+
+        package = view.settings().get("_hh_package", None)
+        file = view.settings().get("_hh_file", None)
+        pkg_info = self._help_list.get(package, None)
+
+        if pkg_info is not None and file is not None:
+            view.settings().set("_hh_file", "_reload")
+            self.show_file(pkg_info, file)
+        else:
+            log("Unable to reload current help topic")
+
     def show_topic(self, pkg_info, topic):
         help_file = pkg_info.topics.get(topic, {}).get("file", None)
         if help_file is None:
@@ -127,7 +144,7 @@ class HyperHelpCommand(sublime_plugin.ApplicationCommand):
             for item in items]
 
         if len(captions) == 0 and len(stack) == 0:
-            return log("No table of contents defined for %s", pkg_info.package,
+            return log("No help topics defined for %s", pkg_info.package,
                        status=True)
 
         if len(stack) > 0:
@@ -154,9 +171,16 @@ class HyperHelpCommand(sublime_plugin.ApplicationCommand):
             captions,
             on_select=lambda index: self.select_package_item(captions, index))
 
-    def run(self, package=None, toc=False, topic=None):
+    def run(self, package=None, toc=False, topic=None, reload=False):
         if "__scanned" not in self._help_list:
             package_help_scan(self._help_list)
+
+        if reload == True:
+            if topic == "reload":
+                self.reload_current_topic()
+            else:
+                self._help_list = package_help_reload(self._help_list, package)
+            return
 
         # When there are no arguments at all, respond by showing all available
         # help packages for the user to select from.
@@ -190,7 +214,7 @@ class HyperHelpCommand(sublime_plugin.ApplicationCommand):
         # Show the given topic from within this help package
         self.show_topic(pkg_info, topic)
 
-    def is_enabled(self, package=None, toc=False, topic=None):
+    def is_enabled(self, package=None, toc=False, topic=None, reload=False):
         # Always enable unless we're told to display the TOC and:
         #   1) no package is given
         #   2) No help view is currently available to get one from
