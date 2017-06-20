@@ -23,12 +23,80 @@ as things change.
 
 ## Installation ##
 
-Since the package is still in development, the only supported installation
-method is a manual one.
+As a dependency, this package is not meant to be user installable. Instead,
+your package should indicate that it needs `hyperhelp` as a dependency and
+Package Control will install or update it as it installs packages that depend
+on it.
 
-To install, you can clone this repository directly into your `Packages` folder,
-then from within Sublime choose `Package Control: Install Local Dependency`
-from the command palette and select `hyperhelp` from the list.
+See the [Package Control DependencyDocumenation](https://packagecontrol.io/docs/dependencies)
+for more information on how to add a dependency for your package in order to use
+`hyperhelp`.
+
+
+### Manual Installation ###
+
+Since `hyperhelp` is still under active development and has not had an official
+release yet, the only way to make use of it currently is to manually install
+it. You may also need to follow these steps if you are manually installing a
+package that requires `hyperhelp`.
+
+
+#### Package Control is not installed ####
+
+If PackageControl is not installed, you can install the `hyperhelp` dependency
+package manually using the following steps:
+
+  1. Ensure that Sublime Text is not currently running
+  2. Clone this repository directly into your `Packages` folder
+  3. Rename `hyperhelp/loader.code` to `hyperhelp/loader.py`
+  4. Start Sublime Text
+  5. Verify the installation by selecting `HyperHelp: Help on Help` from the
+     command palette, which should open help on `hyperhelp` itself.
+
+#### Package Control is installed ####
+
+If you are using Package Control, you can follow this series of steps to
+manually install `hyperhelp` as a dependency.
+
+To manually install, you can follow these steps.
+
+  1. Ensure that Sublime Text is not currently running
+  2. Clone this repository directly into your `Packages` folder
+  3. Start Sublime Text, and then from the command palette select the command
+     `Packge Control: Install Local Dependency` and select `hyperhelp` from the
+     list of dependencies
+  4. Start Sublime Text
+  5. Verify the installation by selecting `HyperHelp: Help on Help` from the
+     command palette, which should open help on `hyperhelp` itself.
+
+Some version of Package Control have a bug which blocks the installation of a
+local dependency when it uses custom loader code. If this is the case, in step
+5 above you will be unable to find the appropriate command.
+
+If this is the case, you need to complete the installation manually using the
+following steps.
+
+  1. Ensure that Sublime Text is not currently running
+  2. Copy the file `Packages/hyperhelp/loader.code` to the file
+     `Installed Packages/01-hyperhelp.py`
+  3. Move the file `01-hyperhelp.py` into the file `0_package_control_loader.sublime-package`,
+     which is actually a `zip` file (See below).
+  4. Restart Sublime Text and use step 5 above to verify that the installation
+     was successful.
+
+The file `0_package_control_loader.sublime-package` in the `Installed Packages`
+folder is a zip file with a different extension. For MacOS and Linux, you can
+use the following command from within the `Installed Packages` folder to add
+the hyperhelp loader to the package and remove it from the current directory
+all in one step:
+
+    zip -m 0_package_control_loader.sublime-package 01-hyperhelp.py
+
+On Windows you can do this by temporarily renaming the `sublime-package` file
+to have a `zip` extension instead, then double click it to open it as a
+compressed folder and move the file inside. Be sure to rename the file back to
+a `sublime-package` extension when you're done, then verify the success of the
+install with step 5 above.
 
 
 -------------------------------------------------------------------------------
