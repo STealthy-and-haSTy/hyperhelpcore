@@ -4,30 +4,9 @@ import sublime_plugin
 import re
 import webbrowser
 
-from .output_view import find_view, output_to_view
-
 from .operations import _log as log
 from .operations import scan_packages, reload_package
-
-###----------------------------------------------------------------------------
-
-
-def focus_on_position(view, position):
-    """
-    Focus the provided view on the given position. Includes some hacks to work
-    around a bug in sublime that can sometimes cause it to not properly update
-    the window visually.
-    """
-    position = sublime.Region(position.end(), position.begin())
-
-    view.show_at_center(position)
-    view.sel().clear()
-    view.sel().add(position)
-
-    # Hack to make the view update properly. See:
-    #    https://github.com/SublimeTextIssues/Core/issues/485
-    view.add_regions("_hh_rk", [], "", "", sublime.HIDDEN)
-    view.erase_regions("_hh_rk")
+from .operations import help_view, focus_on, display_help
 
 
 ###----------------------------------------------------------------------------
@@ -42,43 +21,8 @@ class HyperHelpCommand(sublime_plugin.ApplicationCommand):
         self._url_re = re.compile("^(https?|file)://")
         self._help_list = dict()
 
-    def help_content(self, pkg_info, help_file):
-        filename = "%s/%s" % (pkg_info.doc_root, help_file)
-        try:
-            return sublime.load_resource(filename)
-        except:
-            pass
-
-        return None
-
-    def show_file(self, pkg_info, help_file):
-        window = sublime.active_window()
-        view = find_view(window, "HyperHelp")
-
-        if view is not None:
-            window.focus_view(view)
-            current_pkg = view.settings().get("_hh_package", None)
-            current_file = view.settings().get("_hh_file", None)
-
-            if help_file == current_file and pkg_info.package == current_pkg:
-                return view
-
-        help_text = self.help_content(pkg_info, help_file)
-        if help_text is not None:
-            view = output_to_view(window,
-                                  "HyperHelp",
-                                  help_text,
-                                  syntax="Packages/hyperhelp/all/Help.sublime-syntax")
-            view.settings().set("_hh_file", help_file)
-            view.settings().set("_hh_package", pkg_info.package)
-            return view
-
-        return None
-
     def reload_current_topic(self):
-        window = sublime.active_window()
-        view = find_view(window, "HyperHelp")
-
+        view = help_view()
         if view is None:
             return log("No help topic visible to reload")
 
@@ -88,7 +32,7 @@ class HyperHelpCommand(sublime_plugin.ApplicationCommand):
 
         if pkg_info is not None and file is not None:
             view.settings().set("_hh_file", "_reload")
-            self.show_file(pkg_info, file)
+            display_help(pkg_info, file)
         else:
             log("Unable to reload current help topic")
 
@@ -105,14 +49,14 @@ class HyperHelpCommand(sublime_plugin.ApplicationCommand):
             window = sublime.active_window()
             return window.run_command("open_file", {"file": help_file})
 
-        help_view = self.show_file(pkg_info, help_file)
+        help_view = display_help(pkg_info, help_file)
         if help_view is None:
             return log("Unable to load help file '%s'", help_file, status=True)
 
         for pos in help_view.find_by_selector('meta.link-target'):
             target = help_view.substr(pos)
             if target == topic:
-                return focus_on_position(help_view, pos)
+                return focus_on(help_view, pos)
 
         log("Unable to find topic '%s' in help file '%s'", topic, help_file,
             status=True)
@@ -190,7 +134,7 @@ class HyperHelpCommand(sublime_plugin.ApplicationCommand):
         # current window; if there is no help yet, select the help package
         # instead.
         if package is None:
-            view = find_view(sublime.active_window(), "HyperHelp")
+            view = help_view()
             if view is not None:
                 package = view.settings().get("_hh_package")
             else:
@@ -218,8 +162,8 @@ class HyperHelpCommand(sublime_plugin.ApplicationCommand):
         #   1) no package is given
         #   2) No help view is currently available to get one from
         if toc == True:
-            help_view = find_view(sublime.active_window(), "HyperHelp")
-            if package is None and help_view is None:
+            view = help_view()
+            if package is None and view is None:
                 return False
 
         return True
@@ -263,9 +207,9 @@ class HyperHelpNavigateCommand(sublime_plugin.WindowCommand):
 
         for pos in reversed(targets) if prev else targets:
             if pick(pos):
-                return focus_on_position(view, pos)
+                return focus_on(view, pos)
 
-        focus_on_position(view, fallback)
+        focus_on(view, fallback)
 
     def extract_topic(self):
         view = self.window.active_view()

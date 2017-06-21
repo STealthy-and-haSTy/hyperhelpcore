@@ -12,6 +12,7 @@ from .help import HyperHelpListener
 # These functions represent the API that is exposed to external packages that
 # may want/need to get at some of the internals of hyperhelp.
 from .operations import scan_packages, reload_package
+from .operations import help_view, focus_on, display_help
 
 
 ###----------------------------------------------------------------------------

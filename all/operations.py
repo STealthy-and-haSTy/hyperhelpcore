@@ -5,6 +5,8 @@ import collections
 # Package paths are always portrayed as a unix path
 import posixpath as path
 
+from .output_view import find_view, output_to_view
+
 
 ###----------------------------------------------------------------------------
 
@@ -109,6 +111,30 @@ def _load_index(package, index_file):
 ###----------------------------------------------------------------------------
 
 
+def focus_on(view, position):
+    """
+    Focus the given help view on the provided position to ensure that is is
+    visible. This alters the selection to the given position.
+
+    If position is a point, the view is focused on that point and the cursor is
+    placed there. If it is a Region, the region is selected and the cursor is
+    left at the beginning of the region instead of at the end.
+    """
+    if isinstance(position, int):
+        position = sublime.Region(position, position)
+    else:
+        position = sublime.Region(position.end(), position.begin())
+
+    view.show_at_center(position)
+    view.sel().clear()
+    view.sel().add(position)
+
+    # Hack to make the view update properly. See:
+    #    https://github.com/SublimeTextIssues/Core/issues/485
+    view.add_regions("_hh_rk", [], "", "", sublime.HIDDEN)
+    view.erase_regions("_hh_rk")
+
+
 def scan_packages(help_list=None):
     """
     Find all packages with a help index and load it, returning a dictionary of
@@ -155,6 +181,81 @@ def reload_package(help_list, package):
             help_list[result.package] = result
 
     return help_list
+
+
+def load_help(pkg_info, help_file):
+    """
+    Load and return the contents of the help file with the given name from the
+    provided package. The help file name should be relative to the set document
+    root for the package given.
+
+    Returns the contents of the help file or None.
+    """
+    try:
+        return sublime.load_resource("%s/%s" % (pkg_info.doc_root, help_file))
+    except:
+        pass
+
+    return None
+
+
+def help_view(window=None):
+    """
+    Find and return the help view for the provided window. If no window is
+    provided, the currently active window is checked instead.
+
+    The return value is the view on success or None if there is currently no
+    help view in the window.
+    """
+    window = window if window is not None else sublime.active_window()
+    view = find_view(window, "HyperHelp")
+    if view is not None:
+        settings = view.settings()
+        if settings.has("_hh_package") and settings.has("_hh_file"):
+            return view
+
+    return None
+
+
+def display_help(pkg_info, help_file):
+    """
+    Load and display the help file with the given name from the provided
+    package. The help file name should be relative to the set document
+    root for the package given.
+
+    The help is displayed in a help view for the current window, which
+    will be given the focus if it does not already have it. If there is no
+    such view yet, one is created; otherwise the existing help view is used.
+
+    When a help view exists and is already displaying the given file, nothing
+    happens.
+
+    Returns None if the help file could not be found or the view holding the
+    help on success.
+    """
+    view = help_view()
+    window = view.window() if view is not None else sublime.active_window()
+
+    if view is not None:
+        window.focus_view(view)
+
+        current_pkg = view.settings().get("_hh_package", None)
+        current_file = view.settings().get("_hh_file", None)
+
+        if help_file == current_file and pkg_info.package == current_pkg:
+            return view
+
+    help_text = load_help(pkg_info, help_file)
+    if help_text is not None:
+        view = output_to_view(window,
+                              "HyperHelp",
+                              help_text,
+                              syntax="Packages/hyperhelp/all/Help.sublime-syntax")
+        view.settings().set("_hh_file", help_file)
+        view.settings().set("_hh_package", pkg_info.package)
+        return view
+
+    return None
 
 
 ###----------------------------------------------------------------------------
