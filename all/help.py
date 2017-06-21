@@ -6,9 +6,8 @@ import webbrowser
 
 from .output_view import find_view, output_to_view
 
-from .operations import log
-from .operations import HelpData, load_index_json
-from .operations import package_help_scan, package_help_reload
+from .operations import _log as log
+from .operations import scan_packages, reload_package
 
 ###----------------------------------------------------------------------------
 
@@ -173,13 +172,13 @@ class HyperHelpCommand(sublime_plugin.ApplicationCommand):
 
     def run(self, package=None, toc=False, topic=None, reload=False):
         if "__scanned" not in self._help_list:
-            package_help_scan(self._help_list)
+            scan_packages(self._help_list)
 
         if reload == True:
             if topic == "reload":
                 self.reload_current_topic()
             else:
-                self._help_list = package_help_reload(self._help_list, package)
+                self._help_list = reload_package(self._help_list, package)
             return
 
         # When there are no arguments at all, respond by showing all available

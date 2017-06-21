@@ -9,9 +9,9 @@ from .help import HyperHelpCommand, HyperHelpNavigateCommand
 from .help import HyperHelpListener
 
 
-# These are exposed to packages that may want to interface with the hyperhelp
-# core for use in their own packages.
-from .operations import package_help_scan
+# These functions represent the API that is exposed to external packages that
+# may want/need to get at some of the internals of hyperhelp.
+from .operations import scan_packages, reload_package
 
 
 ###----------------------------------------------------------------------------

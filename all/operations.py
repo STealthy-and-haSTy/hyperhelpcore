@@ -16,7 +16,7 @@ HelpData = collections.namedtuple("HelpData",
 ###----------------------------------------------------------------------------
 
 
-def log(message, *args, status=False, dialog=False):
+def _log(message, *args, status=False, dialog=False):
     """
     A simple logic facility to ensure that all console output is prefixed with
     the package name so the source is clear. Can also optionally send the output
@@ -57,21 +57,19 @@ def _make_help_dict(topic_data, help_file):
     return (topic, topic_data)
 
 
-def load_index_json(package, index_file):
+def _load_index(package, index_file):
     """
     Takes a package name and its associated hyperhelp.json index resource name
-    and loads it.
-
-    On success, the return value is a HelpData tuple containing the loaded
-    information.
+    and loads it. Returns None on failure or a HelpData tuple for the loaded
+    help information on success.
     """
     try:
-        log("Loading help index for package %s", package)
+        _log("Loading help index for package %s", package)
         json = sublime.load_resource(index_file)
         raw_dict = sublime.decode_value(json)
 
     except:
-        return log("Unable to load help index from '%s'", index_file)
+        return _log("Unable to load help index from '%s'", index_file)
 
     # Extract all top level dictionary keys that are not considered to be a
     # help file.
@@ -97,7 +95,7 @@ def load_index_json(package, index_file):
         for topic_entry in topic_list:
             topic, topic_entry = _make_help_dict(topic_entry, help_file)
             if topic is None:
-                return log("Entry missing topic in package %s: %s",
+                return _log("Entry missing topic in package %s: %s",
                            package, str(topic_entry))
 
             topics[topic] = topic_entry
@@ -111,41 +109,48 @@ def load_index_json(package, index_file):
 ###----------------------------------------------------------------------------
 
 
-def package_help_scan(help_list):
+def scan_packages(help_list=None):
     """
-    Update the provided help_list by finding and loading the hyperhelp.json
-    index file for any package not already contained in the provided list.
+    Find all packages with a help index and load it, returning a dictionary of
+    the packages found. If a partial help dictionary is passed, only packages
+    it does not contain will be added.
+
+    The new/modified dictionary is returned, and will have a `__scanned` key to
+    tell you that a scan was performed.
     """
+    help_list = dict() if help_list is None else help_list
     for index_file in sublime.find_resources("hyperhelp.json"):
         pkg_name = path.split(index_file)[0].split("/")[1]
-
         if pkg_name not in help_list:
-            result = load_index_json(pkg_name, index_file)
+            result = _load_index(pkg_name, index_file)
             if result is not None:
                 help_list[result.package] = result
 
     help_list["__scanned"] = True
     return help_list
 
-def package_help_reload(help_list, package):
-    """
-    Given a package name that has already had its help loaded, reload its index
-    file so that changes take effect. If no package is provided, a complete
-    fresh package scan is done instead.
 
-    This returns the help list, which may be a brand new object based on the
-    input parameters.
+def reload_package(help_list, package):
+    """
+    Find the package provided in the list of previously loaded help and reload
+    the help index file, updating the provided help list to represent the new
+    information.
+
+    If no package name is provided, the help list given is ignored and this is
+    the same as invoking scan_packages() with no help list provided.
+
+    The return value is the new or updated help list.
     """
     if package is None:
-        log("Rescanning all help index files")
-        return package_help_scan(dict())
+        _log("Rescanning all help index files")
+        return scan_packages()
 
     pkg_info = help_list.get(package, None)
     if pkg_info is None:
-        log("Package '%s' not previously loaded; cannot reload", package)
+        _log("Package '%s' not previously loaded; cannot reload", package)
     else:
-        log("Reloading help index for package '%s'", package)
-        result = load_index_json(pkg_info.package, pkg_info.index)
+        _log("Reloading help index for package '%s'", package)
+        result = _load_index(pkg_info.package, pkg_info.index)
         if result is not None:
             help_list[result.package] = result
 
