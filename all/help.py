@@ -1,12 +1,10 @@
 import sublime
 import sublime_plugin
 
-import re
-import webbrowser
-
 from .operations import _log as log
 from .operations import scan_packages, reload_package
-from .operations import help_view, focus_on, display_help
+from .operations import help_view, focus_on, display_help, reload_help
+from .operations import show_topic
 
 
 ###----------------------------------------------------------------------------
@@ -14,52 +12,11 @@ from .operations import help_view, focus_on, display_help
 
 class HyperHelpCommand(sublime_plugin.ApplicationCommand):
     """
-    This command is the core of the help system, and can open a view, follow a
-    link target to a new location, or display topic lists.
+    The core command of hyperhelp; allows you to display help files and topics
+    defined in packages that are providing help.
     """
     def __init__(self):
-        self._url_re = re.compile("^(https?|file)://")
         self._help_list = dict()
-
-    def reload_current_topic(self):
-        view = help_view()
-        if view is None:
-            return log("No help topic visible to reload")
-
-        package = view.settings().get("_hh_package", None)
-        file = view.settings().get("_hh_file", None)
-        pkg_info = self._help_list.get(package, None)
-
-        if pkg_info is not None and file is not None:
-            view.settings().set("_hh_file", "_reload")
-            display_help(pkg_info, file)
-        else:
-            log("Unable to reload current help topic")
-
-    def show_topic(self, pkg_info, topic):
-        help_file = pkg_info.topics.get(topic, {}).get("file", None)
-        if help_file is None:
-            return log("Unknown help topic '%s'", topic, status=True)
-
-        if self._url_re.match(help_file):
-            return webbrowser.open_new_tab(help_file)
-
-        if help_file.startswith("Packages/"):
-            help_file = help_file.replace("Packages/", "${packages}/")
-            window = sublime.active_window()
-            return window.run_command("open_file", {"file": help_file})
-
-        help_view = display_help(pkg_info, help_file)
-        if help_view is None:
-            return log("Unable to load help file '%s'", help_file, status=True)
-
-        for pos in help_view.find_by_selector('meta.link-target'):
-            target = help_view.substr(pos)
-            if target == topic:
-                return focus_on(help_view, pos)
-
-        log("Unable to find topic '%s' in help file '%s'", topic, help_file,
-            status=True)
 
     def select_toc_item(self, pkg_info, items, stack, index):
         if index >= 0:
@@ -79,7 +36,7 @@ class HyperHelpCommand(sublime_plugin.ApplicationCommand):
                 stack.append(items)
                 return self.show_toc(pkg_info, children, stack)
 
-            self.show_topic(pkg_info, entry["topic"])
+            show_topic(pkg_info, entry["topic"])
 
     def show_toc(self, pkg_info, items, stack):
         captions = [[item["caption"], item["topic"] +
@@ -114,48 +71,40 @@ class HyperHelpCommand(sublime_plugin.ApplicationCommand):
             captions,
             on_select=lambda index: self.select_package_item(captions, index))
 
+    def reload(self, package, topic):
+        if topic == "reload":
+            return reload_help(self._help_list)
+        self._help_list = reload_package(self._help_list, package)
+
     def run(self, package=None, toc=False, topic=None, reload=False):
         if "__scanned" not in self._help_list:
             scan_packages(self._help_list)
 
         if reload == True:
-            if topic == "reload":
-                self.reload_current_topic()
-            else:
-                self._help_list = reload_package(self._help_list, package)
-            return
+            return self.reload(package, topic)
 
-        # When there are no arguments at all, respond by showing all available
-        # help packages for the user to select from.
+        # Prompt for a package when no arguments are given
         if package is None and topic is None and toc == False:
             return self.select_package()
 
-        # When there is no package, try to get it from the help file in the
-        # current window; if there is no help yet, select the help package
-        # instead.
+        # Collect a missing package from the current help window, if any.
         if package is None:
             view = help_view()
-            if view is not None:
-                package = view.settings().get("_hh_package")
-            else:
+            if view is None:
                 return self.select_package()
+            package = view.settings().get("_hh_package")
 
-        # Get the help information for the selected package; if there is none
-        # we can't display any help.
+        # Get the help index for the provided package.
         pkg_info = self._help_list.get(package, None)
         if pkg_info is None:
             return log("No help availabie for package %s", package, status=True)
 
-        # Display the table of contents for this help if asked to do that.
+        # Display the table of contents for this help if requested
         if toc:
             return self.show_toc(pkg_info, pkg_info.toc, [])
 
-        # We have a package and we're not displaying the toc; if there is not
-        # a topic, use a default.
-        topic = topic or "index.txt"
-
-        # Show the given topic from within this help package
-        self.show_topic(pkg_info, topic)
+        # Show the appropriate topic
+        show_topic(pkg_info, topic or "index.txt")
 
     def is_enabled(self, package=None, toc=False, topic=None, reload=False):
         # Always enable unless we're told to display the TOC and:

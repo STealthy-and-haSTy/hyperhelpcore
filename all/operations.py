@@ -1,6 +1,8 @@
 import sublime
 
 import collections
+import re
+import webbrowser
 
 # Package paths are always portrayed as a unix path
 import posixpath as path
@@ -14,6 +16,8 @@ from .output_view import find_view, output_to_view
 HelpData = collections.namedtuple("HelpData",
     ["package", "description", "index", "doc_root", "topics", "toc"])
 
+
+_url_re = re.compile("^(https?|file)://")
 
 ###----------------------------------------------------------------------------
 
@@ -108,6 +112,8 @@ def _load_index(package, index_file):
     return HelpData(package, description, index_file, doc_root, topics, toc)
 
 
+###----------------------------------------------------------------------------
+### Public API
 ###----------------------------------------------------------------------------
 
 
@@ -256,6 +262,77 @@ def display_help(pkg_info, help_file):
         return view
 
     return None
+
+
+def reload_help(help_list):
+    """
+    Reload the file currently displayed in the help view for the current
+    window, if any.
+
+    If there is no help view or the package it is displaying help for is not
+    in the list of packages in the provided help list, nothing happens.
+
+    Returns True if the current file was reloaded or False if it was not.
+    """
+    view = help_view()
+    if view is None:
+        log("No help topic visible to reload")
+        return False
+
+    package = view.settings().get("_hh_package", None)
+    file = view.settings().get("_hh_file", None)
+    pkg_info = help_list.get(package, None)
+
+    if pkg_info is not None and file is not None:
+        view.settings().set("_hh_file", "_reload")
+        display_help(pkg_info, file)
+        return True
+
+    log("Unable to reload current help topic")
+    return False
+
+
+def show_topic(pkg_info, topic):
+    """
+    Using the help index data provided, display the given help topic by looking
+    up the appropriate help file, loading and displaying it, and then focusing
+    the cursor on the topic target in the file.
+
+    This can also show a topic that represents a URL or a file contained in a
+    package by executing the appropriate command.
+
+    The return value is a boolean which indicates if the topic was displayed or
+    not.
+    """
+    help_file = pkg_info.topics.get(topic, {}).get("file", None)
+    if help_file is None:
+        log("Unknown help topic '%s'", topic, status=True)
+        return False
+
+    if _url_re.match(help_file):
+        webbrowser.open_new_tab(help_file)
+        return True
+
+    if help_file.startswith("Packages/"):
+        help_file = help_file.replace("Packages/", "${packages}/")
+        window = sublime.active_window()
+        window.run_command("open_file", {"file": help_file})
+        return True
+
+    help_view = display_help(pkg_info, help_file)
+    if help_view is None:
+        log("Unable to load help file '%s'", help_file, status=True)
+        return False
+
+    for pos in help_view.find_by_selector('meta.link-target'):
+        target = help_view.substr(pos)
+        if target == topic:
+            focus_on(help_view, pos)
+            return True
+
+    log("Unable to find topic '%s' in help file '%s'", topic, help_file,
+        status=True)
+    return False
 
 
 ###----------------------------------------------------------------------------
