@@ -276,7 +276,7 @@ def reload_help(help_list):
     """
     view = help_view()
     if view is None:
-        log("No help topic visible to reload")
+        _log("No help topic visible to reload")
         return False
 
     package = view.settings().get("_hh_package", None)
@@ -288,7 +288,7 @@ def reload_help(help_list):
         display_help(pkg_info, file)
         return True
 
-    log("Unable to reload current help topic")
+    _log("Unable to reload current help topic")
     return False
 
 
@@ -306,7 +306,7 @@ def show_topic(pkg_info, topic):
     """
     help_file = pkg_info.topics.get(topic, {}).get("file", None)
     if help_file is None:
-        log("Unknown help topic '%s'", topic, status=True)
+        _log("Unknown help topic '%s'", topic, status=True)
         return False
 
     if _url_re.match(help_file):
@@ -321,7 +321,7 @@ def show_topic(pkg_info, topic):
 
     help_view = display_help(pkg_info, help_file)
     if help_view is None:
-        log("Unable to load help file '%s'", help_file, status=True)
+        _log("Unable to load help file '%s'", help_file, status=True)
         return False
 
     for pos in help_view.find_by_selector('meta.link-target'):
@@ -330,7 +330,7 @@ def show_topic(pkg_info, topic):
             focus_on(help_view, pos)
             return True
 
-    log("Unable to find topic '%s' in help file '%s'", topic, help_file,
+    _log("Unable to find topic '%s' in help file '%s'", topic, help_file,
         status=True)
     return False
 
