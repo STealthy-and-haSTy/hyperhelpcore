@@ -164,7 +164,7 @@ class HyperHelpNavigateCommand(sublime_plugin.WindowCommand):
         view = self.window.active_view()
         point = view.sel()[0].begin()
 
-        if view.match_selector(point, "text.help meta.link"):
+        if view.match_selector(point, "text.hyperhelp meta.link"):
             return view.substr(view.extract_scope(point))
 
         return None
@@ -182,7 +182,7 @@ class HyperHelpListener(sublime_plugin.EventListener):
             event = args["event"]
             point = view.window_to_text((event["x"], event["y"]))
 
-            if view.match_selector(point, "text.help meta.link"):
+            if view.match_selector(point, "text.hyperhelp meta.link"):
                 view.window().run_command("hyper_help_navigate", {"nav": "follow"})
                 return ("noop")
 
