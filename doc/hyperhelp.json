@@ -1,6 +1,5 @@
 {
     "__description": "HyperHelp System Documenation",
-    "__root": "doc/",
     "__toc": [
         {
             "topic": "index.txt",
