@@ -2,6 +2,7 @@ import sublime
 
 import collections
 import re
+import time
 import webbrowser
 
 # Package paths are always portrayed as a unix path
@@ -16,8 +17,13 @@ from .output_view import find_view, output_to_view
 HelpData = collections.namedtuple("HelpData",
     ["package", "description", "index", "doc_root", "topics", "toc"])
 
+HeaderData = collections.namedtuple("HeaderData",
+    ["file", "title", "date"])
 
-_url_re = re.compile("^(https?|file)://")
+_header_prefix_re = re.compile(r'^%hyperhelp(\b|$)')
+_header_keypair_re = re.compile(r'\b([a-z]+)\b="([^"]*)"')
+_url_re = re.compile(r"^(https?|file)://")
+
 
 ###----------------------------------------------------------------------------
 
@@ -110,6 +116,49 @@ def _load_index(package, index_file):
         toc = [topics.get(topic) for topic in sorted(topics.keys())]
 
     return HelpData(package, description, index_file, doc_root, topics, toc)
+
+
+def _postprocess_help(view):
+    """
+    Perform post processing on a loaded help view to do any transformations
+    needed on the help content before control is handed back to the user to
+    interact with it.
+    """
+    help_file = view.settings().get("_hh_file")
+    first_line = view.substr(view.full_line(0))
+    header = parse_header(help_file, first_line)
+    if header is None:
+        return
+
+    settings = sublime.load_settings("Preferences.sublime-settings")
+
+    _hdr_width = 80
+    _time_fmt = settings.get("hyperhelp_date_format", "%x")
+
+    file_target = "*%s*" % help_file
+    title = header.title
+    date_str = "Not Available"
+
+    if header.date != 0:
+        date_str = time.strftime(_time_fmt, time.localtime(header.date))
+
+    # Take into account two extra spaces on either side of the title
+    max_title_len = _hdr_width - len(file_target) - len(date_str) - 4
+    if len(title) > max_title_len:
+        title = title[:max_title_len-1] + '\u2026'
+
+    header_line = "%s  %s  %s\n%s\n" % (
+        file_target,
+        "%s" % title.center(max_title_len, " "),
+        date_str,
+        ("=" * _hdr_width)
+    )
+
+    view.sel().clear()
+    view.sel().add(view.full_line(0))
+    view.set_read_only(False)
+    view.run_command("insert", {"characters": header_line})
+    view.set_read_only(True)
 
 
 ###----------------------------------------------------------------------------
@@ -223,6 +272,35 @@ def help_view(window=None):
     return None
 
 
+def parse_header(help_file, header_line):
+    """
+    Given the name of a help file and its first line, return back a HeaderData
+    that provides the information from the header.
+
+    The return value is None if the line is not a valid file header.
+    """
+    if not _header_prefix_re.match(header_line):
+        return None
+
+    result = re.findall(_header_keypair_re, header_line)
+
+    title = "No Title provided"
+    date = 0.0
+    for match in result:
+        if match[0] == "title":
+            title = match[1]
+        elif match[0] == "date":
+            try:
+                date = time.mktime(time.strptime(match[1], "%Y-%m-%d"))
+            except:
+                _log("Ignoring invalid file date '%s'", match[1])
+                date = 0.0
+        else:
+            _log("Ignoring header key '%s' in '%s'", match[0], help_file)
+
+    return HeaderData(help_file, title, date)
+
+
 def display_help(pkg_info, help_file):
     """
     Load and display the help file with the given name from the provided
@@ -259,6 +337,7 @@ def display_help(pkg_info, help_file):
                               syntax="Packages/hyperhelp/all/Help.sublime-syntax")
         view.settings().set("_hh_file", help_file)
         view.settings().set("_hh_package", pkg_info.package)
+        _postprocess_help(view)
         return view
 
     return None

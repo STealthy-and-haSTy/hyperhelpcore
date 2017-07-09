@@ -1,5 +1,4 @@
-*syntax.txt*                    Help File Syntax                     May 8, 2017
-================================================================================
+%hyperhelp title="Help File Syntax" date="2017-07-08"
 | <?> TOC | <Enter> Follow Link | <Tab> Next Link |        Back to |index.txt| |
 +---------+---------------------+-----------------+----------------------------+
 
