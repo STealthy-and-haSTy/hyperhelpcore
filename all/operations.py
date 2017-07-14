@@ -15,7 +15,7 @@ from .output_view import find_view, output_to_view
 
 
 HelpData = collections.namedtuple("HelpData",
-    ["package", "description", "index", "doc_root", "topics", "toc"])
+    ["package", "description", "index", "doc_root", "topics", "files", "toc"])
 
 HeaderData = collections.namedtuple("HeaderData",
     ["file", "title", "date"])
@@ -40,6 +40,20 @@ def _log(message, *args, status=False, dialog=False):
         sublime.status_message(message)
     if dialog:
         sublime.message_dialog(message)
+
+
+def _is_url(help_file):
+    """
+    Test if a help file represents a URL or not.
+    """
+    return _url_re.match(help_file)
+
+
+def _is_pkg(help_file):
+    """
+    Test if a help file represents a package to open or not.
+    """
+    return help_file.startswith("Packages/")
 
 
 def _make_help_dict(topic_data, help_file):
@@ -97,6 +111,8 @@ def _load_index(package, index_file):
         doc_root = path.normpath("Packages/%s/%s" % (package, doc_root))
 
     topics = dict()
+    files = [file for file in raw_dict.keys()
+                if not _is_url(file) and not _is_pkg(file)]
 
     for help_file in raw_dict:
         topic_list = raw_dict[help_file]
@@ -115,7 +131,7 @@ def _load_index(package, index_file):
     if toc is None:
         toc = [topics.get(topic) for topic in sorted(topics.keys())]
 
-    return HelpData(package, description, index_file, doc_root, topics, toc)
+    return HelpData(package, description, index_file, doc_root, topics, files, toc)
 
 
 def _postprocess_help(view):
@@ -388,11 +404,11 @@ def show_topic(pkg_info, topic):
         _log("Unknown help topic '%s'", topic, status=True)
         return False
 
-    if _url_re.match(help_file):
+    if _is_url(help_file):
         webbrowser.open_new_tab(help_file)
         return True
 
-    if help_file.startswith("Packages/"):
+    if _is_pkg(help_file):
         help_file = help_file.replace("Packages/", "${packages}/")
         window = sublime.active_window()
         window.run_command("open_file", {"file": help_file})
