@@ -79,6 +79,7 @@ class HyperHelpCommand(sublime_plugin.ApplicationCommand):
     def run(self, package=None, toc=False, topic=None, reload=False):
         if "__scanned" not in self._help_list:
             scan_packages(self._help_list)
+            self._help_list["__scanned"] = True
 
         if reload == True:
             return self.reload(package, topic)

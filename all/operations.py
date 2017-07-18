@@ -211,9 +211,6 @@ def scan_packages(help_list=None):
     Find all packages with a help index and load it, returning a dictionary of
     the packages found. If a partial help dictionary is passed, only packages
     it does not contain will be added.
-
-    The new/modified dictionary is returned, and will have a `__scanned` key to
-    tell you that a scan was performed.
     """
     help_list = dict() if help_list is None else help_list
     for index_file in sublime.find_resources("hyperhelp.json"):
@@ -223,7 +220,6 @@ def scan_packages(help_list=None):
             if result is not None:
                 help_list[result.package] = result
 
-    help_list["__scanned"] = True
     return help_list
 
 
