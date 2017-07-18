@@ -15,7 +15,7 @@ from .output_view import find_view, output_to_view
 
 
 HelpData = collections.namedtuple("HelpData",
-    ["package", "description", "index", "doc_root", "topics",
+    ["package", "description", "index_file", "doc_root", "topics",
      "files", "package_files", "urls", "toc"])
 
 HeaderData = collections.namedtuple("HeaderData",
@@ -137,7 +137,7 @@ def _load_index(package, index_file):
     return HelpData(package, description, index_file, doc_root, topics,
                     sorted(help_files.keys()),
                     sorted(package_files.keys()),
-                    urls.keys(),
+                    list(urls.keys()),
                     toc)
 
 
@@ -250,7 +250,7 @@ def reload_package(help_list, package):
         _log("Package '%s' not previously loaded; cannot reload", package)
     else:
         _log("Reloading help index for package '%s'", package)
-        result = _load_index(pkg_info.package, pkg_info.index)
+        result = _load_index(pkg_info.package, pkg_info.index_file)
         if result is not None:
             help_list[result.package] = result
 

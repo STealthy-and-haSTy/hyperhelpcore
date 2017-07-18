@@ -170,6 +170,7 @@ class HyperHelpNavigateCommand(sublime_plugin.WindowCommand):
 
         return None
 
+
 ###----------------------------------------------------------------------------
 
 
@@ -207,7 +208,6 @@ class HyperHelpListener(sublime_plugin.EventListener):
             return lhs != rhs
 
         return None
-
 
 
 ###----------------------------------------------------------------------------
