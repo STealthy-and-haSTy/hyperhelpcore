@@ -86,7 +86,10 @@ def _process_topic_dict(package, topics, help_topic_dict):
                 return _log("Entry missing topic in package %s: %s",
                            package, str(topic_entry))
 
-            topics[topic] = topic_entry
+            if topic in topics:
+                _log("Package %s contains duplicate topic '%s'", package, topic)
+            else:
+                topics[topic] = topic_entry
 
 
 def _load_index(package, index_file):
@@ -124,8 +127,6 @@ def _load_index(package, index_file):
         doc_root = path.normpath("Packages/%s/%s" % (package, doc_root))
 
     # Pull in all the topics.
-    #
-    # TODO: Validate that the same topic is not included more than once
     topics = dict()
     _process_topic_dict(package, topics, help_files)
     _process_topic_dict(package, topics, package_files)
