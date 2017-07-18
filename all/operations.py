@@ -92,6 +92,22 @@ def _process_topic_dict(package, topics, help_topic_dict):
                 topics[topic] = topic_entry
 
 
+def _validate_toc(package, toc, topics):
+    """
+    Perform a recursive check to ensure that all of the topics in the provided
+    table of contents actually exist in the help file. Any that don't generate
+    a warning to the console but are otherwise left alone.
+    """
+    for entry in toc:
+        topic = entry["topic"]
+        if topic not in topics:
+            _log("TOC for package %s contains missing topic %s", package, topic)
+
+        children = entry.get("children", None)
+        if children is not None:
+            _validate_toc(package, children, topics)
+
+
 def _load_index(package, index_file):
     """
     Takes a package name and its associated hyperhelp.json index resource name
@@ -107,8 +123,6 @@ def _load_index(package, index_file):
         return _log("Unable to load help index from '%s'", index_file)
 
     # Extract all known top level dictionary keys from the help index
-    #
-    # TODO: Validate children in the TOC
     description = raw_dict.pop("description", "No description available")
     doc_root = raw_dict.pop("doc_root", None)
     toc = raw_dict.pop("toc", None)
@@ -134,6 +148,8 @@ def _load_index(package, index_file):
 
     if toc is None:
         toc = [topics.get(topic) for topic in sorted(topics.keys())]
+    else:
+        _validate_toc(package, toc, topics)
 
     return HelpData(package, description, index_file, doc_root, topics,
                     sorted(help_files.keys()),
