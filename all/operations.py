@@ -170,10 +170,8 @@ def _postprocess_help(view):
     if header is None:
         return
 
-    settings = sublime.load_settings("Preferences.sublime-settings")
-
     _hdr_width = 80
-    _time_fmt = settings.get("hyperhelp_date_format", "%x")
+    _time_fmt = view.settings().get("hyperhelp_date_format", "%x")
 
     file_target = "*%s*" % help_file
     title = header.title
