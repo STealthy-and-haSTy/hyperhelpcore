@@ -128,11 +128,14 @@ class HyperHelpNavigateCommand(sublime_plugin.WindowCommand):
     topic).
     """
     def run(self, nav, prev=False):
-        #TODO: Extend to allow navigation among links, targets or both
-        if nav == "link":
-            return self.focus_link(prev)
+        if nav == "find_setting":
+            view = self.window.active_view()
+            nav = view.settings().get("hyperhelp_navigate_type", "find_both")
 
-        if nav == "follow":
+        if nav in ["find_link", "find_target", "find_both"]:
+            return self.focus_item(nav, prev)
+
+        if nav == "follow_link":
             return self.follow_link()
 
         log("Unknown help navigation directive '%s'", nav)
@@ -144,11 +147,20 @@ class HyperHelpNavigateCommand(sublime_plugin.WindowCommand):
 
         log("Cannot follow link; no link found under the cursor")
 
-    def focus_link(self, prev):
+    def focus_item(self, nav, prev):
         view = self.window.active_view()
         point = view.sel()[0].begin()
 
-        targets = view.find_by_selector("meta.link | meta.link-target")
+        selector = {
+            "find_link":   "meta.link",
+            "find_target": "meta.link-target",
+            "find_both":   "meta.link | meta.link-target"
+        }.get(nav, "meta.unknown")
+
+        targets = view.find_by_selector(selector)
+        if len(targets) == 0:
+            return
+
         fallback = targets[-1] if prev else targets[0]
 
         def pick(pos):
@@ -185,7 +197,7 @@ class HyperHelpListener(sublime_plugin.EventListener):
             point = view.window_to_text((event["x"], event["y"]))
 
             if view.match_selector(point, "text.hyperhelp meta.link"):
-                view.window().run_command("hyper_help_navigate", {"nav": "follow"})
+                view.window().run_command("hyper_help_navigate", {"nav": "follow_link"})
                 return ("noop")
 
         return None

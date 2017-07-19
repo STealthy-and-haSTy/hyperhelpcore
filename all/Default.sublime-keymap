@@ -10,7 +10,7 @@
     },
     {
         "keys": ["enter"],
-        "command": "hyper_help_navigate", "args": {"nav": "follow"},
+        "command": "hyper_help_navigate", "args": {"nav": "follow_link"},
         "context": [
             { "key": "selector", "operator": "equal", "operand": "text.hyperhelp meta.link" },
             { "key": "num_selections", "operator": "equal", "operand": 1 },
@@ -19,7 +19,7 @@
     },
     {
         "keys": ["keypad_enter"],
-        "command": "hyper_help_navigate", "args": {"nav": "follow"},
+        "command": "hyper_help_navigate", "args": {"nav": "follow_link"},
         "context": [
             { "key": "selector", "operator": "equal", "operand": "text.hyperhelp meta.link" },
             { "key": "num_selections", "operator": "equal", "operand": 1 },
@@ -28,7 +28,7 @@
     },
     {
         "keys": ["tab"],
-        "command": "hyper_help_navigate", "args": {"nav": "link", "prev": false},
+        "command": "hyper_help_navigate", "args": {"nav": "find_setting", "prev": false},
         "context": [
             { "key": "selector", "operator": "equal", "operand": "text.hyperhelp" },
             { "key": "help_author_mode", "operator": "equal", "operand": false}
@@ -36,7 +36,7 @@
     },
     {
         "keys": ["shift+tab"],
-        "command": "hyper_help_navigate", "args": {"nav": "link", "prev": true},
+        "command": "hyper_help_navigate", "args": {"nav": "find_setting", "prev": true},
         "context": [
             { "key": "selector", "operator": "equal", "operand": "text.hyperhelp" },
             { "key": "help_author_mode", "operator": "equal", "operand": false}
