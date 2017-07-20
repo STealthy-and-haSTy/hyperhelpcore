@@ -10,14 +10,31 @@ from .operations import show_topic
 ###----------------------------------------------------------------------------
 
 
+def _get_help_info(reload=False, package=None):
+    """
+    Return the global help list. This will demand load the help index only
+    when it is accessed, and can also force a reload of help indexes, possibly
+    of only a particular package, if requested.
+    """
+    initial_load = False
+    if not hasattr(_get_help_info, "index"):
+        initial_load = True
+        _get_help_info.index = scan_packages()
+
+    if reload and not initial_load:
+        _get_help_info.index = reload_package(_get_help_info.index, package)
+
+    return _get_help_info.index
+
+
+###----------------------------------------------------------------------------
+
+
 class HyperHelpCommand(sublime_plugin.ApplicationCommand):
     """
     The core command of hyperhelp; allows you to display help files and topics
     defined in packages that are providing help.
     """
-    def __init__(self):
-        self._help_list = dict()
-
     def select_toc_item(self, pkg_info, items, stack, index):
         if index >= 0:
             # When stack is not empty, first item takes us back
@@ -59,12 +76,14 @@ class HyperHelpCommand(sublime_plugin.ApplicationCommand):
             self.run(pkg_list[index][0], True)
 
     def select_package(self):
-        if len(self._help_list) <= 1:
-            return log("No packages with help are currently installed", status=True)
+        help_list = _get_help_info()
+        if len(help_list) <= 1:
+            return log("No packages with help are currently installed",
+                        status=True)
 
-        pkg_list = sorted([key for key in self._help_list if key != "__scanned"])
-        captions = [[self._help_list[key].package,
-                     self._help_list[key].description]
+        pkg_list = sorted([key for key in help_list])
+        captions = [[help_list[key].package,
+                     help_list[key].description]
             for key in pkg_list]
 
         sublime.active_window().show_quick_panel(
@@ -73,13 +92,11 @@ class HyperHelpCommand(sublime_plugin.ApplicationCommand):
 
     def reload(self, package, topic):
         if topic == "reload":
-            return reload_help(self._help_list)
-        self._help_list = reload_package(self._help_list, package)
+            return reload_help(_get_help_info())
+        _get_help_info(reload=True, package=package)
 
     def run(self, package=None, toc=False, topic=None, reload=False):
-        if "__scanned" not in self._help_list:
-            scan_packages(self._help_list)
-            self._help_list["__scanned"] = True
+        help_list = _get_help_info()
 
         if reload == True:
             return self.reload(package, topic)
@@ -96,7 +113,7 @@ class HyperHelpCommand(sublime_plugin.ApplicationCommand):
             package = view.settings().get("_hh_package")
 
         # Get the help index for the provided package.
-        pkg_info = self._help_list.get(package, None)
+        pkg_info = help_list.get(package, None)
         if pkg_info is None:
             return log("No help availabie for package %s", package, status=True)
 
