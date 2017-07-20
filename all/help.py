@@ -238,5 +238,67 @@ class HyperHelpListener(sublime_plugin.EventListener):
 
         return None
 
+    def on_hover(self, view, point, hover_zone):
+        """
+        When hovering over a help link with the mouse, show the user the link
+        caption and where it links.
+        """
+        if hover_zone != sublime.HOVER_TEXT:
+            return
+
+        package = view.settings().get("_hh_package")
+        if package is None or not view.score_selector(point, "meta.link"):
+            return
+
+        pkg_help = _get_help_info().get(package, None)
+        if pkg_help is None:
+            return
+
+        info = pkg_help.topics.get(view.substr(view.extract_scope(point)), None)
+        if info is None:
+            return
+
+        caption = info["caption"]
+        location = info["file"]
+        location_type = "Links to: "
+
+        if location in pkg_help.urls:
+            location_type = "Opens URL: "
+        elif location in pkg_help.package_files:
+            location_type = "Opens package file: "
+
+        body = """
+            <body id="hyperhelp-link-caption">
+                <style>
+                    body {
+                        font-family: system;
+                        margin: 0.5rem 1rem;
+                    }
+                    h1 {
+                        font-size: 1.1rem;
+                        font-weight: bold;
+                        margin: 0 0 1rem 0;
+                        border-bottom: 2px solid var(--foreground);
+                    }
+                    p {
+                        font-size: 1.05rem;
+                        margin: 0;
+                    }
+                    .indent {
+                        margin-left: 1.5rem;
+                    }
+                 </style>
+                <h1>%s</h1>
+                <p>%s<p>
+                <p class="indent">%s</p>
+            </body>
+        """ % (caption, location_type, location)
+
+        view.show_popup(
+            body,
+            flags=sublime.HIDE_ON_MOUSE_MOVE_AWAY,
+            location=point,
+            max_width=1024)
+
 
 ###----------------------------------------------------------------------------

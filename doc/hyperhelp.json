@@ -114,10 +114,19 @@
     "package_files": {
         "Packages/Default/delete_word.py":
         [
-            "Packages/Default/delete_word.py"
+            {
+                "caption": "Default Plugin",
+                "topic": "Packages/Default/delete_word.py"
+            }
         ],
 
-        "Packages/Default/exec.py": true,
+        "Packages/Default/exec.py":
+        [
+            {
+                "caption": "Default Plugin",
+                "topic": "Packages/Default/exec.py"
+            }
+        ],
     },
 
     // This functions identicaly to "help_files" except that here the file names
@@ -130,9 +139,18 @@
     "urls": {
         "https://packagecontrol.io/packages/OverrideAudit":
         [
-            "OverrideAudit"
+            {
+                "caption": "Easily manage your Sublime Text package Overrides",
+                "topic": "OverrideAudit"
+            }
         ],
 
-        "https://packagecontrol.io/packages/PackageResourceViewer": true
+        "https://packagecontrol.io/packages/PackageResourceViewer":
+        [
+            {
+                "caption": "Sublime Text plugin to view package resources",
+                "topic": "https://packagecontrol.io/packages/PackageResourceViewer"
+            }
+        ]
     }
 }
