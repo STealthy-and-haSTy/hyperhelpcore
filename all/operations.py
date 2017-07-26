@@ -204,6 +204,23 @@ def _postprocess_help(view):
 ###----------------------------------------------------------------------------
 
 
+def help_index_list(reload=False, package=None):
+    """
+    Return the global help list. This will demand load the help index only
+    when it is accessed, and can also force a reload of help indexes, possibly
+    of only a particular package, if requested.
+    """
+    initial_load = False
+    if not hasattr(help_index_list, "index"):
+        initial_load = True
+        help_index_list.index = scan_packages()
+
+    if reload and not initial_load:
+        help_index_list.index = reload_package(help_index_list.index, package)
+
+    return help_index_list.index
+
+
 def focus_on(view, position):
     """
     Focus the given help view on the provided position to ensure that is is

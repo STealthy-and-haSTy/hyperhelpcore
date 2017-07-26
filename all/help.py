@@ -2,29 +2,9 @@ import sublime
 import sublime_plugin
 
 from .operations import _log as log
-from .operations import scan_packages, reload_package
+from .operations import help_index_list, scan_packages, reload_package
 from .operations import help_view, focus_on, display_help, reload_help
 from .operations import show_topic
-
-
-###----------------------------------------------------------------------------
-
-
-def _get_help_info(reload=False, package=None):
-    """
-    Return the global help list. This will demand load the help index only
-    when it is accessed, and can also force a reload of help indexes, possibly
-    of only a particular package, if requested.
-    """
-    initial_load = False
-    if not hasattr(_get_help_info, "index"):
-        initial_load = True
-        _get_help_info.index = scan_packages()
-
-    if reload and not initial_load:
-        _get_help_info.index = reload_package(_get_help_info.index, package)
-
-    return _get_help_info.index
 
 
 ###----------------------------------------------------------------------------
@@ -76,7 +56,7 @@ class HyperHelpCommand(sublime_plugin.ApplicationCommand):
             self.run(pkg_list[index][0], True)
 
     def select_package(self):
-        help_list = _get_help_info()
+        help_list = help_index_list()
         if len(help_list) <= 1:
             return log("No packages with help are currently installed",
                         status=True)
@@ -92,11 +72,11 @@ class HyperHelpCommand(sublime_plugin.ApplicationCommand):
 
     def reload(self, package, topic):
         if topic == "reload":
-            return reload_help(_get_help_info())
-        _get_help_info(reload=True, package=package)
+            return reload_help(help_index_list())
+        help_index_list(reload=True, package=package)
 
     def run(self, package=None, toc=False, topic=None, reload=False):
-        help_list = _get_help_info()
+        help_list = help_index_list()
 
         if reload == True:
             return self.reload(package, topic)
@@ -250,7 +230,7 @@ class HyperHelpListener(sublime_plugin.EventListener):
         if package is None or not view.score_selector(point, "meta.link"):
             return
 
-        pkg_help = _get_help_info().get(package, None)
+        pkg_help = help_index_list().get(package, None)
         if pkg_help is None:
             return
 
