@@ -21,6 +21,9 @@ HelpData = collections.namedtuple("HelpData",
 HeaderData = collections.namedtuple("HeaderData",
     ["file", "title", "date"])
 
+HistoryData = collections.namedtuple("HistoryData",
+    ["package", "file", "viewport", "caret"])
+
 _header_prefix_re = re.compile(r'^%hyperhelp(\b|$)')
 _header_keypair_re = re.compile(r'\b([a-z]+)\b="([^"]*)"')
 
@@ -386,8 +389,19 @@ def display_help(pkg_info, help_file):
                               "HyperHelp",
                               help_text,
                               syntax="Packages/hyperhelp/all/Help.sublime-syntax")
-        view.settings().set("_hh_file", help_file)
-        view.settings().set("_hh_package", pkg_info.package)
+        settings = view.settings()
+        settings.set("_hh_file", help_file)
+        settings.set("_hh_package", pkg_info.package)
+
+        # For a newly created help view, Create an initial history entry. The
+        # saved selection sets the cursor to the start of the file.
+        if not settings.has("_hh_hist_pos"):
+            history = HistoryData(pkg_info.package,
+                                  help_file,
+                                  view.viewport_position(),
+                                  (0, 0))
+            settings.set("_hh_hist_pos", 0)
+            settings.set("_hh_history", [history])
         _postprocess_help(view)
         return view
 
