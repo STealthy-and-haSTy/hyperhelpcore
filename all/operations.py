@@ -206,7 +206,8 @@ def _update_history(view, append=False, selection=None):
     """
     Update the history for the current view by either updating the contents of
     the current history entry (append is False) or adding a new entry (append
-    is True).
+    is True). When appending a new history entry, any history after the
+    entry currently being displayed is truncated away.
 
     In either case, the selection used is either the one passed in or the
     first selection in the buffer if the passed selection is None, and the
@@ -226,6 +227,13 @@ def _update_history(view, append=False, selection=None):
     hist_info = settings.get("_hh_history", [])
 
     if append:
+        # Truncate history after this point; new timeline branches here
+        if hist_pos != len(hist_info) - 1:
+            hist_info = hist_info[:hist_pos + 1]
+
+        # TODO: This should maybe also do a similar truncation with a slice in
+        # the other direction to keep the history from getting arbitrarily
+        # long.
         hist_pos += 1
 
     history = HistoryData(settings.get("_hh_package"),
