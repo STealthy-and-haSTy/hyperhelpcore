@@ -472,6 +472,44 @@ def reload_help(help_list):
     return False
 
 
+def navigate_history(prev):
+    """
+    Navigate the current help view through its help topic display history by
+    altering the currently set history position by one item in either direction
+    and then displaying that topic.
+
+    This updates the history position that the view is displaying but otherwise
+    leaves things alone.
+
+    The return value is True if the history position changed or false
+    otherwise.
+    """
+    view = help_view()
+    if view is None:
+        return False
+
+    history = view.settings().get("_hh_history")
+    pos = view.settings().get("_hh_hist_pos")
+
+    if (prev and pos == 0) or (not prev and pos == len(history) - 1):
+        _log("Cannnot navigate history; at end of history")
+        return False
+
+    pos = (pos - 1) if prev else (pos + 1)
+    entry = HistoryData._make(history[pos])
+
+    # Save current position in this history entry, then switch to the new one
+    _update_history(view)
+    if show_topic(entry.package, entry.file, update_history=False) is not None:
+        view.sel().clear()
+        view.sel().add(sublime.Region(entry.caret[0], entry.caret[1]))
+        view.set_viewport_position(entry.viewport, False)
+        view.settings().set("_hh_hist_pos", pos)
+        return True
+
+    return False
+
+
 def show_topic(package, topic, update_history):
     """
     Attempt to display the help for the provided help topic and package. This

@@ -4,7 +4,7 @@ import sublime_plugin
 from .operations import _log as log
 from .operations import help_index_list, scan_packages, reload_package
 from .operations import help_view, focus_on, display_help, reload_help
-from .operations import show_topic
+from .operations import show_topic, navigate_history
 
 
 ###----------------------------------------------------------------------------
@@ -134,6 +134,9 @@ class HyperHelpNavigateCommand(sublime_plugin.WindowCommand):
 
         if nav == "follow_link":
             return self.follow_link()
+
+        if nav == "follow_history":
+            return navigate_history(prev)
 
         log("Unknown help navigation directive '%s'", nav)
 

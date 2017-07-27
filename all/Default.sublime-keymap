@@ -27,6 +27,22 @@
         ]
     },
     {
+        "keys": ["alt+right"],
+        "command": "hyper_help_navigate", "args": {"nav": "follow_history", "prev": false},
+        "context": [
+            { "key": "selector", "operator": "equal", "operand": "text.hyperhelp" },
+            { "key": "help_author_mode", "operator": "equal", "operand": false}
+        ]
+    },
+    {
+        "keys": ["alt+left"],
+        "command": "hyper_help_navigate", "args": {"nav": "follow_history", "prev": true},
+        "context": [
+            { "key": "selector", "operator": "equal", "operand": "text.hyperhelp" },
+            { "key": "help_author_mode", "operator": "equal", "operand": false}
+        ]
+    },
+    {
         "keys": ["tab"],
         "command": "hyper_help_navigate", "args": {"nav": "find_setting", "prev": false},
         "context": [
