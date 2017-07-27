@@ -202,6 +202,46 @@ def _postprocess_help(view):
     view.set_read_only(True)
 
 
+def _update_history(view, append=False, selection=None):
+    """
+    Update the history for the current view by either updating the contents of
+    the current history entry (append is False) or adding a new entry (append
+    is True).
+
+    In either case, the selection used is either the one passed in or the
+    first selection in the buffer if the passed selection is None, and the
+    view must have the settings that indicate what package and help file are
+    currently being viewed.
+
+    When append is False and the view has no history information yet, a new
+    history is added to the view.
+    """
+    if view is None:
+        return
+
+    selection = view.sel()[0] if selection is None else selection
+    settings = view.settings()
+
+    hist_pos = settings.get("_hh_hist_pos", 0)
+    hist_info = settings.get("_hh_history", [])
+
+    if append:
+        hist_pos += 1
+
+    history = HistoryData(settings.get("_hh_package"),
+                          settings.get("_hh_file"),
+                          view.viewport_position(),
+                          (selection.a, selection.b))
+
+    if hist_pos >= len(hist_info):
+        hist_info.append(history)
+    else:
+        hist_info[hist_pos] = history
+
+    settings.set("_hh_hist_pos", hist_pos)
+    settings.set("_hh_history", hist_info)
+
+
 ###----------------------------------------------------------------------------
 ### Public API
 ###----------------------------------------------------------------------------
@@ -396,12 +436,8 @@ def display_help(pkg_info, help_file):
         # For a newly created help view, Create an initial history entry. The
         # saved selection sets the cursor to the start of the file.
         if not settings.has("_hh_hist_pos"):
-            history = HistoryData(pkg_info.package,
-                                  help_file,
-                                  view.viewport_position(),
-                                  (0, 0))
-            settings.set("_hh_hist_pos", 0)
-            settings.set("_hh_history", [history])
+            _update_history(view, append=False, selection=sublime.Region(0, 0))
+
         _postprocess_help(view)
         return view
 
@@ -436,47 +472,65 @@ def reload_help(help_list):
     return False
 
 
-def show_topic(pkg_info, topic):
+def show_topic(package, topic, update_history):
     """
-    Using the help index data provided, display the given help topic by looking
-    up the appropriate help file, loading and displaying it, and then focusing
-    the cursor on the topic target in the file.
+    Attempt to display the help for the provided help topic and package. This
+    either displays the appropriate part of the given help file, opens a url in
+    a browser, or opens the contents of a package file.
 
-    This can also show a topic that represents a URL or a file contained in a
-    package by executing the appropriate command.
+    If update_history is true, the history for the help view is updated after
+    a successful help navigation to a help file, otherwise the history is left
+    untouched. The function acts as if update_history is True if it has to
+    create a new help view in order to display a help file.
 
-    The return value is a boolean which indicates if the topic was displayed or
-    not.
+    The return value is None on error or a string that represents the result of
+    the operation.
     """
+    pkg_info = help_index_list().get(package, None)
+    if pkg_info is None:
+        return None
+
     help_file = pkg_info.topics.get(topic, {}).get("file", None)
     if help_file is None:
         _log("Unknown help topic '%s'", topic, status=True)
-        return False
+        return None
 
     if help_file in pkg_info.urls:
         webbrowser.open_new_tab(help_file)
-        return True
+        return "url"
 
     if help_file in pkg_info.package_files:
         help_file = help_file.replace("Packages/", "${packages}/")
         window = sublime.active_window()
         window.run_command("open_file", {"file": help_file})
-        return True
+        return "pkg_file"
 
-    help_view = display_help(pkg_info, help_file)
-    if help_view is None:
+    # Update the position in the current help file before navigating away
+    if update_history:
+        _update_history(help_view())
+
+    existing_view = True if help_view() is not None else False
+    view = display_help(pkg_info, help_file)
+    if view is None:
         _log("Unable to load help file '%s'", help_file, status=True)
-        return False
+        return None
 
-    for pos in help_view.find_by_selector('meta.link-target'):
-        target = help_view.substr(pos)
+    found = False
+    for pos in view.find_by_selector('meta.link-target'):
+        target = view.substr(pos)
         if target == topic:
-            focus_on(help_view, pos)
-            return True
+            focus_on(view, pos)
+            found = True
 
-    _log("Unable to find topic '%s' in help file '%s'", topic, help_file,
-        status=True)
-    return False
+    # Add a new history entry as long as this view previously existed
+    if update_history and existing_view:
+        _update_history(view, append=True)
+
+    # Warn on topic not found
+    if not found:
+        _log("Unable to find topic '%s' in help file '%s'", topic, help_file,
+             status=True)
+    return "file"
 
 
 ###----------------------------------------------------------------------------

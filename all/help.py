@@ -33,7 +33,7 @@ class HyperHelpCommand(sublime_plugin.ApplicationCommand):
                 stack.append(items)
                 return self.show_toc(pkg_info, children, stack)
 
-            show_topic(pkg_info, entry["topic"])
+            show_topic(pkg_info.package, entry["topic"], update_history=True)
 
     def show_toc(self, pkg_info, items, stack):
         captions = [[item["caption"], item["topic"] +
@@ -102,7 +102,7 @@ class HyperHelpCommand(sublime_plugin.ApplicationCommand):
             return self.show_toc(pkg_info, pkg_info.toc, [])
 
         # Show the appropriate topic
-        show_topic(pkg_info, topic or "index.txt")
+        show_topic(pkg_info.package, topic or "index.txt", update_history=True)
 
     def is_enabled(self, package=None, toc=False, topic=None, reload=False):
         # Always enable unless we're told to display the TOC and:
