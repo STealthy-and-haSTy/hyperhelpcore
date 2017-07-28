@@ -5,6 +5,7 @@ from .operations import _log as log
 from .operations import help_index_list, scan_packages, reload_package
 from .operations import help_view, focus_on, display_help, reload_help
 from .operations import show_topic, navigate_history
+from .operations import HistoryData
 
 
 ###----------------------------------------------------------------------------
@@ -124,6 +125,10 @@ class HyperHelpNavigateCommand(sublime_plugin.WindowCommand):
     Perform all help navigation (with the exception of opening a new help
     topic).
     """
+
+    nav_list = ["find_setting", "find_link", "find_target", "find_both",
+                "follow_link", "follow_history"]
+
     def run(self, nav, prev=False):
         if nav == "find_setting":
             view = self.window.active_view()
@@ -139,6 +144,42 @@ class HyperHelpNavigateCommand(sublime_plugin.WindowCommand):
             return navigate_history(prev)
 
         log("Unknown help navigation directive '%s'", nav)
+
+    def is_enabled(self, nav, prev=False):
+        view = help_view()
+        if view is None or nav not in self.nav_list:
+            return False
+
+        # TODO: This could be more clever and disable follow_link when not in
+        # a link.
+        if nav != "follow_history":
+            return self.window.active_view() == view
+
+        pos = view.settings().get("_hh_hist_pos")
+        history = view.settings().get("_hh_history")
+
+        if (prev and pos == 0) or (not prev and pos == len(history) - 1):
+            return False
+
+        return True
+
+    def description(self, nav, prev=False):
+        view = help_view()
+        if view is None or nav != "follow_history":
+            return None
+
+        pos = view.settings().get("_hh_hist_pos")
+        history = view.settings().get("_hh_history")
+
+        template = ("HyperHelp: Previous Topic" if prev else
+                    "HyperHelp: Next Topic")
+
+        if (prev and pos == 0) or (not prev and pos == len(history) - 1):
+            return template
+
+        entry = HistoryData._make(history[pos + (-1 if prev else 1)])
+
+        return "%s [%s: %s]" % (template, entry.package, entry.file)
 
     def follow_link(self):
         topic = self.extract_topic()
