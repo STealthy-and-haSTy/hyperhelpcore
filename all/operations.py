@@ -161,11 +161,11 @@ def _load_index(package, index_file):
                     toc)
 
 
-def _postprocess_help(view):
+def _postprocess_header(view):
     """
-    Perform post processing on a loaded help view to do any transformations
-    needed on the help content before control is handed back to the user to
-    interact with it.
+    Perform post processing on a loaded help view by transforming a potential
+    %hyperhelp header line into a more complete header line, including the
+    name of the file, it's title and its edit date.
     """
     help_file = view.settings().get("_hh_file")
     first_line = view.substr(view.full_line(0))
@@ -200,6 +200,20 @@ def _postprocess_help(view):
     view.set_read_only(False)
     view.run_command("insert", {"characters": header_line})
     view.set_read_only(True)
+
+
+def _postprocess_help(view):
+    """
+    Perform post processing on a loaded help view to do any transformations
+    needed on the help content before control is handed back to the user to
+    interact with it.
+    """
+    _postprocess_header(view)
+
+    # Underlink all links.
+    # TODO: Populate via a setting only?
+    view.add_regions("_hh_link", view.find_by_selector("meta.link"), "storage",
+        flags=sublime.DRAW_SOLID_UNDERLINE|sublime.DRAW_NO_FILL|sublime.DRAW_NO_OUTLINE)
 
 
 def _update_history(view, append=False, selection=None):
