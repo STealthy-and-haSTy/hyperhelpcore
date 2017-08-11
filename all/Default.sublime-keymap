@@ -5,7 +5,7 @@
         "args": { "toc": true },
         "context": [
             { "key": "selector", "operator": "equal", "operand": "text.hyperhelp" },
-            { "key": "help_author_mode", "operator": "equal", "operand": false}
+            { "key": "hyperhelp.authoring_mode", "operator": "equal", "operand": false}
         ]
     },
     {
@@ -14,7 +14,7 @@
         "context": [
             { "key": "selector", "operator": "equal", "operand": "text.hyperhelp meta.link" },
             { "key": "num_selections", "operator": "equal", "operand": 1 },
-            { "key": "help_author_mode", "operator": "equal", "operand": false}
+            { "key": "hyperhelp.authoring_mode", "operator": "equal", "operand": false}
         ]
     },
     {
@@ -23,7 +23,7 @@
         "context": [
             { "key": "selector", "operator": "equal", "operand": "text.hyperhelp meta.link" },
             { "key": "num_selections", "operator": "equal", "operand": 1 },
-            { "key": "help_author_mode", "operator": "equal", "operand": false}
+            { "key": "hyperhelp.authoring_mode", "operator": "equal", "operand": false}
         ]
     },
     {
@@ -31,7 +31,7 @@
         "command": "hyper_help_navigate", "args": {"nav": "follow_history", "prev": false},
         "context": [
             { "key": "selector", "operator": "equal", "operand": "text.hyperhelp" },
-            { "key": "help_author_mode", "operator": "equal", "operand": false}
+            { "key": "hyperhelp.authoring_mode", "operator": "equal", "operand": false}
         ]
     },
     {
@@ -39,7 +39,7 @@
         "command": "hyper_help_navigate", "args": {"nav": "follow_history", "prev": true},
         "context": [
             { "key": "selector", "operator": "equal", "operand": "text.hyperhelp" },
-            { "key": "help_author_mode", "operator": "equal", "operand": false}
+            { "key": "hyperhelp.authoring_mode", "operator": "equal", "operand": false}
         ]
     },
     {
@@ -47,7 +47,7 @@
         "command": "hyper_help_navigate", "args": {"nav": "find_setting", "prev": false},
         "context": [
             { "key": "selector", "operator": "equal", "operand": "text.hyperhelp" },
-            { "key": "help_author_mode", "operator": "equal", "operand": false}
+            { "key": "hyperhelp.authoring_mode", "operator": "equal", "operand": false}
         ]
     },
     {
@@ -55,7 +55,7 @@
         "command": "hyper_help_navigate", "args": {"nav": "find_setting", "prev": true},
         "context": [
             { "key": "selector", "operator": "equal", "operand": "text.hyperhelp" },
-            { "key": "help_author_mode", "operator": "equal", "operand": false}
+            { "key": "hyperhelp.authoring_mode", "operator": "equal", "operand": false}
         ]
     }
 ]

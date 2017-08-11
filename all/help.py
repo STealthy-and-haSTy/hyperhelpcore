@@ -249,7 +249,7 @@ class HyperHelpListener(sublime_plugin.EventListener):
         help "authoring" mode so that it is possible to edit files without
         the bindings getting in the way.
         """
-        if key != "help_author_mode":
+        if key != "hyperhelp.authoring_mode":
             return None
 
         lhs = view.is_read_only() == False
