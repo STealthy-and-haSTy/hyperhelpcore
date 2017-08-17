@@ -9,7 +9,7 @@ variables:
   code: '`[^`]*`'
   link: '(\|''?)([^|'' ]*)(''?\|)'
   link_target: '(\*)([^* ]*)(\*)'
-  separator: '\+?([=-])\1{2,}\+?|\|'
+  separator: '\+?([=-])\1{3,}\+?|\|'
   expanded_header: '^{{link_target}}\s+(.*)\s{2,}(.*)'
   author_header: '^(%)(hyperhelp)'
   header_keypair: '\b([a-z]+)(=)(")([^"]*)(")'
