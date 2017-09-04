@@ -164,15 +164,18 @@ class HyperHelpNavigateCommand(sublime_plugin.WindowCommand):
         return True
 
     def description(self, nav, prev=False):
-        view = help_view()
-        if view is None or nav != "follow_history":
-            return None
-
-        pos = view.settings().get("_hh_hist_pos")
-        history = view.settings().get("_hh_history")
+        if nav != "follow_history":
+            return ""
 
         template = ("HyperHelp: Previous Topic" if prev else
                     "HyperHelp: Next Topic")
+
+        view = help_view()
+        if view is None:
+            return template
+
+        pos = view.settings().get("_hh_hist_pos")
+        history = view.settings().get("_hh_history")
 
         if (prev and pos == 0) or (not prev and pos == len(history) - 1):
             return template
@@ -267,6 +270,7 @@ class HyperHelpListener(sublime_plugin.EventListener):
         When hovering over a help link with the mouse, show the user the link
         caption and where it links.
         """
+        return None
         if hover_zone != sublime.HOVER_TEXT:
             return
 
