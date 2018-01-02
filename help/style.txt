@@ -1,0 +1,19 @@
+%hyperhelp title="HyperHelp Style Conventions" date="2017-12-30"
+
+*|Style	Conventions|*
+=================
+
+In order to remain as consistent as possible for all users of help,  HyperHelp
+imposes some limitations on the layout of help in the |help	view| in the form
+of custom settings applied that override user settings.
+
+				* `word_wrap` is disabled, so all help should optimally be presentable in
+				  no more than 80 characters of text. This matches the width of the
+				  generated |file	header| in the displayed help.
+
+				* `tab_size` is set to `1`. This is to ensure that help does not display
+				  indent widths that are not what the author intended.
+
+				* `convert_tabs_to_spaces` is disabled so that raw tab characters can be
+				  inserted into the buffer. These are used to provide white space inside
+				  of |anchors| and |links|, as well as to define |separators|.

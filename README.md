@@ -14,12 +14,11 @@ is write the help itself.
 
 **NOTE:** This is very much still a work in progress and still being actively
 developed and tweaked. At this point anything and everything is subject to
-change without notice. Ironically, as a system purpose built to provide help,
-during development what documentation there is may be potentially out of date
-as things change.
+change without notice.
 
 -------------------------------------------------------------------------------
 
+<!--
 
 ## Installation ##
 
@@ -160,6 +159,7 @@ navigation.
 
 -------------------------------------------------------------------------------
 
+-->
 
 ## License ##
 

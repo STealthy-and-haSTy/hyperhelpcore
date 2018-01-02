@@ -1,5 +1,0 @@
-[
-    { "caption": "HyperHelp: Packages with Help", "command": "hyper_help", "args": {} },
-    { "caption": "HyperHelp: Help on Help", "command": "hyper_help", "args": {"package": "hyperhelp", "topic": "index.txt"} },
-    { "caption": "HyperHelp: View Table of Contents", "command": "hyper_help", "args": {"toc": true} },
-]

@@ -1,0 +1,134 @@
+%hyperhelp title="HyperHelp Help Syntax" date="2017-12-30"
+
+Help files in HyperHelp are plain text files with an extension of `.txt` that
+support a minimal |markup| language to provide emphasis and navigation hints to
+the help system.
+
+
+*|File	Header|*
+===========
+
+Every HyperHelp help file should start with a header structured as follows:
+
+    `%hyperhelp title="Help File Title" date="YYYY-MM-DD"`
+
+
+When the help file is loaded into the |help	view|, the header will be parsed
+and converted into a standard header line in the buffer. The title of the file
+is always centered within the 80 column width of the help view, and the date
+is displayed in a user-selectable format via the |hyperhelp_date_format|
+setting.
+
+The file header is not mandatory, but it is highly recommended that your help
+files contain one. This helps to ensure that all help displayed to the user is
+in a consistent format and ensures that every help file can be easily opened
+by name (since the expanded header contains the file name as an |anchor|).
+
+
+*|Markup|*
+======
+
+Although HyperHelp is primarily plain text, there is a small markup language
+provided to add navigation information and visual emphasis where needed.
+
+Bu design, all markup is simple, contextual and non-ambiguous due to how
+Sublime Text syntax highlighting is performed.
+
+
+    *|Key	Bindings|*
+    ------------
+
+				Simple key bindings are supported, which are highlighted in the view to
+				call attention to them. Key bindings are denoted by placing the binding
+				inside of `<` and `>` characters, such as:
+
+        <Shift+Page	Up>
+        <Command+P>
+        <Alt+Shift+>>
+
+    Key bindings can not contain space characters, but `Tab` characters are
+    allowed.
+
+
+    *|Code	Blocks|*
+    -----------
+
+    Simple code blocks such as those in markdown are implemented as a way to
+    help you draw some simple contextual highlighting around key terms and
+    elements.
+
+				`Code Blocks` are wrapped in back ticks and may contain whitespace, but
+				must always start and end on the same line in order to be considered valid
+				and cannot contain back ticks.
+
+				```
+				Code blocks are also allowed by providing `code fences` that wrap the
+				text.
+				```
+
+
+    *Anchors*
+    ---------
+
+    Anchors represent points of interest in help documents. HyperHelp natively
+    allows you to jump through all of the anchors in the current help document
+    via the <Tab> and <Shift+Tab> key bindings.
+
+    Pressing <Enter> while the cursor is in a |link| will jump the cursor to
+    the matching anchor point, even if it is in a different help document. This
+    action is also available by a <Double	Left	Clicking> on a link.
+
+    Anchors are defined by wrapping text in asterisks, such as the heading of
+    this section of the documentation. Such anchors remain visible in the
+    document to provide visual clues that it is a point of interest.
+
+    Spaces are not allowed inside of anchor text, although `Tab` characters are
+    allowed. Note that only interior tabs are supported; an anchor with a
+    leading or trailing tab is not allowed.
+
+    Alternatively you may also use other conventions as you see fit, such as
+    *snake_case* or *periods.as.spaces* (or some other method that does not
+    include whitespace).
+
+    To allow for points of interest in documents that are not visually
+    distinguishable from regular text, you can wrap the text of the anchor in
+    pipe characters, such as `*|this sample|*`. Such anchors are treated the
+    same as other anchors, but are invisible in the buffer.
+
+    This variety of hidden anchor is generally employed as section headers in
+    documentation.
+
+
+    *|Links|*
+    -----
+
+    Links are defined by wrapping the link text in pipe characters. The text in
+    a link must match an |anchor| or one of its |aliases| and must appear in
+    the |help	index|.
+
+    Links follow the same rules as |anchors| do in that white space is not
+    allowed in link text but tabs are (except leading and trailing tabs).
+
+
+    *|Separators|*
+    ----------
+
+    Separators allow you to draw lines and boxes in help, such as to underline
+    section headings (as is done in this help).
+
+    Vertical separators consist of a `|` character that is preceded or
+    succeeded with a tab character. This distinguishes them from the characters
+    used to define links, which are not allowed to have leading or trailing tab
+    characters.
+
+    Horizontal separators consist of four or more consecutive `=` or `-`
+    characters. Additionally the sequence can begin with an `+` character and
+    end with a `+` or `|` character.
+
+    This allows you to do things like underline section headers, draw boxes or
+    create tables.
+
+
+        +------------|----------+
+        |	Sample Box	| Column 2	|
+        +============+==========+

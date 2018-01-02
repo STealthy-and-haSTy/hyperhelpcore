@@ -1,0 +1,122 @@
+%hyperhelp title="HyperHelp Commands" date="2017-12-31"
+
+*|Command	Overview|*
+================
+
+HyperHelp provides several commands that allow you to interact with the help
+system with your own custom key bindings, menu entries or plugin code. These
+commands expose all of the functionality that the core of HyperHelp provides.
+
+
+*|hyperhelp_topic|*
+---------------
+
+Arguments: `package` <default:	package	of	currently	displayed	help>
+           `topic`   <default:	"index.txt">
+
+This command will display the help topic in the given package in the help view.
+
+If there is already a |help	view| present, you can omit the `package` field to
+navigate within the current package.
+
+When no topic is provided, it is assumed to be `"index.txt"`, which navigates
+to the root help file for the given package.
+
+This command is always available, but will display an error in the status line
+if it cannot display the given help topic for any reason.
+
+
+*|hyperhelp_contents|*
+------------------
+
+Arguments: `package` <default:	package	of	currently	displayed	help>
+           `prompt`  <default:	false>
+
+This command will display the |table	of	contents| for the help package given.
+If no package is provided, but there is currently a |help	view| visible, the
+table of contents for the visible package is displayed.
+
+When `prompt` is `true` or no `package` was given and one cannot be inferred
+from an existing help view, you will be prompted to select the help package
+whose table of contents you wish to view.
+
+This command is unavailable if no `package` is provided, there is no current
+help view, and `prompt` is set to `False`. This allows key bindings and menu
+entries to not be available if there is no help view available to provide a
+package.
+
+In order to ensure that this command is always enabled, ensure that you pass
+a value of `true` to the `prompt` argument.
+
+
+*|hyperhelp_index|*
+---------------
+
+Arguments: `package` <default:	package	of	currently	displayed	help>
+           `prompt`  <default:	false>
+
+This command will display the |topic| index for the help package given. If no
+package is provided, but there is currently a |help	view| visible, the index
+for the visible package is displayed.
+
+When `prompt` is `true` or no `package` was given and one cannot be inferred
+from an existing help view, you will be prompted to select the help package
+whose table of contents you wish to view.
+
+The index is a list of every known topic in every known help file within the
+given package, which allows you to quickly find and select a topic without
+knowing where it's located.
+
+This command is unavailable if no `package` is provided, there is no current
+help view, and `prompt` is set to `False`. This allows key bindings and menu
+entries to not be available if there is no help view available to provide a
+package.
+
+In order to ensure that this command is always enabled, ensure that you pass
+a value of `true` to the `prompt` argument.
+
+
+*|hyperhelp_navigate|*
+------------------
+
+Arguments: `nav` 	<default:	None>
+               Possible values of this argument are:
+                   `find_anchor`
+                   `follow_link`
+                   `follow_history`
+           `prev` <default:	false>
+
+This command is the core of navigating within help files in HyperHelp. The
+following types of navigation are available, based on the value of the `nav`
+command line argument:
+
+    `find_anchor` will shift the cursor to the next or previous |anchor| within
+    the current help view, wrapping around the ends of the file if needed.
+
+    `follow_link` will navigate to the topic represented by the link that is
+    currently under the first cursor in the |help	view|, if there is one. If
+    the cursor is not currently on a link, this does nothing.
+
+    `follow_history` navigates through |history| for this help view, changing
+    the displayed topic to one of the previously displayed help topics.
+
+This command is only available when there is a help view visible in the current
+window and the value of the `nav` argument is one of the valid values.
+
+Further, the command is also disabled if the `nav` command is `follow_history`
+and the help view that is currently visible in the window does not have any
+history in the indicated direction.
+
+
+*|hyperhelp_current_help|*
+----------------------
+
+Arguments: `help_fmt` 			<default:	"Viewing	help	for:	'%s'">
+           `no_help_fmt` <default:	"No	help	currently	visible">
+
+This command does nothing and is always disabled. If used as a command in a
+menu item, the caption will tell you the name of the package that help is
+currently being displayed for, if any.
+
+The provided arguments provide the text to use in either case, allowing you to
+customize the text used if desired.

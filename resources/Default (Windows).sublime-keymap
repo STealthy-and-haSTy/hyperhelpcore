@@ -1,0 +1,83 @@
+[
+    // View the table of contents for the current help package.
+    {
+        "keys": ["?"], "command": "hyperhelp_contents",
+        "context": [
+            { "key": "selector", "operator": "equal", "operand": "text.hyperhelp.help" },
+            { "key": "hyperhelp.is_authoring", "operator": "equal", "operand": false }
+        ]
+    },
+
+    // Navigate forward and backward through anchors in the current help file.
+    {
+        "keys": ["tab"], "command": "hyperhelp_navigate", "args": {
+            "nav": "find_anchor",
+            "prev": false,
+        },
+        "context": [
+            { "key": "selector", "operator": "equal", "operand": "text.hyperhelp.help" },
+            { "key": "hyperhelp.is_authoring", "operator": "equal", "operand": false }
+        ],
+    },
+    {
+        "keys": ["shift+tab"], "command": "hyperhelp_navigate", "args": {
+            "nav": "find_anchor",
+            "prev": true,
+        },
+        "context": [
+            { "key": "selector", "operator": "equal", "operand": "text.hyperhelp.help" },
+            { "key": "hyperhelp.is_authoring", "operator": "equal", "operand": false }
+        ],
+    },
+
+    // Follow links in the current help file.
+    {
+        "keys": ["enter"], "command": "hyperhelp_navigate", "args": {
+            "nav": "follow_link"
+        },
+        "context": [
+            { "key": "selector", "operator": "equal", "operand": "text.hyperhelp.help meta.link" },
+            { "key": "hyperhelp.is_authoring", "operator": "equal", "operand": false }
+        ]
+    },
+    {
+        "keys": ["keypad_enter"], "command": "hyperhelp_navigate", "args": {
+            "nav": "follow_link"
+        },
+        "context": [
+            { "key": "selector", "operator": "equal", "operand": "text.hyperhelp.help meta.link" },
+            { "key": "hyperhelp.is_authoring", "operator": "equal", "operand": false }
+        ]
+    },
+
+    // Navigate through the topic history
+    {
+        "keys": ["alt+left"], "command": "hyperhelp_navigate", "args": {
+            "nav": "follow_history",
+            "prev": true,
+        },
+        "context": [
+            { "key": "selector", "operator": "equal", "operand": "text.hyperhelp.help" },
+            { "key": "hyperhelp.is_authoring", "operator": "equal", "operand": false }
+        ]
+    },
+    {
+        "keys": ["alt+right"], "command": "hyperhelp_navigate", "args": {
+            "nav": "follow_history",
+            "prev": false,
+        },
+        "context": [
+            { "key": "selector", "operator": "equal", "operand": "text.hyperhelp.help" },
+            { "key": "hyperhelp.is_authoring", "operator": "equal", "operand": false }
+        ]
+    },
+
+    // Open the command palette with all help commands displayed.
+    {
+        "keys": ["ctrl+alt+h"], "command": "show_overlay",
+        "args": {
+            "overlay": "command_palette",
+            "text" : "HyperHelp: "
+        }
+    }
+]

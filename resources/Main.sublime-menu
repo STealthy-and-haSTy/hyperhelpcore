@@ -1,0 +1,90 @@
+[
+    {
+        "caption": "Preferences",
+        "mnemonic": "n",
+        "id": "preferences",
+        "children":
+        [
+            {
+                "caption": "Package Settings",
+                "mnemonic": "P",
+                "id": "package-settings",
+                "children":
+                [
+                    {
+                        "caption": "hyperhelp",
+                        "children":
+                        [
+                            {
+                                "caption": "Key Bindings",
+                                "command": "edit_settings",
+                                "args": {
+                                    "base_file": "${packages}/hyperhelp/resources/Default ($platform).sublime-keymap",
+                                    "default": "[\n\t$0\n]\n"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+
+   {
+        "id": "help",
+        "children":
+        [
+            {
+                "id": "hyperhelp",
+                "caption": "HyperHelp",
+                "mnemonic": "y",
+                "children": [
+                    {
+                        "caption": "Help on help",
+                        "command": "hyperhelp_topic",
+                        "args": {
+                            "package": "hyperhelp",
+                            "topic": "index.txt"
+                        }
+                    },
+                    {
+                        "caption": "Browse Available Help…",
+                        "command": "hyperhelp_contents",
+                        "args": { "prompt": true }
+                    },
+
+                    { "caption": "-" },
+
+                    { "command": "hyperhelp_current_help" },
+
+                    { "caption": "-" },
+
+
+                    {
+                        "caption": "Table of Contents",
+                        "command": "hyperhelp_contents",
+                    },
+                    {
+                        "caption": "Help Index",
+                        "command": "hyperhelp_index",
+                    },
+
+                    {
+                        "command": "hyperhelp_navigate",
+                        "args": {
+                            "nav": "follow_history",
+                            "prev": true
+                        }
+                    },
+                    {
+                        "command": "hyperhelp_navigate",
+                        "args": {
+                            "nav": "follow_history",
+                            "prev": false
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+]

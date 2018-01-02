@@ -1,0 +1,29 @@
+%hyperhelp title="Integrating HyperHelp" date="2017-12-30"
+
+*|Integration|*
+===========
+
+One of the core design goals of HyperHelp is to be as easy as possible to
+integrate with any package in order to promote a simple, easily accessible and
+useful help system that provided consistency for users.
+
+In the future, HyperHelp will be a dependency package that your package can
+depend on. This requires a simple change to the entry for your package in the
+Package Control Channel in order to ensure that Package Control installs
+HyperHelp if it is not already installed.
+
+There will also be a small amount of boiler plate bootstrap code to include
+somewhere in your package in order to ensure that everything is set up as it
+should be.
+
+For the time being, HyperHelp is still in active development, and so it is
+still being developed as a regular package in order to facilitate development.
+
+This file will be modified to include the full integration instructions when
+development has proceeded far enough to warrant it.
+
+In the meantime, HyperHelp remains a user facing package. You can still use it
+to create help for your package; while it remains a regular package it is
+always available with no bootstrapping required.
+
+For more information on writing help text in HyperHelp, see |authoring.txt|.
