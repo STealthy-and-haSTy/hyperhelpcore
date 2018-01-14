@@ -8,6 +8,15 @@
         ]
     },
 
+    // View the topic index for the current help package
+    {
+        "keys": ["i"], "command": "hyperhelp_index",
+        "context": [
+            { "key": "selector", "operator": "equal", "operand": "text.hyperhelp.help" },
+            { "key": "hyperhelp.is_authoring", "operator": "equal", "operand": false }
+        ]
+    },
+
     // Navigate forward and backward through anchors in the current help file.
     {
         "keys": ["tab"], "command": "hyperhelp_navigate", "args": {
