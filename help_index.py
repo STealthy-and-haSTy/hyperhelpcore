@@ -56,10 +56,10 @@ def _import_topics(package, topics, aliases, help_topic_dict, caption_tpl,
             if caption is None:
                 caption = default_caption or _make_caption(name, help_source)
 
-            # Turn spaces in the topic name into tabs so they match what's in
-            # the buffer at run time. Saves forcing tabs in the index file.
+            # Convert all spaces into nonbreaking spaces so they match what's
+            # in the buffer at runtime. Saves forcing them into the index file.
             # TODO: This could be a lot cleaner
-            name = name.replace(" ", "\t").casefold()
+            name = name.replace(" ", "\u00a0").casefold()
             if name in topics:
                 log("Skipping duplicate topic '%s' in %s:%s",
                     name, package, help_source)
@@ -73,7 +73,7 @@ def _import_topics(package, topics, aliases, help_topic_dict, caption_tpl,
                     "file": help_source
                 }
 
-            for new_name in [name.replace(" ", "\t") for name in alias_list]:
+            for new_name in [name.replace(" ", "\u00a0") for name in alias_list]:
                 if new_name in topics:
                     log("Alias '%s' is already a topic in %s:%s",
                         new_name, package, help_source)
@@ -146,12 +146,12 @@ def _get_toc_metadata(help_toc_list, topics, aliases, package):
         if isinstance(entry, str):
             # A string looks up a topic directly; this goes through the alias
             # list if it has to.
-            topic = entry.replace(" ", "\t")
+            topic = entry.replace(" ", "\u00a0")
             topic = aliases.get(topic, topic)
             return topic, topics.get(topic, None)
 
         # Use the caption for the topic being referenced if not overridden.
-        topic = entry["topic"].replace(" ", "\t").casefold()
+        topic = entry["topic"].replace(" ", "\u00a0").casefold()
         alias = aliases.get(topic, None)
         base_obj = topics.get(alias or topic, None)
         if base_obj is None:

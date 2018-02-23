@@ -56,7 +56,7 @@ class HyperhelpContentsCommand(sublime_plugin.ApplicationCommand):
         return True
 
     def show_toc(self, pkg_info, items, stack):
-        captions = [[item["caption"], item["topic"].replace("\t", " ") +
+        captions = [[item["caption"], item["topic"] +
             (" ({} topics)".format(len(item["children"])) if "children" in item else "")]
             for item in items]
 
@@ -112,7 +112,7 @@ class HyperhelpIndexCommand(sublime_plugin.ApplicationCommand):
         topics = [pkg_info.help_topics.get(topic)
                   for topic in sorted(pkg_info.help_topics.keys())]
 
-        items = [[t["caption"], t["topic"].replace("\t", " ")]
+        items = [[t["caption"], t["topic"]]
                  for t in topics]
 
         if not items:
