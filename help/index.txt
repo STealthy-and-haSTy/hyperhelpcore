@@ -1,6 +1,6 @@
-%hyperhelp title="HyperHelp: What is it?" date="2017-12-30"
+%hyperhelp title="HyperHelp: What is it?" date="2018-02-22"
 
-*|What	is	HyperHelp|*
+*|What is HyperHelp|*
 =================
 
 HyperHelp is a package that provides a simple text based help system to Sublime
@@ -14,7 +14,7 @@ based documentation by allowing you to navigate easily from help file to help
 file and topic to topic.
 
 
-*|How	it	works|*
+*|How it works|*
 ============
 
 Help files in HyperHelp are plain text with a small amount of |markup| allowed

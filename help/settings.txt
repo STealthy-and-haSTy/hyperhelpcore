@@ -1,8 +1,8 @@
-%hyperhelp title="HyperHelp Settings" date="2017-12-31"
+%hyperhelp title="HyperHelp Settings" date="2018-02-22"
 
 There are a small handful of settings that you can use to alter how HyperHelp
 works to customize it to your needs better. As HyperHelp is a dependency
-package, the settings should go in |your	user	preferences| file.
+package, the settings should go in |your user preferences| file.
 
 
 *|hyperhelp_date_format|*
@@ -15,8 +15,8 @@ the next help file is loaded.
 The default value for this is setting is `%x`, which sets a date format that's
 appropriate for the area of the world in which you live.
 
-You can use any of the format specifiers given in the |Python	3.3	docs| on the
-|strftime()	and	strptime()	behavior| page.
+You can use any of the format specifiers given in the |Python 3.3 docs| on the
+|strftime() and strptime() behavior| page.
 
 Note however that no time stamps are stored for file times, only dates. As such
 you should avoid any fields that tell you the time of the day.

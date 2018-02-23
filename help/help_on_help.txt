@@ -1,4 +1,4 @@
-%hyperhelp title="How to use HyperHelp" date="2017-12-31"
+%hyperhelp title="How to use HyperHelp" date="2018-02-22"
 
 *|Introduction|*
 ============
@@ -14,7 +14,7 @@ allows you to create your own custom set of user specific documentation for
 reference materials you often refer to, all without having to leave Sublime.
 
 
-*|Navigating	Help|*
+*|Navigating Help|*
 ===============
 
 This tab contains a HyperHelp |help view| for displaying help text. Along with
@@ -31,7 +31,7 @@ around within help files. Additionally, the following additional key bindings
 are also available:
 
     <?>
-        Open the |table	of	contents| for the package currently being displayed
+        Open the |table of contents| for the package currently being displayed
         so you can navigate the logical structure of the help provided.
 
     <Tab>/<Shift+Tab>
@@ -39,15 +39,15 @@ are also available:
         help file. This allows you to skip between points  of interest within
         a help file.
 
-    <Enter>/<Double	Click>
+    <Enter>/<Double Click>
         Follow a |link| to an |anchor| in this or some other help file.
 
     <Alt+Left>/<Alt+Right>
         Navigate forward and backward through the |history| of topics that have
-        been visited in this |help	view|.
+        been visited in this |help view|.
 
 
-*|Help	View|*
+*|Help View|*
 =========
 
 Each Sublime window has it's own `help view` with a |history| independent of
@@ -62,7 +62,7 @@ more relevant help.
 *|History|*
 =======
 
-Each |help	view| records a history of the topics that it has displayed since it
+Each |help view| records a history of the topics that it has displayed since it
 was created. This works similarly to how history works in your web browser:
 
     * Opening a new help file adds that file to the end of the history.
@@ -75,11 +75,11 @@ It is important to note that if you move backwards through history to a
 previous topic and then navigate to a new help file, the previous history after
 the current topic is replaced with the new topic you visited.
 
-See the section on |navigating	help| for information on how to move through
+See the section on |navigating help| for information on how to move through
 history in the help view.
 
 
-*|Opening	Help|*
+*|Opening Help|*
 ============
 
 Opening the initial help view in a window can be accomplished by:
@@ -98,13 +98,13 @@ Opening the initial help view in a window can be accomplished by:
     and the package in question.
 
 
-*|Next	Steps|*
+*|Next Steps|*
 ==========
 
 Now that you know a little bit more about HyperHelp, feel free to explore
 the help system a little bit and see what you can do.
 
-To begin, use the <?> key to open the |table	of	contents| for this help and
+To begin, use the <?> key to open the |table of contents| for this help and
 explore around to get more information on how things work.
 
 If you're a package author you may want to check out |integration.txt| to see

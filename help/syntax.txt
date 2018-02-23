@@ -1,11 +1,11 @@
-%hyperhelp title="HyperHelp Help Syntax" date="2017-12-30"
+%hyperhelp title="HyperHelp Help Syntax" date="2018-02-22"
 
 Help files in HyperHelp are plain text files with an extension of `.txt` that
 support a minimal |markup| language to provide emphasis and navigation hints to
 the help system.
 
 
-*|File	Header|*
+*|File Header|*
 ===========
 
 Every HyperHelp help file should start with a header structured as follows:
@@ -13,7 +13,7 @@ Every HyperHelp help file should start with a header structured as follows:
     `%hyperhelp title="Help File Title" date="YYYY-MM-DD"`
 
 
-When the help file is loaded into the |help	view|, the header will be parsed
+When the help file is loaded into the |help view|, the header will be parsed
 and converted into a standard header line in the buffer. The title of the file
 is always centered within the 80 column width of the help view, and the date
 is displayed in a user-selectable format via the |hyperhelp_date_format|
@@ -35,14 +35,14 @@ Bu design, all markup is simple, contextual and non-ambiguous due to how
 Sublime Text syntax highlighting is performed.
 
 
-    *|Key	Bindings|*
+    *|Key Bindings|*
     ------------
 
-				Simple key bindings are supported, which are highlighted in the view to
-				call attention to them. Key bindings are denoted by placing the binding
-				inside of `<` and `>` characters, such as:
+    Simple key bindings are supported, which are highlighted in the view to
+    call attention to them. Key bindings are denoted by placing the binding
+    inside of `<` and `>` characters, such as:
 
-        <Shift+Page	Up>
+        <Shift+Page Up>
         <Command+P>
         <Alt+Shift+>>
 
@@ -50,21 +50,21 @@ Sublime Text syntax highlighting is performed.
     allowed.
 
 
-    *|Code	Blocks|*
+    *|Code Blocks|*
     -----------
 
     Simple code blocks such as those in markdown are implemented as a way to
     help you draw some simple contextual highlighting around key terms and
     elements.
 
-				`Code Blocks` are wrapped in back ticks and may contain whitespace, but
-				must always start and end on the same line in order to be considered valid
-				and cannot contain back ticks.
+    `Code Blocks` are wrapped in back ticks and may contain whitespace, but
+    must always start and end on the same line in order to be considered valid
+    and cannot contain back ticks.
 
-				```
-				Code blocks are also allowed by providing `code fences` that wrap the
-				text.
-				```
+    ```
+    Code blocks are also allowed by providing `code fences` that wrap the
+    text.
+    ```
 
 
     *Anchors*
@@ -76,7 +76,7 @@ Sublime Text syntax highlighting is performed.
 
     Pressing <Enter> while the cursor is in a |link| will jump the cursor to
     the matching anchor point, even if it is in a different help document. This
-    action is also available by a <Double	Left	Clicking> on a link.
+    action is also available by a <Double Left Clicking> on a link.
 
     Anchors are defined by wrapping text in asterisks, such as the heading of
     this section of the documentation. Such anchors remain visible in the
@@ -104,7 +104,7 @@ Sublime Text syntax highlighting is performed.
 
     Links are defined by wrapping the link text in pipe characters. The text in
     a link must match an |anchor| or one of its |aliases| and must appear in
-    the |help	index|.
+    the |help index|.
 
     Links follow the same rules as |anchors| do in that white space is not
     allowed in link text but tabs are (except leading and trailing tabs).
@@ -130,5 +130,5 @@ Sublime Text syntax highlighting is performed.
 
 
         +------------|----------+
-        |	Sample Box	| Column 2	|
+        | Sample Box | Column 2 |
         +============+==========+

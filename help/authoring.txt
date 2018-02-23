@@ -1,10 +1,10 @@
-%hyperhelp title="Authoring Help" date="2017-12-30"
+%hyperhelp title="Authoring Help" date="2018-02-22"
 
-*|Authoring	Overview|*
+*|Authoring Overview|*
 ==================
 
 In order to provide help for a package, there are two key types of files that
-need to be provided, a |help	index| and a |help	source|.  Each package that
+need to be provided, a |help index| and a |help source|.  Each package that
 provides help must contain an index, which tells HyperHelp about the help that
 is available in that package. Additionally, one or more help files need to be
 provided in order to provide the actual help content.
@@ -14,14 +14,14 @@ structures |JSON| file and the source files being plain text along with some
 simple |markup|.
 
 
-*|Help	Index|*
+*|Help Index|*
 ----------
 
 This section would talk about the structure of the help index and the required
 keys. It should link to a file with more complete information and an example.
 
 
-*|Table	of	Contents|*
+*|Table of Contents|*
 -----------------
 
 This section would talk about the table of contents sections of the help index
@@ -29,7 +29,7 @@ to tell you what it's for. It should also be a separate file with more complete
 information.
 
 
-*|Help	Source|*
+*|Help Source|*
 -----------
 
 This section would talk about help files. I think it's enough to discuss them
