@@ -3,20 +3,17 @@
     // wrap.
     "wrap_width": 80,
     "word_wrap": false,
-    "rulers": [],
 
-    // Remove visual clutter from the help view
+    // Remove visual clutter from the help view; authoring tools can apply
+    // settings as required to edited views, or you can override these options
+    // if desired in your own settings.
     "fade_fold_buttons": true,
     "match_selection": false,
     "draw_indent_guides": false,
+    "rulers": [],
 
-    // All help files use a tab width of a single character and disable the
-    // translation of tabs to spaces so that tabs can be used as virtual white
-    // space.
-    //
-    // WARNING: You should not alter these settings in your own user settings
-    // or you may break help files.
+    // All help files should contain no physical tabs since there will never be
+    // any concensus on how wide they should be.
     "detect_indentation": false,
-    "tab_size": 1,
-    "translate_tabs_to_spaces": false
+    "translate_tabs_to_spaces": true
 }
