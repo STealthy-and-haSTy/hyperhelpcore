@@ -5,13 +5,13 @@ scope: text.hyperhelp.help
 first_line_match: '^%hyperhelp'
 hidden: true
 variables:
-  key_binding: '<[^> ]*>\t?>?'
+  key_binding: '<[^> ]*>[^> ]?>?'
   code_markup: '`[^`]*`'
   block_markup: '^\s*```\s*$'
-  hyperlink: '(\|)([^|\t\* ][^|\* ]*)(\|)'
-  anchor: '(\*)([^*\|\t ][^*\| ]*)(\*)'
-  hidden_anchor: '(\*\|)([^\*\|\t ][^*\| ]*)(\|\*)'
-  separator: '(?:\+?([=-])\1{3,}(\+|\|)?)|(?:\|\t)|(?:\t\|)'
+  hyperlink: '(\|)([^|\* \x{00a0}][^|\* ]*)(\|)'
+  anchor: '(\*)([^*\| \x{00a0}][^*\| ]*)(\*)'
+  hidden_anchor: '(\*\|)([^\*\|\t \x{00a0}][^*\| ]*)(\|\*)'
+  separator: '(?:\+?([=-])\1{3,}(\+|\|)?)|(?:\|\x{00a0})|(?:\x{00a0}\|)'
   author_header: '^(%)(hyperhelp)'
   header_keypair: '\b([a-z]+)(=)(")([^"]*)(")'
   expanded_header: '^{{anchor}}\s+(.*)\s{2,}(.*)'
