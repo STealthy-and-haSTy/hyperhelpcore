@@ -109,6 +109,7 @@ _externals_schema = {
 _index_schema = {
     "type": "object",
     "properties": {
+        "package":         { "type": "string", "required": True },
         "description":     { "type": "string", "required": False },
         "doc_root":        { "type": "string", "required": False },
         "default_caption": { "type": "string", "required": False },
@@ -124,7 +125,7 @@ _index_schema = {
 ###----------------------------------------------------------------------------
 
 
-def validate_index(content, package):
+def validate_index(content, index_res):
     """
     Given a raw JSON string that represents a help index for a package, perform
     validation on it to ensure that it's valid JSON and also that it conforms
@@ -133,10 +134,10 @@ def validate_index(content, package):
     Return a decoded dict object on success or None on failure.
     """
     def validate_fail(message, *args):
-        log("Error validating index for '%s': %s", package, message % args)
+        log("Error validating index in '%s': %s", index_res, message % args)
 
     try:
-        log("Loading help index for package '%s'", package)
+        log("Loading help index from '%s'", index_res)
         raw_dict = sublime.decode_value(content)
     except:
         return validate_fail("Invalid JSON detected; unable to decode")
