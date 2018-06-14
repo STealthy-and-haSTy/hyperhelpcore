@@ -195,17 +195,19 @@ def _load_help_index(index_res):
     if not index_res.casefold().startswith("packages/"):
         return log("Index source is not in a package: %s", index_res)
 
-    package = path.split(index_res)[0].split("/")[1]
     content = load_resource(index_res)
 
     if content is None:
-        return log("Unable to load index information for '%s'", package)
+        return log("Unable to load index information from '%s'", index_res)
 
-    raw_dict = validate_index(content, package)
+    raw_dict = validate_index(content, index_res)
     if raw_dict is None:
         return None
 
+    containing_pkg = path.split(index_res)[0].split("/")[1]
+
     # Top level index keys
+    package = raw_dict.pop("package", None)
     description = raw_dict.pop("description", "Help for %s" % package)
     doc_root = raw_dict.pop("doc_root", None)
     help_files = raw_dict.pop("help_files", dict())
@@ -223,7 +225,7 @@ def _load_help_index(index_res):
     if not doc_root:
         doc_root = path.split(index_res[len("Packages/"):])[0]
     else:
-        doc_root = path.normpath("%s/%s" % (package, doc_root))
+        doc_root = path.normpath("%s/%s" % (containing_pkg, doc_root))
 
     # Gather the unique list of topics.
     topic_list = dict()
@@ -244,6 +246,53 @@ def _load_help_index(index_res):
         _get_toc_metadata(help_toc, topic_list, alias_list, package))
 
 
+def _is_canonical_pkg_idx(pkg_idx):
+    """
+    Given a loaded package index, return a determination as to whether it is
+    the canonical help for that package or not, which is determined by it being
+    present in its own package.
+    """
+    containing_pkg = path.split(pkg_idx.index_file)[0].split("/")[1]
+    return containing_pkg == pkg_idx.package
+
+
+def _resolve_index_conflict(existing_idx, new_idx):
+    """
+    Takes two loaded index files that are for the same package and selects one
+    to use, which is returned back. The one selected is determined based on the
+    load order of the indexes and user settings.
+
+    The return may be None to indicate that neither package should be used.
+    """
+    existing_canon = _is_canonical_pkg_idx(existing_idx)
+    new_canon = _is_canonical_pkg_idx(new_idx)
+
+    log("Warning: Multiple indexes found for package '%s'", new_idx.package)
+    log("    %s", existing_idx.index_file)
+    log("    %s", new_idx.index_file)
+
+    # When only one of the two packages is canonical, that is the one to use.
+    if existing_canon != new_canon:
+        if existing_canon:
+            log("Warning: Ignoring non-canonical index (%s)", new_idx.index_file)
+            return existing_idx
+
+        log("Warning: Using canonical index (%s)", new_idx.index_file)
+        return new_idx
+
+    # The canon of both indexes is identical. If neither is canon, always use
+    # the most recently loaded one (in package load order), just as result
+    # Sublime resources would.
+    if existing_canon == False:
+        log("Warning: Selecting new index (%s)", new_idx.index_file)
+        return new_idx
+
+    # Both are canon, which is not good. This is an error, and we will return
+    # None to signal that.
+    log("Error: Multiple indexes for '%s' are canonical", new_idx.package)
+    return None
+
+
 def _scan_help_packages(help_list=None):
     """
     Scan for packages with a help index and load them. If a help list is
@@ -251,12 +300,38 @@ def _scan_help_packages(help_list=None):
     loaded.
     """
     help_list = dict() if help_list is None else help_list
-    for index_file in sublime.find_resources("hyperhelp.json"):
-        pkg_name = path.split(index_file)[0].split("/")[1]
-        if pkg_name not in help_list:
-            result = _load_help_index(index_file)
-            if result is not None:
-                help_list[result.package] = result
+
+    # Find all of the index file resources and the list of those that are
+    # currently loaded in the provided help list (if any).
+    indexes = sublime.find_resources("hyperhelp.json")
+    loaded = [help_list[pkg].index_file for pkg in help_list.keys()]
+
+    # The list of packages that are considered broken because they have at
+    # least two canonical help indexes dedicated to them.
+    broken = []
+
+    # Load all of the indexes that aren't already loaded.
+    for index_file in [idx for idx in indexes if idx not in loaded]:
+        new_idx = _load_help_index(index_file)
+        if new_idx is not None:
+            # If this package index is broken, ignore it completely
+            if new_idx.package in broken:
+                log("Error: Ignoring index for '%s' (%s)", new_idx.package,
+                    new_idx.index_file)
+                continue
+
+            # If an index already exists for this package, we need to determine
+            # which one to use.
+            existing_idx = help_list.get(new_idx.package, None)
+            if existing_idx is not None:
+                # Returns None if both are canonical index files.
+                new_idx = _resolve_index_conflict(existing_idx, new_idx)
+                if new_idx is None:
+                    del help_list[existing_idx.package]
+                    broken.append(existing_idx.package)
+                    continue
+
+            help_list[new_idx.package] = new_idx
 
     return help_list
 

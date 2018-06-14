@@ -1,11 +1,17 @@
 {
+    // Required: The name of the package that this help is for.
+    //
+    // This is used to associate this help index with a particular package.
+    // Only one index can be in use for a package at once.
+    "package": "HyperHelp",
+
     // Optional; A descriptive string that describes what this help is for.
     //
     // If not given, a default will be used instead.
     "description": "HyperHelp System Documentation",
 
-    // Optional; The path inside the package containing this index where the
-    // help files are stored.
+    // Optional; A relative path inside the package containing this index where
+    // the help files referenced in this index are stored.
     //
     // If not given, the package location of the help index is used.
     "doc_root": "help/",

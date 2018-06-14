@@ -74,6 +74,13 @@ def reload_help_index(help_list, package):
         if result is not None:
             help_list[result.package] = result
 
+            # If the package changed from what it used to be, remove the old
+            # one from the list of packages.
+            if result.package != package:
+                log("Warning: package name in index changed (%s became %s)",
+                    package, result.package)
+                del help_list[package]
+
     return help_list
 
 
