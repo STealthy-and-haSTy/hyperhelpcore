@@ -6,7 +6,6 @@ first_line_match: '^%hyperhelp'
 hidden: true
 variables:
   key_binding: '<[^> ]*>[^> ]?>?'
-  inline_code_markup: '(`)([^`]*)(`)'
   block_markup: '^\s*(`{3,})(?![^`]*`)'
   block_markup_end: '^\s*(\1)\s*$'
   hyperlink: '(\|)([^|\* \x{00a0}][^|\* ]*)(\|)'
@@ -94,11 +93,13 @@ contexts:
             0: meta.code-fence.definition.end
             1: punctuation.definition.code-fence.end
           pop: true
-    - match: '{{inline_code_markup}}'
-      captures:
-        1: punctuation.definition.raw.begin
-        2: markup.raw.inline
-        3: punctuation.definition.raw.end
+    - match: '`'
+      scope: punctuation.definition.raw.begin
+      push:
+        - meta_content_scope: markup.raw.inline
+        - match: '`'
+          scope: punctuation.definition.raw.end
+          pop: true
     - match: '{{hyperlink}}'
       captures:
         1: storage punctuation.link.begin
