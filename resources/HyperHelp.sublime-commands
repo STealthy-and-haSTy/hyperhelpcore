@@ -1,5 +1,5 @@
 [
-    { "caption": "HyperHelp: Help on Help",           "command": "hyperhelp_topic",    "args": { "package": "hyperhelp", "topic": "help_on_help.txt" } },
+    { "caption": "HyperHelp: Help on Help",           "command": "hyperhelp_topic",    "args": { "package": "HyperHelp", "topic": "help_on_help.txt" } },
     { "caption": "HyperHelp: Browse Available Help",  "command": "hyperhelp_contents", "args": { "prompt": true } },
     { "caption": "HyperHelp: Table of Contents",      "command": "hyperhelp_contents", "args": { "prompt": false } },
     { "caption": "HyperHelp: Help Index",             "command": "hyperhelp_index",    "args": { "prompt": false } }
