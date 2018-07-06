@@ -43,7 +43,7 @@
                         "caption": "Help on help",
                         "command": "hyperhelp_topic",
                         "args": {
-                            "package": "hyperhelp",
+                            "package": "HyperHelp",
                             "topic": "index.txt"
                         }
                     },
