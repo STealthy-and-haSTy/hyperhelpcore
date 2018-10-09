@@ -46,6 +46,14 @@ contexts:
     - match: '$'
       set: main
   body:
+    - match: '<\*\*'
+      scope: punctuation.definition.comment.end.help
+      push:
+        - meta_scope: comment.block.help
+        - match: '(\*\*>)(\n)?'
+          captures:
+            1: punctuation.definition.comment.begin.help
+          pop: true
     - match: '{{key_binding}}'
       scope: variable.language meta.keybind
     - match: '{{block_markup}}(json).*$\n?'
