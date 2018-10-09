@@ -117,10 +117,12 @@ def _display_help_file(pkg_info, help_file):
         if not view.settings().has("_hh_hist_pos"):
             _update_help_history(view, selection=sublime.Region(0))
 
+        view.set_read_only(False)
         _post_process_comments(view)
         _post_process_header(view)
         _post_process_links(view)
         _post_process_anchors(view)
+        view.set_read_only(True)
 
         return view
 
@@ -192,12 +194,10 @@ def _post_process_comments(help_view):
     buffer. This should happen prior to all other post processing since
     it will change the locations of items in the buffer.
     """
-    help_view.set_read_only(False)
     for region in reversed(help_view.find_by_selector("comment")):
         help_view.sel().clear()
         help_view.sel().add(region)
         help_view.run_command("left_delete")
-    help_view.set_read_only(True)
 
 
 def _post_process_header(help_view):
@@ -237,9 +237,7 @@ def _post_process_header(help_view):
 
     help_view.sel().clear()
     help_view.sel().add(help_view.full_line(0))
-    help_view.set_read_only(False)
     help_view.run_command("insert", {"characters": header_line})
-    help_view.set_read_only(True)
 
 
 def _post_process_anchors(help_view):
@@ -248,8 +246,6 @@ def _post_process_anchors(help_view):
     marks them as anchors, so they just appear as plain text. The position of
     these anchors is stored in a setting in the view for later retreival.
     """
-    help_view.set_read_only(False)
-
     regions = help_view.find_by_selector("meta.anchor.hidden")
     anchors = []
     adj = 4 * (len(regions) - 1)
@@ -280,8 +276,6 @@ def _post_process_anchors(help_view):
 
     help_view.settings().set("_hh_nav", sorted(nav_list,
                                                key=lambda item: item[1][0]))
-
-    help_view.set_read_only(True)
 
 
 def _post_process_links(help_view):
