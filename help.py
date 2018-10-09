@@ -117,6 +117,7 @@ def _display_help_file(pkg_info, help_file):
         if not view.settings().has("_hh_hist_pos"):
             _update_help_history(view, selection=sublime.Region(0))
 
+        _post_process_comments(view)
         _post_process_header(view)
         _post_process_links(view)
         _post_process_anchors(view)
@@ -183,6 +184,20 @@ def _parse_header(help_file, header_line):
                 match[1], help_file)
 
     return HeaderData(help_file, title, date)
+
+
+def _post_process_comments(help_view):
+    """
+    Strip away from the provided help all comments that may exist in the
+    buffer. This should happen prior to all other post processing since
+    it will change the locations of items in the buffer.
+    """
+    help_view.set_read_only(False)
+    for region in reversed(help_view.find_by_selector("comment")):
+        help_view.sel().clear()
+        help_view.sel().add(region)
+        help_view.run_command("left_delete")
+    help_view.set_read_only(True)
 
 
 def _post_process_header(help_view):
