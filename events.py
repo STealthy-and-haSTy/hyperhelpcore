@@ -2,6 +2,8 @@ import sublime
 import sublime_plugin
 
 from .core import help_index_list, lookup_help_topic
+from .view import find_help_view
+from .help import _post_process_links
 
 
 ###----------------------------------------------------------------------------
@@ -47,6 +49,15 @@ _missing_body = """
 
 ###----------------------------------------------------------------------------
 
+
+def plugin_loaded():
+    for window in sublime.windows():
+        view = find_help_view(window)
+        if view:
+            _post_process_links(view)
+
+
+###----------------------------------------------------------------------------
 
 class HyperhelpEventListener(sublime_plugin.EventListener):
     def on_query_context(self, view, key, operator, operand, match_all):
