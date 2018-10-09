@@ -47,12 +47,12 @@ contexts:
       set: main
   body:
     - match: '<\*\*'
-      scope: punctuation.definition.comment.end.help
+      scope: punctuation.definition.comment.begin.help
       push:
         - meta_scope: comment.block.help
         - match: '(\*\*>)(\n)?'
           captures:
-            1: punctuation.definition.comment.begin.help
+            1: punctuation.definition.comment.end.help
           pop: true
     - match: '{{key_binding}}'
       scope: variable.language meta.keybind
