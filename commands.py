@@ -4,12 +4,35 @@ import sublime_plugin
 import os
 
 from .common import log, current_help_package, help_package_prompt
-from .view import find_help_view, focus_on
+from .view import find_help_view
 from .core import help_index_list
 from .core import show_help_topic, navigate_help_history
 from .help import HistoryData
 
 ###----------------------------------------------------------------------------
+
+
+class HyperHelpFocusCommand(sublime_plugin.TextCommand):
+    """
+    Alter the selection in the given view (which should be a help view but
+    doesn't need to be) by clearing it and setting the single selection to the
+    provided position and focusing that position in the view.
+
+    Position may be a single integer or a region.
+    """
+    def run(self, edit, position, at_center=False):
+        if isinstance(position, int):
+            position = sublime.Region(position)
+        elif isinstance(position, list):
+            position = sublime.Region(position[1], position[0])
+
+        if at_center:
+            self.view.show_at_center(position)
+        else:
+            self.view.show(position, True)
+
+        self.view.sel().clear()
+        self.view.sel().add(position)
 
 
 class HyperhelpTopicCommand(sublime_plugin.ApplicationCommand):
@@ -198,9 +221,11 @@ class HyperhelpNavigateCommand(sublime_plugin.WindowCommand):
         pick = lambda p: (point < p[1][0]) if not prev else (point > p[1][0])
         for pos in reversed(anchors) if prev else anchors:
             if pick(pos):
-                return focus_on(help_view, pos[1])
+                return help_view.run_command("hyper_help_focus",
+                    {"position": [pos[1][1], pos[1][0]]})
 
-        focus_on(help_view, fallback[1])
+        help_view.run_command("hyper_help_focus",
+            {"position": [fallback[1][1], fallback[1][0]]})
 
     def follow_link(self):
         help_view = find_help_view()

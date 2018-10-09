@@ -3,7 +3,7 @@ import sublime
 import webbrowser
 
 from .common import log, hh_syntax
-from .view import find_help_view, update_help_view, focus_on
+from .view import find_help_view, update_help_view
 
 from .help_index import _load_help_index, _scan_help_packages
 from .help import _post_process_links, _resource_for_help
@@ -200,7 +200,11 @@ def show_help_topic(package, topic, history):
     anchors = help_view.settings().get("_hh_nav", [])
     for anchor in anchors:
         if topic_data["topic"] == anchor[0].casefold():
-            focus_on(help_view, anchor[1], at_center=True)
+            help_view.run_command("hyper_help_focus",
+                {
+                    "position": [anchor[1][1], anchor[1][0]],
+                    "at_center": True
+                })
             found = True
 
     # Update history to track the new file, but only if the help view already
