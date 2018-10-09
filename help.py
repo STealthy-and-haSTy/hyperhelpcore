@@ -4,6 +4,8 @@ import sublime_plugin
 import re
 import time
 
+import hyperhelp.core
+
 from .view import find_help_view, update_help_view
 from .common import log, hh_syntax, current_help_file, current_help_package
 from .common import load_resource
@@ -282,9 +284,27 @@ def _post_process_links(help_view):
     """
     Find all of the links in the provided help view and underline them.
     """
+    pkg_name = current_help_package(help_view)
+    pkg_info = hyperhelp.core.help_index_list().get(pkg_name, None)
+
+    active = []
+    broken = []
+
     regions = help_view.find_by_selector("meta.link")
-    help_view.add_regions("_hh_links", regions, "storage",
+    for region in help_view.find_by_selector("meta.link"):
+        topic = help_view.substr(region)
+
+        if hyperhelp.core.lookup_help_topic(pkg_info, topic) is not None:
+            active.append(region)
+        else:
+            broken.append(region)
+
+    help_view.add_regions("_hh_links_active", active, "storage",
         flags=sublime.DRAW_SOLID_UNDERLINE | sublime.PERSISTENT |
+              sublime.DRAW_NO_FILL | sublime.DRAW_NO_OUTLINE)
+
+    help_view.add_regions("_hh_links_broken", broken, "comment",
+        flags=sublime.DRAW_STIPPLED_UNDERLINE | sublime.PERSISTENT |
               sublime.DRAW_NO_FILL | sublime.DRAW_NO_OUTLINE)
 
 
