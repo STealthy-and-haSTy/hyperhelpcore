@@ -12,7 +12,7 @@ from .help import HistoryData
 ###----------------------------------------------------------------------------
 
 
-class HyperHelpFocusCommand(sublime_plugin.TextCommand):
+class HyperhelpFocusCommand(sublime_plugin.TextCommand):
     """
     Alter the selection in the given view (which should be a help view but
     doesn't need to be) by clearing it and setting the single selection to the
@@ -24,7 +24,7 @@ class HyperHelpFocusCommand(sublime_plugin.TextCommand):
         if isinstance(position, int):
             position = sublime.Region(position)
         elif isinstance(position, list):
-            position = sublime.Region(position[1], position[0])
+            position = sublime.Region(position[0], position[1])
 
         if at_center:
             self.view.show_at_center(position)
@@ -231,21 +231,21 @@ class HyperhelpNavigateCommand(sublime_plugin.WindowCommand):
 
     def anchor_nav(self, prev):
         help_view = find_help_view()
-        anchors = help_view.settings().get("_hh_nav")
+        anchors = help_view.get_regions("_hh_anchors")
         if not anchors:
             return
 
         point = help_view.sel()[0].begin()
         fallback = anchors[-1] if prev else anchors[0]
 
-        pick = lambda p: (point < p[1][0]) if not prev else (point > p[1][0])
+        pick = lambda p: (point < p.a) if not prev else (point > p.a)
         for pos in reversed(anchors) if prev else anchors:
             if pick(pos):
-                return help_view.run_command("hyper_help_focus",
-                    {"position": [pos[1][1], pos[1][0]]})
+                return help_view.run_command("hyperhelp_focus",
+                    {"position": [pos.b, pos.a]})
 
-        help_view.run_command("hyper_help_focus",
-            {"position": [fallback[1][1], fallback[1][0]]})
+        help_view.run_command("hyperhelp_focus",
+            {"position": [fallback.b, fallback.a]})
 
     def follow_link(self):
         help_view = find_help_view()
