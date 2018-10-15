@@ -7,12 +7,13 @@ from .common import log, current_help_package, help_package_prompt
 from .view import find_help_view
 from .core import help_index_list
 from .core import show_help_topic, navigate_help_history
+from .core import parse_anchor_body
 from .help import HistoryData
 
 ###----------------------------------------------------------------------------
 
 
-class HyperHelpFocusCommand(sublime_plugin.TextCommand):
+class HyperhelpFocusCommand(sublime_plugin.TextCommand):
     """
     Alter the selection in the given view (which should be a help view but
     doesn't need to be) by clearing it and setting the single selection to the
@@ -24,7 +25,7 @@ class HyperHelpFocusCommand(sublime_plugin.TextCommand):
         if isinstance(position, int):
             position = sublime.Region(position)
         elif isinstance(position, list):
-            position = sublime.Region(position[1], position[0])
+            position = sublime.Region(position[0], position[1])
 
         if at_center:
             self.view.show_at_center(position)
@@ -33,6 +34,29 @@ class HyperHelpFocusCommand(sublime_plugin.TextCommand):
 
         self.view.sel().clear()
         self.view.sel().add(position)
+
+
+class HyperhelpCaptureAnchorsCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        v = self.view
+        v.add_regions("_hh_anchors", v.find_by_selector("meta.anchor"), "",
+                     flags=sublime.HIDDEN | sublime.PERSISTENT)
+
+        for pos in reversed(v.find_by_selector("punctuation.anchor.hidden")):
+            v.erase(edit, pos)
+
+        hh_nav = {}
+        regions = v.get_regions("_hh_anchors")
+        for idx, region in enumerate(reversed(regions)):
+            topic, text = parse_anchor_body(v.substr(region))
+            v.replace(edit, region, text)
+            hh_nav[topic] = len(regions) - idx - 1
+
+        v.settings().set("_hh_nav", hh_nav)
+
+
+    def is_enabled(self):
+        return self.view.match_selector(0, "text.hyperhelp.help")
 
 
 class HyperhelpTopicCommand(sublime_plugin.ApplicationCommand):
@@ -211,21 +235,21 @@ class HyperhelpNavigateCommand(sublime_plugin.WindowCommand):
 
     def anchor_nav(self, prev):
         help_view = find_help_view()
-        anchors = help_view.settings().get("_hh_nav")
+        anchors = help_view.get_regions("_hh_anchors")
         if not anchors:
             return
 
         point = help_view.sel()[0].begin()
         fallback = anchors[-1] if prev else anchors[0]
 
-        pick = lambda p: (point < p[1][0]) if not prev else (point > p[1][0])
+        pick = lambda p: (point < p.a) if not prev else (point > p.a)
         for pos in reversed(anchors) if prev else anchors:
             if pick(pos):
-                return help_view.run_command("hyper_help_focus",
-                    {"position": [pos[1][1], pos[1][0]]})
+                return help_view.run_command("hyperhelp_focus",
+                    {"position": [pos.b, pos.a]})
 
-        help_view.run_command("hyper_help_focus",
-            {"position": [fallback[1][1], fallback[1][0]]})
+        help_view.run_command("hyperhelp_focus",
+            {"position": [fallback.b, fallback.a]})
 
     def follow_link(self):
         help_view = find_help_view()

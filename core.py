@@ -197,15 +197,16 @@ def show_help_topic(package, topic, history):
         return None
 
     found = False
-    anchors = help_view.settings().get("_hh_nav", [])
-    for anchor in anchors:
-        if topic_data["topic"] == anchor[0].casefold():
-            help_view.run_command("hyper_help_focus",
-                {
-                    "position": [anchor[1][1], anchor[1][0]],
-                    "at_center": True
-                })
-            found = True
+    anchor_dict = help_view.settings().get("_hh_nav", [])
+    idx = anchor_dict.get(topic_data["topic"], -1)
+    if idx >= 0:
+        anchor_pos = help_view.get_regions("_hh_anchors")[idx]
+        help_view.run_command("hyperhelp_focus",
+            {
+                "position": [anchor_pos.b, anchor_pos.a],
+                "at_center": True
+            })
+        found = True
 
     # Update history to track the new file, but only if the help view already
     # existed; otherwise its creation set up the default history already.
@@ -257,6 +258,26 @@ def navigate_help_history(help_view, prev):
         return True
 
     return False
+
+
+def parse_anchor_body(anchor_body):
+    """
+    Given the body of an anchor, parse it to determine what topic ID it's
+    anchored to and what text the anchor uses in the source help file.
+
+    This always returns a 2-tuple, though based on the anchor body in the file
+    it may end up thinking that the topic ID and the text are identical.
+    """
+    c_pos = anchor_body.find(':')
+    if c_pos >= 0:
+        id_val = anchor_body[:c_pos]
+        anchor_body = anchor_body[c_pos+1:]
+
+        id_val = id_val or anchor_body
+    else:
+        id_val = anchor_body
+
+    return (id_val.casefold(), anchor_body)
 
 
 ###----------------------------------------------------------------------------

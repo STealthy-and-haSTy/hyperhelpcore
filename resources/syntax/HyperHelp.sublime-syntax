@@ -120,8 +120,8 @@ contexts:
         3: string.unquoted punctuation.anchor.end
     - match: '{{hidden_anchor}}'
       captures:
-        1: string.unquoted punctuation.anchor.begin
+        1: string.unquoted punctuation.anchor.hidden.begin
         2: string.unquoted meta.anchor.hidden
-        3: string.unquoted punctuation.anchor.end
+        3: string.unquoted punctuation.anchor.hidden.end
     - match: '{{separator}}'
       scope: storage.what meta.separator

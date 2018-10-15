@@ -123,7 +123,7 @@ def _display_help_file(pkg_info, help_file):
         _post_process_comments(view)
         _post_process_header(view)
         _post_process_links(view)
-        _post_process_anchors(view)
+        view.run_command("hyperhelp_capture_anchors")
         view.set_read_only(True)
 
         return view
@@ -240,44 +240,6 @@ def _post_process_header(help_view):
     help_view.sel().clear()
     help_view.sel().add(help_view.full_line(0))
     help_view.run_command("insert", {"characters": header_line})
-
-
-def _post_process_anchors(help_view):
-    """
-    Find all of the hidden anchors in the help view and remove the text that
-    marks them as anchors, so they just appear as plain text. The position of
-    these anchors is stored in a setting in the view for later retreival.
-    """
-    regions = help_view.find_by_selector("meta.anchor.hidden")
-    anchors = []
-    adj = 4 * (len(regions) - 1)
-    for pos in reversed(regions):
-        # Adjust the positions of all anchors relative to their position in
-        # the document, since they all move backwards as we process them. Those
-        # closer to the bottom of the document move more.
-        anchor = help_view.substr(pos)
-        adjusted_pos = sublime.Region(pos.a - adj - 2, pos.b - adj - 2)
-        anchors.append([anchor, adjusted_pos])
-        adj -= 4
-
-        # Remove the marker
-        help_view.sel().clear()
-        help_view.sel().add(sublime.Region(pos.a - 2, pos.b + 2))
-        help_view.run_command("insert", {"characters": anchor})
-
-    # Leave the buffer at the top of the file when we're done, by default.
-    help_view.run_command("move_to", {"to": "bof"})
-
-    # The full nav list is the list of hidden anchors plus the list of regular
-    # anchors, sorted by position in the buffer. We need to convert regions to
-    # arrays of points because regions are not iterable and can't be stored in
-    # settings.
-    regions = help_view.find_by_selector("meta.anchor")
-    nav_list = ([[a[0], [a[1].a, a[1].b]] for a in reversed(anchors)] +
-                [[help_view.substr(r), [r.a, r.b]] for r in regions])
-
-    help_view.settings().set("_hh_nav", sorted(nav_list,
-                                               key=lambda item: item[1][0]))
 
 
 def _post_process_links(help_view):
