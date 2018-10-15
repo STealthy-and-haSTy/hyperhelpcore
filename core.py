@@ -260,4 +260,24 @@ def navigate_help_history(help_view, prev):
     return False
 
 
+def parse_anchor_body(anchor_body):
+    """
+    Given the body of an anchor, parse it to determine what topic ID it's
+    anchored to and what text the anchor uses in the source help file.
+
+    This always returns a 2-tuple, though based on the anchor body in the file
+    it may end up thinking that the topic ID and the text are identical.
+    """
+    c_pos = anchor_body.find(':')
+    if c_pos >= 0:
+        id_val = anchor_body[:c_pos]
+        anchor_body = anchor_body[c_pos+1:]
+
+        id_val = id_val or anchor_body
+    else:
+        id_val = anchor_body
+
+    return (id_val.casefold(), anchor_body)
+
+
 ###----------------------------------------------------------------------------

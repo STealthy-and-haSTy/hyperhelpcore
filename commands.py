@@ -7,6 +7,7 @@ from .common import log, current_help_package, help_package_prompt
 from .view import find_help_view
 from .core import help_index_list
 from .core import show_help_topic, navigate_help_history
+from .core import parse_anchor_body
 from .help import HistoryData
 
 ###----------------------------------------------------------------------------
@@ -45,8 +46,11 @@ class HyperhelpCaptureAnchorsCommand(sublime_plugin.TextCommand):
             v.erase(edit, pos)
 
         hh_nav = {}
-        for idx, region in enumerate(v.get_regions("_hh_anchors")):
-            hh_nav[v.substr(region).casefold()] = idx
+        regions = v.get_regions("_hh_anchors")
+        for idx, region in enumerate(reversed(regions)):
+            topic, text = parse_anchor_body(v.substr(region))
+            v.replace(edit, region, text)
+            hh_nav[topic] = len(regions) - idx - 1
 
         v.settings().set("_hh_nav", hh_nav)
 
