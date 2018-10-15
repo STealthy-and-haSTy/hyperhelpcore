@@ -35,6 +35,26 @@ class HyperHelpFocusCommand(sublime_plugin.TextCommand):
         self.view.sel().add(position)
 
 
+class HyperhelpCaptureAnchorsCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        v = self.view
+        v.add_regions("_hh_anchors", v.find_by_selector("meta.anchor"), "",
+                     flags=sublime.HIDDEN | sublime.PERSISTENT)
+
+        for pos in reversed(v.find_by_selector("punctuation.anchor.hidden")):
+            v.erase(edit, pos)
+
+        hh_nav = {}
+        for idx, region in enumerate(v.get_regions("_hh_anchors")):
+            hh_nav[v.substr(region).casefold()] = idx
+
+        v.settings().set("_hh_nav", hh_nav)
+
+
+    def is_enabled(self):
+        return self.view.match_selector(0, "text.hyperhelp.help")
+
+
 class HyperhelpTopicCommand(sublime_plugin.ApplicationCommand):
     """
     Display the provided help topic inside the given package. If package is
