@@ -197,15 +197,16 @@ def show_help_topic(package, topic, history):
         return None
 
     found = False
-    anchors = help_view.settings().get("_hh_nav", [])
-    for anchor in anchors:
-        if topic_data["topic"] == anchor[0].casefold():
-            help_view.run_command("hyper_help_focus",
-                {
-                    "position": [anchor[1][1], anchor[1][0]],
-                    "at_center": True
-                })
-            found = True
+    anchor_dict = help_view.settings().get("_hh_nav", [])
+    idx = anchor_dict.get(topic_data["topic"], -1)
+    if idx >= 0:
+        anchor_pos = help_view.get_regions("_hh_anchors")[idx]
+        help_view.run_command("hyperhelp_focus",
+            {
+                "position": [anchor_pos.b, anchor_pos.a],
+                "at_center": True
+            })
+        found = True
 
     # Update history to track the new file, but only if the help view already
     # existed; otherwise its creation set up the default history already.
