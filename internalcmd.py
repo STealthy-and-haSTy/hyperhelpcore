@@ -13,6 +13,10 @@ from .common import current_help_file
 
 
 def _can_post_process(view):
+    """
+    Determine if the provided view is eligible for a post processing command to
+    execute within it or not.
+    """
     return (view.match_selector(0, "text.hyperhelp.help") and
             view.settings().get("_hh_post_processing", False))
 
@@ -21,6 +25,13 @@ def _can_post_process(view):
 
 
 class HyperhelpInternalProcessHeaderCommand(sublime_plugin.TextCommand):
+    """
+    Process the header in a newly loaded help file by finding and replacing the
+    source level meta header with the fully expanded user-facing header.
+
+    Nothing happens if the current file does not appear to have an appropriate
+    meta-header line.
+    """
     def run(self, edit):
         help_file = current_help_file(self.view)
         first_line = self.view.substr(self.view.full_line(0))
@@ -58,6 +69,12 @@ class HyperhelpInternalProcessHeaderCommand(sublime_plugin.TextCommand):
 
 
 class HyperhelpInternalProcessCommentsCommand(sublime_plugin.TextCommand):
+    """
+    Remove all hyperhelp comments from a newly loaded help file.
+
+    All text scoped as a comment (including newlines) will be redacted from the
+    file.
+    """
     def run(self, edit):
         for region in reversed(self.view.find_by_selector("comment")):
             self.view.erase(edit, region)
@@ -67,6 +84,14 @@ class HyperhelpInternalProcessCommentsCommand(sublime_plugin.TextCommand):
 
 
 class HyperhelpInternalProcessAnchorsCommand(sublime_plugin.TextCommand):
+    """
+    Process all anchors in a newly loaded help file. This does the work of
+    rewriting anchors so that only their anchor text appears as well as
+    removing the markup that makes hidden anchors hidden.
+
+    This results in regions and settings being applied to the view that allow
+    the help core to navigate within the file.
+    """
     def run(self, edit):
         v = self.view
         v.add_regions("_hh_anchors", v.find_by_selector("meta.anchor"), "",
@@ -89,6 +114,14 @@ class HyperhelpInternalProcessAnchorsCommand(sublime_plugin.TextCommand):
 
 
 class HyperhelpInternalProcessLinksCommand(sublime_plugin.TextCommand):
+    """
+    Process all links in a newly loaded help file. This does the work of
+    rewriting links so that only their link text appears, while keeping track
+    of the topic ID and package designations of each link.
+
+    This results in regions and settings being applied to the view that allow
+    the help core to navigate within the file.
+    """
     def run(self, edit):
         v = self.view
         v.add_regions("_hh_links", v.find_by_selector("meta.link"), "",
