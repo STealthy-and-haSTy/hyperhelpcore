@@ -49,11 +49,11 @@ _missing_body = """
 ###----------------------------------------------------------------------------
 
 
-# def plugin_loaded():
-#     for window in sublime.windows():
-#         view = find_help_view(window)
-#         if view:
-#             _post_process_links(view)
+def plugin_loaded():
+    for window in sublime.windows():
+        view = find_help_view(window)
+        if view:
+            view.run_command("hyperhelp_internal_flag_links")
 
 
 ###----------------------------------------------------------------------------
