@@ -9,14 +9,7 @@ import hyperhelp.core
 from .view import find_help_view, update_help_view
 from .common import log, hh_syntax, current_help_file, current_help_package
 from .common import load_resource
-from .data import HeaderData, HistoryData
-
-
-###----------------------------------------------------------------------------
-
-
-_header_prefix_re = re.compile(r'^%hyperhelp(\b|$)')
-_header_keypair_re = re.compile(r'\b([a-z]+)\b="([^"]*)"')
+from .data import HistoryData
 
 
 ###----------------------------------------------------------------------------
@@ -85,6 +78,16 @@ def _update_help_history(view, append=False, selection=None):
     settings.set("_hh_hist", hist_info)
 
 
+def _enable_post_processing(help_view, enable):
+    """
+    Enable or disable post processing on the provided help view, which controls
+    whether or not the file can be edited and whether various post-processing
+    commands are enabled.
+    """
+    help_view.set_read_only(not enable);
+    help_view.settings().set("_hh_post_processing", enable)
+
+
 def _display_help_file(pkg_info, help_file):
     """
     Load and display the help file contained in the provided help package. The
@@ -120,25 +123,15 @@ def _display_help_file(pkg_info, help_file):
             _update_help_history(view, selection=sublime.Region(0))
 
         _enable_post_processing(view, True)
-        _post_process_comments(view)
-        _post_process_header(view)
-        view.run_command("hyperhelp_internal_capture_anchors")
-        view.run_command("hyperhelp_internal_capture_links")
+        view.run_command("hyperhelp_internal_process_header")
+        view.run_command("hyperhelp_internal_process_comments")
+        view.run_command("hyperhelp_internal_process_anchors")
+        view.run_command("hyperhelp_internal_process_links")
         _enable_post_processing(view, False)
 
         return view
 
     return log("Unable to find help file '%s'", help_file, status=True)
-
-
-def _enable_post_processing(help_view, enable):
-    """
-    Enable or disable post processing on the provided help view, which controls
-    whether or not the file can be edited and whether various processing
-    commands are enabled.
-    """
-    help_view.set_read_only(not enable);
-    help_view.settings().set("_hh_processing_enabled", enable)
 
 
 def _reload_help_file(help_list, help_view):
@@ -170,86 +163,6 @@ def _reload_help_file(help_list, help_view):
 
     log("Unable to reload the current help topic")
     return False
-
-
-def _parse_header(help_file, header_line):
-    """
-    Given the first line of a help file, check to see if it looks like a help
-    source file, and if so parse the header and return the parsed values back.
-    """
-    if not _header_prefix_re.match(header_line):
-        return None
-
-    title = "No Title Provided"
-    date = 0.0
-
-    for match in re.findall(_header_keypair_re, header_line):
-        if match[0] == "title":
-            title = match[1]
-        elif match[0] == "date":
-            try:
-                date = time.mktime(time.strptime(match[1], "%Y-%m-%d"))
-            except:
-                date = 0.0
-                log("Ignoring invalid file date '%s' in '%s'",
-                    match[1], help_file)
-        else:
-            log("Ignoring unknown header key '%s' in '%s'",
-                match[1], help_file)
-
-    return HeaderData(help_file, title, date)
-
-
-def _post_process_comments(help_view):
-    """
-    Strip away from the provided help all comments that may exist in the
-    buffer. This should happen prior to all other post processing since
-    it will change the locations of items in the buffer.
-    """
-    for region in reversed(help_view.find_by_selector("comment")):
-        help_view.sel().clear()
-        help_view.sel().add(region)
-        help_view.run_command("left_delete")
-
-
-def _post_process_header(help_view):
-    """
-    Check if the help file contains a formatted header line. If it does it is
-    replaced with a version that more explicitly describes the help. This
-    includes a link to the top level of the help file itself.
-    """
-    help_file = current_help_file(help_view)
-    first_line = help_view.substr(help_view.full_line(0))
-
-    header = _parse_header(help_file, first_line)
-    if header is None:
-        return
-
-    _hdr_width = 80
-    _time_fmt = help_view.settings().get("hyperhelp_date_format", "%x")
-
-    file_target = "*%s*" % help_file
-    title = header.title
-    date_str = "Not Available"
-
-    if header.date != 0:
-        date_str = time.strftime(_time_fmt, time.localtime(header.date))
-
-    # Take into account two extra spaces on either side of the title
-    max_title_len = _hdr_width - len(file_target) - len(date_str) - 4
-    if len(title) > max_title_len:
-        title = title[:max_title_len-1] + '\u2026'
-
-    header_line = "%s  %s  %s\n%s\n" % (
-        file_target,
-        "%s" % title.center(max_title_len, " "),
-        date_str,
-        ("=" * _hdr_width)
-    )
-
-    help_view.sel().clear()
-    help_view.sel().add(help_view.full_line(0))
-    help_view.run_command("insert", {"characters": header_line})
 
 
 ###----------------------------------------------------------------------------

@@ -1,5 +1,7 @@
 import sublime
 
+import re
+import time
 import webbrowser
 
 from .common import log, hh_syntax
@@ -9,6 +11,14 @@ from .help_index import _load_help_index, _scan_help_packages
 from .help import _resource_for_help
 from .help import _load_help_file, _display_help_file, _reload_help_file
 from .help import HistoryData, _update_help_history
+from .data import HeaderData
+
+
+###----------------------------------------------------------------------------
+
+
+_header_prefix_re = re.compile(r'^%hyperhelp(\b|$)')
+_header_keypair_re = re.compile(r'\b([a-z]+)\b="([^"]*)"')
 
 
 ###----------------------------------------------------------------------------
@@ -258,6 +268,35 @@ def navigate_help_history(help_view, prev):
         return True
 
     return False
+
+
+def parse_help_header(help_file, header_line):
+    """
+    Given the first line of a help file, check to see if it looks like a help
+    source file, and if so parse the header and return the parsed values back.
+    """
+    if not _header_prefix_re.match(header_line):
+        return None
+
+    title = "No Title Provided"
+    date = 0.0
+
+    for match in re.findall(_header_keypair_re, header_line):
+        if match[0] == "title":
+            title = match[1]
+        elif match[0] == "date":
+            try:
+                date = time.mktime(time.strptime(match[1], "%Y-%m-%d"))
+            except Exception as e:
+                print(e)
+                date = 0.0
+                log("Ignoring invalid file date '%s' in '%s'",
+                    match[1], help_file)
+        else:
+            log("Ignoring unknown header key '%s' in '%s'",
+                match[1], help_file)
+
+    return HeaderData(help_file, title, date)
 
 
 def parse_anchor_body(anchor_body):
