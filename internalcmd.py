@@ -132,12 +132,13 @@ class HyperhelpInternalProcessLinksCommand(sublime_plugin.TextCommand):
         tmp = {}
         regions = v.get_regions("_hh_links")
         for idx,region in enumerate(reversed(regions)):
-            pkg_name, topic, text = parse_link_body(v.substr(region))
+            base_text = v.substr(region)
+            pkg_name, topic, text = parse_link_body(base_text)
             pkg_name = pkg_name or default_pkg
 
             if text is None:
                 topic = "_broken"
-                text = "broken"
+                text = base_text
 
             v.replace(edit, region, text)
             tmp[len(regions) - idx - 1] = {
