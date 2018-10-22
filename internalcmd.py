@@ -12,6 +12,14 @@ from .common import current_help_file
 ###----------------------------------------------------------------------------
 
 
+def _can_post_process(view):
+    return (view.match_selector(0, "text.hyperhelp.help") and
+            view.settings().get("_hh_post_processing", False))
+
+
+###----------------------------------------------------------------------------
+
+
 class HyperhelpInternalProcessHeaderCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         help_file = current_help_file(self.view)
@@ -46,8 +54,7 @@ class HyperhelpInternalProcessHeaderCommand(sublime_plugin.TextCommand):
         self.view.replace(edit, self.view.full_line(0), header_line)
 
     def is_enabled(self):
-        return (self.view.match_selector(0, "text.hyperhelp.help") and
-                self.view.settings().get("_hh_post_processing", False))
+        return _can_post_process(self.view)
 
 
 class HyperhelpInternalProcessCommentsCommand(sublime_plugin.TextCommand):
@@ -56,8 +63,7 @@ class HyperhelpInternalProcessCommentsCommand(sublime_plugin.TextCommand):
             self.view.erase(edit, region)
 
     def is_enabled(self):
-        return (self.view.match_selector(0, "text.hyperhelp.help") and
-                self.view.settings().get("_hh_post_processing", False))
+        return _can_post_process(self.view)
 
 
 class HyperhelpInternalProcessAnchorsCommand(sublime_plugin.TextCommand):
@@ -79,8 +85,7 @@ class HyperhelpInternalProcessAnchorsCommand(sublime_plugin.TextCommand):
         v.settings().set("_hh_nav", hh_nav)
 
     def is_enabled(self):
-        return (self.view.match_selector(0, "text.hyperhelp.help") and
-                self.view.settings().get("_hh_post_processing", False))
+        return _can_post_process(self.view)
 
 
 class HyperhelpInternalProcessLinksCommand(sublime_plugin.TextCommand):
@@ -132,8 +137,7 @@ class HyperhelpInternalProcessLinksCommand(sublime_plugin.TextCommand):
                   sublime.DRAW_NO_FILL | sublime.DRAW_NO_OUTLINE)
 
     def is_enabled(self):
-        return (self.view.match_selector(0, "text.hyperhelp.help") and
-                self.view.settings().get("_hh_post_processing", False))
+        return _can_post_process(self.view)
 
 
 ###----------------------------------------------------------------------------
