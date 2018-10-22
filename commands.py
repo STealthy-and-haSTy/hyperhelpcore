@@ -8,7 +8,8 @@ from .view import find_help_view
 from .core import help_index_list
 from .core import show_help_topic, navigate_help_history
 from .core import parse_anchor_body
-from .help import HistoryData
+from .help import HistoryData, _get_link_topic
+
 
 
 ###----------------------------------------------------------------------------
@@ -238,9 +239,7 @@ class HyperhelpNavigateCommand(sublime_plugin.WindowCommand):
             package = help_view.settings().get("_hh_pkg")
 
             link_region = help_view.extract_scope(point)
-            hh_links = help_view.settings().get("_hh_links")
-
-            topic_dat = hh_links.get(str(link_region.begin()), None)
+            topic_dat = _get_link_topic(help_view, link_region)
             if topic_dat is not None:
                 topic = topic_dat["topic"]
                 package = topic_dat["pkg"] or package
