@@ -122,8 +122,8 @@ def _display_help_file(pkg_info, help_file):
         _enable_post_processing(view, True)
         _post_process_comments(view)
         _post_process_header(view)
-        _post_process_links(view)
         view.run_command("hyperhelp_internal_capture_anchors")
+        view.run_command("hyperhelp_internal_capture_links")
         _enable_post_processing(view, False)
 
         return view
@@ -250,34 +250,6 @@ def _post_process_header(help_view):
     help_view.sel().clear()
     help_view.sel().add(help_view.full_line(0))
     help_view.run_command("insert", {"characters": header_line})
-
-
-def _post_process_links(help_view):
-    """
-    Find all of the links in the provided help view and underline them.
-    """
-    pkg_name = current_help_package(help_view)
-    pkg_info = hyperhelp.core.help_index_list().get(pkg_name, None)
-
-    active = []
-    broken = []
-
-    regions = help_view.find_by_selector("meta.link")
-    for region in help_view.find_by_selector("meta.link"):
-        topic = help_view.substr(region)
-
-        if hyperhelp.core.lookup_help_topic(pkg_info, topic) is not None:
-            active.append(region)
-        else:
-            broken.append(region)
-
-    help_view.add_regions("_hh_links_active", active, "storage",
-        flags=sublime.DRAW_SOLID_UNDERLINE | sublime.PERSISTENT |
-              sublime.DRAW_NO_FILL | sublime.DRAW_NO_OUTLINE)
-
-    help_view.add_regions("_hh_links_broken", broken, "comment",
-        flags=sublime.DRAW_STIPPLED_UNDERLINE | sublime.PERSISTENT |
-              sublime.DRAW_NO_FILL | sublime.DRAW_NO_OUTLINE)
 
 
 ###----------------------------------------------------------------------------

@@ -6,7 +6,7 @@ from .common import log, hh_syntax
 from .view import find_help_view, update_help_view
 
 from .help_index import _load_help_index, _scan_help_packages
-from .help import _post_process_links, _resource_for_help
+from .help import _resource_for_help
 from .help import _load_help_file, _display_help_file, _reload_help_file
 from .help import HistoryData, _update_help_history
 
@@ -278,6 +278,31 @@ def parse_anchor_body(anchor_body):
         id_val = anchor_body
 
     return (id_val.casefold(), anchor_body)
+
+
+def parse_link_body(link_body):
+    """
+    Given the body of a link, parse it to determine what package and topic ID
+    the link will navigate to as well as what the visual link text should be.
+
+    This always returns a 3-tuple, though the value of the link text will be
+    None if the parse failed. It's possible for the package to be None, in
+    which case you can infer what the default package should be.
+    """
+    parts = link_body.split(':')
+    if len(parts) == 1:
+        return None, link_body, link_body
+
+    if len(parts) >= 3:
+        pkg = parts[0]
+        topic = parts[1]
+        text = ":".join(parts[2:])
+    else:
+        return (None, None, None)
+
+    pkg = pkg or None
+    topic = topic or text
+    return (pkg, topic, text)
 
 
 ###----------------------------------------------------------------------------

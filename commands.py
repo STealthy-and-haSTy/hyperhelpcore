@@ -232,10 +232,19 @@ class HyperhelpNavigateCommand(sublime_plugin.WindowCommand):
     def follow_link(self):
         help_view = find_help_view()
         point = help_view.sel()[0].begin()
-        if help_view.match_selector(point, "text.hyperhelp meta.link"):
-            topic = help_view.substr(help_view.extract_scope(point))
 
+        if help_view.match_selector(point, "text.hyperhelp meta.link"):
+            topic = "_broken"
             package = help_view.settings().get("_hh_pkg")
+
+            link_region = help_view.extract_scope(point)
+            hh_links = help_view.settings().get("_hh_links")
+
+            topic_dat = hh_links.get(str(link_region.begin()), None)
+            if topic_dat is not None:
+                topic = topic_dat["topic"]
+                package = topic_dat["pkg"] or package
+
             show_help_topic(package, topic, history=True)
 
 
