@@ -1,7 +1,7 @@
 import sublime
 import sublime_plugin
 
-from .core import parse_anchor_body
+from .core import parse_anchor_body, parse_link_body
 from .core import help_index_list, lookup_help_topic
 from .common import current_help_package
 
@@ -34,33 +34,49 @@ class HyperhelpInternalCaptureAnchorsCommand(sublime_plugin.TextCommand):
 
 class HyperhelpInternalCaptureLinksCommand(sublime_plugin.TextCommand):
     def run(self, edit):
-        active = []
-        broken = []
+        v = self.view
+        v.add_regions("_hh_links", v.find_by_selector("meta.link"), "",
+                      flags=sublime.HIDDEN | sublime.PERSISTENT)
 
-        hh_links = {}
+        default_pkg = current_help_package(self.view)
 
-        for region in reversed(self.view.find_by_selector("meta.link")):
-            topic = self.view.substr(region)
-            pkg_name = current_help_package(self.view)
+        tmp = {}
+        regions = v.get_regions("_hh_links")
+        for idx,region in enumerate(reversed(regions)):
+            pkg_name, topic, text = parse_link_body(v.substr(region))
+            pkg_name = pkg_name or default_pkg
 
-            hh_links[str(region.begin())] = {
+            if text is None:
+                topic = "_broken"
+                text = "broken"
+
+            v.replace(edit, region, text)
+            tmp[len(regions) - idx - 1] = {
                 "pkg": pkg_name,
                 "topic": topic
             }
 
-            pkg_info = help_index_list().get(pkg_name, None)
-            if lookup_help_topic(pkg_info, topic) is not None:
+        hh_links = {}
+        active = []
+        broken = []
+
+        regions = v.get_regions("_hh_links")
+        for idx, region in enumerate(regions):
+            hh_links[str(region.begin())] = tmp[idx]
+
+            pkg_info = help_index_list().get(tmp[idx]["pkg"], None)
+            if lookup_help_topic(pkg_info, tmp[idx]["topic"]) is not None:
                 active.append(region)
             else:
                 broken.append(region)
 
-        self.view.settings().set("_hh_links", hh_links)
+        v.settings().set("_hh_links", hh_links)
 
-        self.view.add_regions("_hh_links_active", active, "storage",
+        v.add_regions("_hh_links_active", active, "storage",
             flags=sublime.DRAW_SOLID_UNDERLINE | sublime.PERSISTENT |
                   sublime.DRAW_NO_FILL | sublime.DRAW_NO_OUTLINE)
 
-        self.view.add_regions("_hh_links_broken", broken, "comment",
+        v.add_regions("_hh_links_broken", broken, "comment",
             flags=sublime.DRAW_STIPPLED_UNDERLINE | sublime.PERSISTENT |
                   sublime.DRAW_NO_FILL | sublime.DRAW_NO_OUTLINE)
 
