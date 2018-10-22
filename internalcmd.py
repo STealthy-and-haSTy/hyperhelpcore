@@ -1,12 +1,53 @@
 import sublime
 import sublime_plugin
 
-from .core import parse_anchor_body, parse_link_body
+import time
+
+from .core import parse_help_header, parse_anchor_body, parse_link_body
 from .core import help_index_list, lookup_help_topic
 from .common import current_help_package
+from .common import current_help_file
 
 
 ###----------------------------------------------------------------------------
+
+
+class HyperhelpInternalProcessHeaderCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        help_file = current_help_file(self.view)
+        first_line = self.view.substr(self.view.full_line(0))
+
+        header = parse_help_header(help_file, first_line)
+        if header is None:
+            return
+
+        _hdr_width = 80
+        _time_fmt = self.view.settings().get("hyperhelp_date_format", "%x")
+
+        file_target = "*%s*" % help_file
+        title = header.title
+        date_str = "Not Available"
+
+        if header.date != 0:
+            date_str = time.strftime(_time_fmt, time.localtime(header.date))
+
+        # Take into account two extra spaces on either side of the title
+        max_title_len = _hdr_width - len(file_target) - len(date_str) - 4
+        if len(title) > max_title_len:
+            title = title[:max_title_len-1] + '\u2026'
+
+        header_line = "%s  %s  %s\n%s\n" % (
+            file_target,
+            "%s" % title.center(max_title_len, " "),
+            date_str,
+            ("=" * _hdr_width)
+        )
+
+        self.view.replace(edit, self.view.full_line(0), header_line)
+
+    def is_enabled(self):
+        return (self.view.match_selector(0, "text.hyperhelp.help") and
+                self.view.settings().get("_hh_post_processing", False))
 
 
 class HyperhelpInternalProcessCommentsCommand(sublime_plugin.TextCommand):
