@@ -6,7 +6,7 @@ from .common import log, hh_syntax
 from .view import find_help_view, update_help_view
 
 from .help_index import _load_help_index, _scan_help_packages
-from .help import _post_process_links, _resource_for_help
+from .help import _resource_for_help
 from .help import _load_help_file, _display_help_file, _reload_help_file
 from .help import HistoryData, _update_help_history
 
