@@ -9,14 +9,7 @@ import hyperhelp.core
 from .view import find_help_view, update_help_view
 from .common import log, hh_syntax, current_help_file, current_help_package
 from .common import load_resource
-from .data import HeaderData, HistoryData
-
-
-###----------------------------------------------------------------------------
-
-
-_header_prefix_re = re.compile(r'^%hyperhelp(\b|$)')
-_header_keypair_re = re.compile(r'\b([a-z]+)\b="([^"]*)"')
+from .data import HistoryData
 
 
 ###----------------------------------------------------------------------------
@@ -209,7 +202,7 @@ def _post_process_header(help_view):
     help_file = current_help_file(help_view)
     first_line = help_view.substr(help_view.full_line(0))
 
-    header = _parse_header(help_file, first_line)
+    header = hyperhelp.core.parse_help_header(help_file, first_line)
     if header is None:
         return
 
