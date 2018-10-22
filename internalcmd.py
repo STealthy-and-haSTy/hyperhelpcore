@@ -5,6 +5,7 @@ import time
 
 from .core import parse_help_header, parse_anchor_body, parse_link_body
 from .core import help_index_list, lookup_help_topic
+from .help import _get_link_topic
 from .common import current_help_package
 from .common import current_help_file
 
@@ -165,16 +166,13 @@ class HyperhelpInternalFlagLinksCommand(sublime_plugin.TextCommand):
     underlying help indexes may have changed, such as at Sublime startup.
     """
     def run(self, edit):
-        return
         v = self.view
-        hh_links = v.settings().get("_hh_links")
-
         active = []
         broken = []
 
         regions = v.get_regions("_hh_links")
         for idx, region in enumerate(regions):
-            topic_dat = hh_links.get(str(region.begin()), None)
+            topic_dat = _get_link_topic(v, region)
 
             pkg_info = help_index_list().get(topic_dat["pkg"], None)
             if lookup_help_topic(pkg_info, topic_dat["topic"]) is not None:
