@@ -146,20 +146,45 @@ class HyperhelpInternalProcessLinksCommand(sublime_plugin.TextCommand):
             }
 
         hh_links = {}
-        active = []
-        broken = []
 
         regions = v.get_regions("_hh_links")
         for idx, region in enumerate(regions):
             hh_links[str(region.begin())] = tmp[idx]
 
-            pkg_info = help_index_list().get(tmp[idx]["pkg"], None)
-            if lookup_help_topic(pkg_info, tmp[idx]["topic"]) is not None:
+        v.settings().set("_hh_links", hh_links)
+
+        v.run_command("hyperhelp_internal_flag_links")
+
+    def is_enabled(self):
+        return _can_post_process(self.view)
+
+
+class HyperhelpInternalFlagLinksCommand(sublime_plugin.TextCommand):
+    """
+    Given a help file which has had its links post processed already via
+    hyperhelp_internal_process_links, this checks each link in the file and
+    classifies them as either active or broken, depending on whether or not
+    they point to a valid destination.
+
+    This is a non-destructive command and may be executed any time the
+    underlying help indexes may have changed, such as at Sublime startup.
+    """
+    def run(self, edit):
+        v = self.view
+        hh_links = v.settings().get("_hh_links")
+
+        active = []
+        broken = []
+
+        regions = v.get_regions("_hh_links")
+        for idx, region in enumerate(regions):
+            topic_dat = hh_links.get(str(region.begin()), None)
+
+            pkg_info = help_index_list().get(topic_dat["pkg"], None)
+            if lookup_help_topic(pkg_info, topic_dat["topic"]) is not None:
                 active.append(region)
             else:
                 broken.append(region)
-
-        v.settings().set("_hh_links", hh_links)
 
         v.add_regions("_hh_links_active", active, "storage",
             flags=sublime.DRAW_SOLID_UNDERLINE | sublime.PERSISTENT |
@@ -170,7 +195,7 @@ class HyperhelpInternalProcessLinksCommand(sublime_plugin.TextCommand):
                   sublime.DRAW_NO_FILL | sublime.DRAW_NO_OUTLINE)
 
     def is_enabled(self):
-        return _can_post_process(self.view)
+        return self.view.match_selector(0, "text.hyperhelp.help")
 
 
 ###----------------------------------------------------------------------------
