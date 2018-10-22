@@ -130,7 +130,7 @@ def _display_help_file(pkg_info, help_file):
             _update_help_history(view, selection=sublime.Region(0))
 
         _enable_post_processing(view, True)
-        _post_process_comments(view)
+        view.run_command("hyperhelp_internal_process_comments")
         _post_process_header(view)
         view.run_command("hyperhelp_internal_process_anchors")
         view.run_command("hyperhelp_internal_process_links")
@@ -198,18 +198,6 @@ def _parse_header(help_file, header_line):
                 match[1], help_file)
 
     return HeaderData(help_file, title, date)
-
-
-def _post_process_comments(help_view):
-    """
-    Strip away from the provided help all comments that may exist in the
-    buffer. This should happen prior to all other post processing since
-    it will change the locations of items in the buffer.
-    """
-    for region in reversed(help_view.find_by_selector("comment")):
-        help_view.sel().clear()
-        help_view.sel().add(region)
-        help_view.run_command("left_delete")
 
 
 def _post_process_header(help_view):

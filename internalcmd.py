@@ -9,6 +9,16 @@ from .common import current_help_package
 ###----------------------------------------------------------------------------
 
 
+class HyperhelpInternalProcessCommentsCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        for region in reversed(self.view.find_by_selector("comment")):
+            self.view.erase(edit, region)
+
+    def is_enabled(self):
+        return (self.view.match_selector(0, "text.hyperhelp.help") and
+                self.view.settings().get("_hh_post_processing", False))
+
+
 class HyperhelpInternalProcessAnchorsCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         v = self.view
