@@ -29,7 +29,7 @@ class HyperhelpInternalCaptureAnchorsCommand(sublime_plugin.TextCommand):
 
     def is_enabled(self):
         return (self.view.match_selector(0, "text.hyperhelp.help") and
-                self.view.settings().get("_hh_processing_enabled", False))
+                self.view.settings().get("_hh_post_processing", False))
 
 
 class HyperhelpInternalCaptureLinksCommand(sublime_plugin.TextCommand):
@@ -82,7 +82,7 @@ class HyperhelpInternalCaptureLinksCommand(sublime_plugin.TextCommand):
 
     def is_enabled(self):
         return (self.view.match_selector(0, "text.hyperhelp.help") and
-                self.view.settings().get("_hh_processing_enabled", False))
+                self.view.settings().get("_hh_post_processing", False))
 
 
 ###----------------------------------------------------------------------------

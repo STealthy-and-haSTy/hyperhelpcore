@@ -85,6 +85,16 @@ def _update_help_history(view, append=False, selection=None):
     settings.set("_hh_hist", hist_info)
 
 
+def _enable_post_processing(help_view, enable):
+    """
+    Enable or disable post processing on the provided help view, which controls
+    whether or not the file can be edited and whether various post-processing
+    commands are enabled.
+    """
+    help_view.set_read_only(not enable);
+    help_view.settings().set("_hh_post_processing", enable)
+
+
 def _display_help_file(pkg_info, help_file):
     """
     Load and display the help file contained in the provided help package. The
@@ -129,16 +139,6 @@ def _display_help_file(pkg_info, help_file):
         return view
 
     return log("Unable to find help file '%s'", help_file, status=True)
-
-
-def _enable_post_processing(help_view, enable):
-    """
-    Enable or disable post processing on the provided help view, which controls
-    whether or not the file can be edited and whether various processing
-    commands are enabled.
-    """
-    help_view.set_read_only(not enable);
-    help_view.settings().set("_hh_processing_enabled", enable)
 
 
 def _reload_help_file(help_list, help_view):
