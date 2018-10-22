@@ -129,7 +129,7 @@ class HyperhelpInternalProcessLinksCommand(sublime_plugin.TextCommand):
 
         default_pkg = current_help_package(self.view)
 
-        tmp = {}
+        hh_links = {}
         regions = v.get_regions("_hh_links")
         for idx,region in enumerate(reversed(regions)):
             base_text = v.substr(region)
@@ -141,16 +141,10 @@ class HyperhelpInternalProcessLinksCommand(sublime_plugin.TextCommand):
                 text = base_text
 
             v.replace(edit, region, text)
-            tmp[len(regions) - idx - 1] = {
+            hh_links[str(len(regions) - idx - 1)] = {
                 "pkg": pkg_name,
                 "topic": topic
             }
-
-        hh_links = {}
-
-        regions = v.get_regions("_hh_links")
-        for idx, region in enumerate(regions):
-            hh_links[str(region.begin())] = tmp[idx]
 
         v.settings().set("_hh_links", hh_links)
 
@@ -171,6 +165,7 @@ class HyperhelpInternalFlagLinksCommand(sublime_plugin.TextCommand):
     underlying help indexes may have changed, such as at Sublime startup.
     """
     def run(self, edit):
+        return
         v = self.view
         hh_links = v.settings().get("_hh_links")
 
