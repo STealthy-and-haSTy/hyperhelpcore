@@ -165,4 +165,32 @@ def _reload_help_file(help_list, help_view):
     return False
 
 
+def _get_link_topic(help_view, link_region):
+    """
+    Given a help view and information about a link, return back an object that
+    provides the package and topic ID that the link references.
+
+    region can be a Region object, in which case the link data is looked up by
+    region. It can also be an integer, in which case it represents the index of
+    that link, with the first link in the file being numbered as 0.
+
+    None is returned when the information cannot be found.
+    """
+    topic_data = None
+    links = help_view.get_regions("_hh_links")
+
+    try:
+        # If the incoming region is an index, convert it into a region.
+        if isinstance(link_region, int):
+            link_region = links[link_region]
+
+        for idx, region in enumerate(links):
+            if region == link_region:
+                return help_view.settings().get("_hh_links")[str(idx)]
+    except:
+        pass
+
+    return None
+
+
 ###----------------------------------------------------------------------------
