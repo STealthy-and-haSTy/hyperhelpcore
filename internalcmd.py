@@ -9,7 +9,7 @@ from .common import current_help_package
 ###----------------------------------------------------------------------------
 
 
-class HyperhelpInternalCaptureAnchorsCommand(sublime_plugin.TextCommand):
+class HyperhelpInternalProcessAnchorsCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         v = self.view
         v.add_regions("_hh_anchors", v.find_by_selector("meta.anchor"), "",
@@ -32,7 +32,7 @@ class HyperhelpInternalCaptureAnchorsCommand(sublime_plugin.TextCommand):
                 self.view.settings().get("_hh_post_processing", False))
 
 
-class HyperhelpInternalCaptureLinksCommand(sublime_plugin.TextCommand):
+class HyperhelpInternalProcessLinksCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         v = self.view
         v.add_regions("_hh_links", v.find_by_selector("meta.link"), "",

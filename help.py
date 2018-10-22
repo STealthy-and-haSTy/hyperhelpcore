@@ -132,8 +132,8 @@ def _display_help_file(pkg_info, help_file):
         _enable_post_processing(view, True)
         _post_process_comments(view)
         _post_process_header(view)
-        view.run_command("hyperhelp_internal_capture_anchors")
-        view.run_command("hyperhelp_internal_capture_links")
+        view.run_command("hyperhelp_internal_process_anchors")
+        view.run_command("hyperhelp_internal_process_links")
         _enable_post_processing(view, False)
 
         return view
