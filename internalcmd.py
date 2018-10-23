@@ -125,13 +125,14 @@ class HyperhelpInternalProcessLinksCommand(sublime_plugin.TextCommand):
     """
     def run(self, edit):
         v = self.view
-        v.add_regions("_hh_links", v.find_by_selector("meta.link"), "",
-                      flags=sublime.HIDDEN | sublime.PERSISTENT)
-
+        regions = v.find_by_selector("meta.link")
         default_pkg = current_help_package(self.view)
 
-        hh_links = {}
-        regions = v.get_regions("_hh_links")
+        v.add_regions("_hh_links", regions, "",
+                      flags=sublime.HIDDEN | sublime.PERSISTENT)
+
+
+        hh_links = [None] * len(regions)
         for idx,region in enumerate(reversed(regions)):
             base_text = v.substr(region)
             pkg_name, topic, text = parse_link_body(base_text)
@@ -142,7 +143,7 @@ class HyperhelpInternalProcessLinksCommand(sublime_plugin.TextCommand):
                 text = base_text
 
             v.replace(edit, region, text)
-            hh_links[str(len(regions) - idx - 1)] = {
+            hh_links[len(regions) - idx - 1] = {
                 "pkg": pkg_name,
                 "topic": topic
             }
