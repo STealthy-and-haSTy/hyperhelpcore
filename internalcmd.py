@@ -173,10 +173,12 @@ class HyperhelpInternalFlagLinksCommand(sublime_plugin.TextCommand):
 
         regions = v.get_regions("_hh_links")
         for idx, region in enumerate(regions):
-            topic_dat = _get_link_topic(v, idx)
+            link_dat = _get_link_topic(v, idx)
 
-            pkg_info = help_index_list().get(topic_dat["pkg"], None)
-            if lookup_help_topic(pkg_info, topic_dat["topic"]) is not None:
+            pkg_info = help_index_list().get(link_dat["pkg"], None)
+            topic = lookup_help_topic(pkg_info, link_dat["topic"])
+
+            if self.link_is_active(pkg_info, topic):
                 active.append(region)
             else:
                 broken.append(region)
@@ -188,6 +190,16 @@ class HyperhelpInternalFlagLinksCommand(sublime_plugin.TextCommand):
         v.add_regions("_hh_links_broken", broken, "comment",
             flags=sublime.DRAW_STIPPLED_UNDERLINE | sublime.PERSISTENT |
                   sublime.DRAW_NO_FILL | sublime.DRAW_NO_OUTLINE)
+
+    def link_is_active(self, pkg_info, topic):
+        if topic is None:
+            return False
+
+        if topic["file"] in pkg_info.package_files:
+            if not sublime.find_resources(topic["file"]):
+                return False
+
+        return True
 
     def is_enabled(self):
         return self.view.match_selector(0, "text.hyperhelp.help")
