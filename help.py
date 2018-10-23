@@ -177,16 +177,16 @@ def _get_link_topic(help_view, link_region):
     None is returned when the information cannot be found.
     """
     topic_data = None
-    links = help_view.get_regions("_hh_links")
+    topics = help_view.settings().get("_hh_links")
 
     try:
-        # If the incoming region is an index, convert it into a region.
+        # If the incoming region is an index, our job is easy.
         if isinstance(link_region, int):
-            link_region = links[link_region]
+            return topics[link_region]
 
-        for idx, region in enumerate(links):
+        for idx, region in enumerate(help_view.get_regions("_hh_links")):
             if region == link_region:
-                return help_view.settings().get("_hh_links")[str(idx)]
+                return topics[idx]
     except:
         pass
 
