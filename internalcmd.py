@@ -173,7 +173,7 @@ class HyperhelpInternalFlagLinksCommand(sublime_plugin.TextCommand):
 
         regions = v.get_regions("_hh_links")
         for idx, region in enumerate(regions):
-            topic_dat = _get_link_topic(v, region)
+            topic_dat = _get_link_topic(v, idx)
 
             pkg_info = help_index_list().get(topic_dat["pkg"], None)
             if lookup_help_topic(pkg_info, topic_dat["topic"]) is not None:
