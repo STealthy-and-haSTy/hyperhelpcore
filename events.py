@@ -3,6 +3,7 @@ import sublime_plugin
 
 from .core import help_index_list, lookup_help_topic
 from .view import find_help_view
+from .help import _get_link_topic
 
 
 ###----------------------------------------------------------------------------
@@ -11,38 +12,50 @@ from .view import find_help_view
 _help_popup = """
 <body id="hyperhelp-link-caption">
     <style>
-        body {
+        body {{
             font-family: system;
             margin: 0.5rem 1rem;
-        }
-        h1 {
-            font-size: 1.1rem;
+        }}
+        h1 {{
+            font-size: 1.2rem;
             font-weight: bold;
             margin: 0 0 1rem 0;
             border-bottom: 2px solid var(--foreground);
-        }
-        p {
+        }}
+        p {{
             font-size: 1.05rem;
             margin: 0;
-        }
-        .indent {
+        }}
+        .body {{
+            margin-bottom: 1rem;
+        }}
+        .details {{
             margin-left: 1.5rem;
-        }
+            font-family: monospace;
+        }}
      </style>
-     %s
+     {body}
 </body>
 """
 
-_topic_body = """
-<h1>%s</h1>
-<p>%s</p>
-<p class="indent">%s</p>
+_missing_pkg = """
+<h1>Package not Found</h1>
+<p class="body">This link references a help package that is
+   not currently installed.</p>
+<p class="details">{pkg} / {topic}</p>
 """
 
-_missing_body = """
-<h1>Missing Topic</h1>
-<p>Topic not in help index:</p>
-<p class="indent">%s</p>
+_missing_topic = """
+<h1>Topic not found</h1>
+<p class="body">This link references a topic that does not appear
+in the help index:</p>
+<p class="details">{pkg} / {topic}</p>
+"""
+
+_topic_body = """
+<h1>{title}</h1>
+<p class="body">{link_type}</p>
+<p class="details">{link}</p>
 """
 
 
@@ -54,6 +67,14 @@ def plugin_loaded():
         view = find_help_view(window)
         if view:
             view.run_command("hyperhelp_internal_flag_links")
+
+
+def _show_popup(view, point, popup):
+    view.show_popup(
+        _help_popup.format(body=popup),
+        flags=sublime.HIDE_ON_MOUSE_MOVE_AWAY,
+        location=point,
+        max_width=1024)
 
 
 ###----------------------------------------------------------------------------
@@ -95,47 +116,69 @@ class HyperhelpEventListener(sublime_plugin.EventListener):
 
         return None
 
+
     def on_hover(self, view, point, hover_zone):
         """
-        If the mouse hovers over a link in a help view, show a popup that
-        says where the link goes.
+        When the mouse hovers over a link in a help view, show a popup that
+        tells you where the link goes or what file/URL it opens.
         """
         if hover_zone != sublime.HOVER_TEXT:
             return
 
-        pkg = view.settings().get("_hh_pkg", None)
-        if pkg is None or not view.score_selector(point, "meta.link"):
+        default_pkg = view.settings().get("_hh_pkg", None)
+        if default_pkg is None or not view.score_selector(point, "meta.link"):
             return
 
+        link_info = _get_link_topic(view, view.extract_scope(point))
+        if link_info is None:
+            return
+
+        pkg = link_info.get("pkg", default_pkg)
+        topic = link_info.get("topic")
+
+        # Report if we don't know the package. In this case we may know what
+        # the topic is but not what file it might appear in.
         pkg_info = help_index_list().get(pkg, None)
         if pkg_info is None:
+            popup = _missing_pkg.format(pkg=pkg, topic=topic)
+            return _show_popup(view, point, popup)
+
+        # If there is no topic we can't really display anything useful. This is
+        # an exceptional situation that is only possible if the help is broken.
+        if topic is None:
             return
 
-        topic = view.substr(view.extract_scope(point))
+        # Look up the topic details. If we can't find it in the index, react
+        # like a missing package since we can't know the file.
         topic_data = lookup_help_topic(pkg_info, topic)
         if topic_data is None:
-            popup = _missing_body % topic
+            popup = _missing_topic.format(pkg=pkg, topic=topic)
+            return _show_popup(view, point, popup)
+
+        caption = topic_data.get("caption")
+        file = topic_data.get("file")
+        link = file
+
+        if file in pkg_info.urls:
+            link_type = "Opens URL: "
+        elif file in pkg_info.package_files:
+            link_type = "Opens File: "
         else:
-            caption = topic_data["caption"]
-            file = topic_data["file"]
+            link_type = "Links To: "
 
-            if file in pkg_info.urls:
-                link_type = "Opens URL: "
-            elif file in pkg_info.package_files:
-                link_type = "Opens File: "
-            else:
-                link_type = "Links To: "
-                current_file = view.settings().get("_hh_file", None)
-                if file == current_file:
-                    file = "this file"
+            link = "" if default_pkg == pkg else pkg + " / "
 
-            popup = _topic_body % (caption, link_type, file)
+            current_file = view.settings().get("_hh_file", None)
+            if file != current_file:
+                link = link + file + " / "
 
-        view.show_popup(
-            _help_popup % popup,
-            flags=sublime.HIDE_ON_MOUSE_MOVE_AWAY,
-            location=point,
-            max_width=1024)
+            link = link + topic
+
+        popup = _topic_body.format(title=caption or topic,
+                                   link_type=link_type,
+                                   link=link)
+
+        _show_popup(view, point, popup)
 
 
 ###----------------------------------------------------------------------------
