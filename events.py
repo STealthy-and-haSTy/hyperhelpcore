@@ -39,7 +39,7 @@ _help_popup = """
 """
 
 _missing_pkg = """
-<h1>Package not Found</h1>
+<h1>Package not found</h1>
 <p class="body">This link references a help package that is
    not currently installed.</p>
 <p class="details">{pkg} / {topic}</p>
@@ -48,9 +48,17 @@ _missing_pkg = """
 _missing_topic = """
 <h1>Topic not found</h1>
 <p class="body">This link references a topic that does not appear
-in the help index:</p>
+   in the help index.</p>
 <p class="details">{pkg} / {topic}</p>
 """
+
+_missing_file = """
+<h1>Package File not found</h1>
+<p class="body">This link opens a package file that does not
+   currently exist.</p>
+<p class="details">{file}</p>
+"""
+
 
 _topic_body = """
 <h1>{title}</h1>
@@ -158,6 +166,13 @@ class HyperhelpEventListener(sublime_plugin.EventListener):
         caption = topic_data.get("caption")
         file = topic_data.get("file")
         link = file
+
+        # For links that open files, if that file does not exist as far as
+        # Sublime is concerned, use a custom popup to let the user know. Such
+        # a link will be highlighted as broken, so this explains why.
+        if file in pkg_info.package_files and not sublime.find_resources(file):
+            popup = _missing_file.format(file=file)
+            return _show_popup(view, point, popup)
 
         if file in pkg_info.urls:
             link_type = "Opens URL: "

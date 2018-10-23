@@ -125,13 +125,14 @@ class HyperhelpInternalProcessLinksCommand(sublime_plugin.TextCommand):
     """
     def run(self, edit):
         v = self.view
-        v.add_regions("_hh_links", v.find_by_selector("meta.link"), "",
-                      flags=sublime.HIDDEN | sublime.PERSISTENT)
-
+        regions = v.find_by_selector("meta.link")
         default_pkg = current_help_package(self.view)
 
-        hh_links = {}
-        regions = v.get_regions("_hh_links")
+        v.add_regions("_hh_links", regions, "",
+                      flags=sublime.HIDDEN | sublime.PERSISTENT)
+
+
+        hh_links = [None] * len(regions)
         for idx,region in enumerate(reversed(regions)):
             base_text = v.substr(region)
             pkg_name, topic, text = parse_link_body(base_text)
@@ -142,7 +143,7 @@ class HyperhelpInternalProcessLinksCommand(sublime_plugin.TextCommand):
                 text = base_text
 
             v.replace(edit, region, text)
-            hh_links[str(len(regions) - idx - 1)] = {
+            hh_links[len(regions) - idx - 1] = {
                 "pkg": pkg_name,
                 "topic": topic
             }
@@ -172,10 +173,12 @@ class HyperhelpInternalFlagLinksCommand(sublime_plugin.TextCommand):
 
         regions = v.get_regions("_hh_links")
         for idx, region in enumerate(regions):
-            topic_dat = _get_link_topic(v, region)
+            link_dat = _get_link_topic(v, idx)
 
-            pkg_info = help_index_list().get(topic_dat["pkg"], None)
-            if lookup_help_topic(pkg_info, topic_dat["topic"]) is not None:
+            pkg_info = help_index_list().get(link_dat["pkg"], None)
+            topic = lookup_help_topic(pkg_info, link_dat["topic"])
+
+            if self.link_is_active(pkg_info, topic):
                 active.append(region)
             else:
                 broken.append(region)
@@ -187,6 +190,16 @@ class HyperhelpInternalFlagLinksCommand(sublime_plugin.TextCommand):
         v.add_regions("_hh_links_broken", broken, "comment",
             flags=sublime.DRAW_STIPPLED_UNDERLINE | sublime.PERSISTENT |
                   sublime.DRAW_NO_FILL | sublime.DRAW_NO_OUTLINE)
+
+    def link_is_active(self, pkg_info, topic):
+        if topic is None:
+            return False
+
+        if topic["file"] in pkg_info.package_files:
+            if not sublime.find_resources(topic["file"]):
+                return False
+
+        return True
 
     def is_enabled(self):
         return self.view.match_selector(0, "text.hyperhelp.help")
