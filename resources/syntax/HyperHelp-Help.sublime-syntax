@@ -128,6 +128,36 @@ contexts:
         1: string.unquoted punctuation.anchor.hidden.begin
         2: string.unquoted meta.anchor.hidden
         3: string.unquoted punctuation.anchor.hidden.end
+    - match: '^\s*(?=#)'
+      push: header-anchors
+  header-anchor-terminator:
+    - match: '[ ]*(#*)[ ]*($\n?)'
+      captures:
+        1: string.unquoted punctuation.anchor.end.heading
+      pop: true
+
+  header-anchors:
+    - match: '(#)(?!#)\s*(?=\S)'
+      captures:
+        1: string.unquoted punctuation.anchor.begin.heading
+      set:
+        - meta_scope: meta.heading.anchor
+        - meta_content_scope: string.unquoted meta.anchor.heading.1
+        - include: header-anchor-terminator
+    - match: '(##)(?!#)\s*(?=\S)'
+      captures:
+        1: string.unquoted punctuation.anchor.begin.heading
+      set:
+        - meta_scope: meta.heading.anchor
+        - meta_content_scope: string.unquoted meta.anchor.heading.2
+        - include: header-anchor-terminator
+    - match: '(#{3,})(?!#)\s*(?=\S)'
+      captures:
+        1: string.unquoted punctuation.anchor.begin.heading
+      set:
+        - meta_scope: meta.heading.anchor
+        - meta_content_scope: string.unquoted meta.anchor.heading.3
+        - include: header-anchor-terminator
   separators:
     - match: '{{separator}}'
       scope: storage.what meta.separator
