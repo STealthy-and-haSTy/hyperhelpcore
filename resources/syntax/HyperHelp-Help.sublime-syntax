@@ -5,10 +5,8 @@ scope: text.hyperhelp.help
 first_line_match: '^%hyperhelp'
 hidden: true
 variables:
-  key_binding: '<[^> ]*>[^> ]?>?'
-  block_markup: '^\s*(`{3,})(?![^`]*`)'
-  block_markup_end: '^\s*(\1)\s*$'
-  hyperlink: '(\|)([^|\* \x{00a0}][^|\* ]*)(\|)'
+  block_markup: '^\s*(`{3})(?![^`]*`)'
+  block_markup_end: '^\s*(`{3})\s*$'
   anchor: '(\*)([^*\| \x{00a0}][^*\| ]*)(\*)'
   hidden_anchor: '(\*\|)([^\*\|\t \x{00a0}][^*\| ]*)(\|\*)'
   separator: '(?:\+?([=-])\1{3,}(\+|\|)?)|(?:\|\x{00a0})|(?:\x{00a0}\|)'
@@ -46,7 +44,7 @@ contexts:
       scope: invalid.illegal.hyperhelp.header
     - match: '$'
       set: body
-  body:
+  comments:
     - match: '<\*\*'
       scope: punctuation.definition.comment.begin.help
       push:
@@ -55,8 +53,18 @@ contexts:
           captures:
             1: punctuation.definition.comment.end.help
           pop: true
-    - match: '{{key_binding}}'
+  key-bindings:
+    - match: '<[^> ]*>[^> ]?>?'
       scope: variable.language meta.keybind
+  inline-code-block:
+    - match: '`'
+      scope: punctuation.definition.raw.begin
+      push:
+        - meta_content_scope: markup.raw.inline
+        - match: '`'
+          scope: punctuation.definition.raw.end
+          pop: true
+  code-blocks:
     - match: '{{block_markup}}(json).*$\n?'
       captures:
         0: meta.code-fence.definition.begin.json
@@ -102,18 +110,13 @@ contexts:
             0: meta.code-fence.definition.end
             1: punctuation.definition.code-fence.end
           pop: true
-    - match: '`'
-      scope: punctuation.definition.raw.begin
-      push:
-        - meta_content_scope: markup.raw.inline
-        - match: '`'
-          scope: punctuation.definition.raw.end
-          pop: true
-    - match: '{{hyperlink}}'
+  links:
+    - match: '(\|)([^|\* \x{00a0}][^|\* ]*)(\|)'
       captures:
         1: storage punctuation.link.begin
         2: storage meta.link
         3: storage punctuation.link.end
+  anchors:
     - match: '{{anchor}}'
       captures:
         1: string.unquoted punctuation.anchor.begin
@@ -124,5 +127,14 @@ contexts:
         1: string.unquoted punctuation.anchor.hidden.begin
         2: string.unquoted meta.anchor.hidden
         3: string.unquoted punctuation.anchor.hidden.end
+  separators:
     - match: '{{separator}}'
       scope: storage.what meta.separator
+  body:
+    - include: comments
+    - include: key-bindings
+    - include: code-blocks
+    - include: inline-code-block
+    - include: links
+    - include: anchors
+    - include: separators
