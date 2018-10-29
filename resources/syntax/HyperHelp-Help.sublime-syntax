@@ -12,18 +12,15 @@ variables:
   anchor: '(\*)([^*\| \x{00a0}][^*\| ]*)(\*)'
   hidden_anchor: '(\*\|)([^\*\|\t \x{00a0}][^*\| ]*)(\|\*)'
   separator: '(?:\+?([=-])\1{3,}(\+|\|)?)|(?:\|\x{00a0})|(?:\x{00a0}\|)'
-  author_header: '^(%)(hyperhelp)'
-  header_keypair: '\b([a-z]+)(=)(")([^"]*)(")'
-  expanded_header: '^{{anchor}}\s+(.*)\s{2,}(.*)'
 
 contexts:
   main:
-    - match: '{{author_header}}'
-      captures:
-        1: punctuation.definition.directive
-        2: keyword.other.directive meta.directive
-      push: header_keypairs
-    - match: '{{expanded_header}}'
+    - include: help-header
+    - include: help-source-header
+    - match: ''
+      set: body
+  help-header:
+    - match: '^{{anchor}}\s+(.*?)\s{2,}(.*)'
       captures:
         1: string.unquoted punctuation.anchor.begin
         2: string.unquoted meta.anchor
@@ -31,10 +28,14 @@ contexts:
         4: storage.type.class meta.title
         5: variable.language meta.date
       set: body
-    - match: ''
-      set: body
-  header_keypairs:
-    - match: '{{header_keypair}}'
+  help-source-header:
+    - match: '^(%)(hyperhelp)'
+      captures:
+        1: punctuation.definition.directive
+        2: keyword.other.directive meta.directive
+      push: header-keypairs
+  header-keypairs:
+    - match: '\b([a-z]+)(=)(")([^"]*)(")'
       captures:
         1: storage.type.class meta.key
         2: keyword.operator
@@ -44,7 +45,7 @@ contexts:
     - match: '\S'
       scope: invalid.illegal.hyperhelp.header
     - match: '$'
-      set: main
+      set: body
   body:
     - match: '<\*\*'
       scope: punctuation.definition.comment.begin.help
