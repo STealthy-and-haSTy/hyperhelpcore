@@ -20,6 +20,7 @@ contexts:
   help-header:
     - match: '^{{anchor}}\s+(.*?)\s{2,}(.*)'
       captures:
+        0: meta.help.header
         1: string.unquoted punctuation.anchor.begin
         2: string.unquoted meta.anchor
         3: string.unquoted punctuation.anchor.end
