@@ -2,6 +2,8 @@ import sublime
 import sublime_plugin
 
 from .core import help_index_list, lookup_help_topic
+from .core import is_topic_file, is_topic_file_valid
+from .core import is_topic_url
 from .view import find_help_view
 from .help import _get_link_topic
 
@@ -87,6 +89,7 @@ def _show_popup(view, point, popup):
 
 ###----------------------------------------------------------------------------
 
+
 class HyperhelpEventListener(sublime_plugin.EventListener):
     def on_query_context(self, view, key, operator, operand, match_all):
         """
@@ -170,13 +173,16 @@ class HyperhelpEventListener(sublime_plugin.EventListener):
         # For links that open files, if that file does not exist as far as
         # Sublime is concerned, use a custom popup to let the user know. Such
         # a link will be highlighted as broken, so this explains why.
-        if file in pkg_info.package_files and not sublime.find_resources(file):
+        #
+        # This returns None for things that are not package files, so we need
+        # to compare for False directkly.
+        if is_topic_file_valid(pkg_info, topic_data) is False:
             popup = _missing_file.format(file=file)
             return _show_popup(view, point, popup)
 
-        if file in pkg_info.urls:
+        if is_topic_url(pkg_info, topic_data):
             link_type = "Opens URL: "
-        elif file in pkg_info.package_files:
+        elif is_topic_file(pkg_info, topic_data):
             link_type = "Opens File: "
         else:
             link_type = "Links To: "

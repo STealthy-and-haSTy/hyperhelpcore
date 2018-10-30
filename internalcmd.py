@@ -5,6 +5,7 @@ import time
 
 from .core import parse_help_header, parse_anchor_body, parse_link_body
 from .core import help_index_list, lookup_help_topic
+from .core import is_topic_file, is_topic_file_valid
 from .help import _get_link_topic
 from .common import current_help_package
 from .common import current_help_file
@@ -195,9 +196,10 @@ class HyperhelpInternalFlagLinksCommand(sublime_plugin.TextCommand):
         if topic is None:
             return False
 
-        if topic["file"] in pkg_info.package_files:
-            if not sublime.find_resources(topic["file"]):
-                return False
+        # Returns None if the topic is not a file, so only consider the topic
+        # broken when the return is definitely false.
+        if is_topic_file_valid(pkg_info, topic) is False:
+            return False
 
         return True
 
