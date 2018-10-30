@@ -1,8 +1,11 @@
 import sublime
 
+import os
 import re
 import time
 import webbrowser
+
+from urllib.parse import urlparse
 
 from .common import log, hh_syntax
 from .view import find_help_view, update_help_view
@@ -157,6 +160,68 @@ def lookup_help_topic(pkg_info, topic):
         topic = topic.casefold().replace(" ", "\u00a0")
         alias = pkg_info.help_aliases.get(topic, None)
         return pkg_info.help_topics.get(alias or topic, None)
+
+    return None
+
+
+def is_topic_normal(pkg_info, topic_dict):
+    """
+    Given a topic dictionary such as returned by lookup_help_topic(), determine
+    if the topic represents a "normal" topic or not.
+    """
+    return (not is_topic_url(pkg_info, topic_dict) and
+            not is_topic_file(pkg_info, topic_dict))
+
+
+def is_topic_url(pkg_info, topic_dict):
+    """
+    Given a topic dictionary such as returned by lookup_help_topic(), determine
+    if the topic represents a topic that will open a URL or not.
+    """
+    return topic_dict["file"] in pkg_info.urls
+
+
+def is_topic_file(pkg_info, topic_dict):
+    """
+    Given a topic dictionary such as returned by lookup_help_topic(), determine
+    if the topic represents a topic that will open a URL or not.
+    """
+    return topic_dict["file"] in pkg_info.package_files
+
+
+def is_topic_url_valid(pkg_info, topic_dict):
+    """
+    Given a topic dictionary such as returned by lookup_help_topic() that
+    represents a URL, return an indication as to whether the URL is valid or
+    not.
+
+    None is returned if a topic does not represent a URL.
+    """
+    if is_topic_url(pkg_info, topic_dict):
+        try:
+            result = urlparse(topic_dict["file"])
+            return result.scheme and result.netloc
+        except:
+            return False
+
+    return None
+
+
+def is_topic_file_valid(pkg_info, topic_dict):
+    """
+    Given a topic dictionary such as returned by lookup_help_topic() that
+    represents a package file, return an indication as to whether that file
+    exists or not as a package resource.
+
+    None is returned if a topic does not represent a package file.
+    """
+    if is_topic_file(pkg_info, topic_dict):
+        file = topic_dict["file"]
+        base = os.path.split(file)[1]
+        if file not in sublime.find_resources(base):
+            return False
+
+        return True
 
     return None
 
