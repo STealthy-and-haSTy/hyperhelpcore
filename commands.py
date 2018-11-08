@@ -124,11 +124,12 @@ class HyperhelpIndexCommand(sublime_plugin.ApplicationCommand):
     cannot be inferred from the current help view, the user will be prompted to
     supply one. The prompt always occurs if the argument asks.
     """
-    def run(self, package=None, prompt=False):
+    def run(self, package=None, initial_text=None, prompt=False):
         package = package or current_help_package()
         if package is None or prompt:
             return help_package_prompt(help_index_list(),
-                                       on_select=lambda pkg: self.run(pkg))
+                                       on_select=lambda pkg:
+                                           self.run(pkg, initial_text))
 
         pkg_info = help_index_list().get(package, None)
         if pkg_info is None:
@@ -148,6 +149,9 @@ class HyperhelpIndexCommand(sublime_plugin.ApplicationCommand):
         sublime.active_window().show_quick_panel(
             items,
             on_select=lambda index: self.select(pkg_info, items, index))
+
+        if initial_text:
+            sublime.active_window().run_command("insert", {"characters": initial_text})
 
     def is_enabled(self, package=None, prompt=False):
         if prompt == False:
