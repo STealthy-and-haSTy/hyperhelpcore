@@ -9,6 +9,19 @@ from .view import find_help_view
 ###----------------------------------------------------------------------------
 
 
+def plugin_loaded():
+    """
+    Do package setup at packge load time.
+    """
+    hh_setting.obj = sublime.load_settings("HyperHelp.sublime-settings")
+    hh_setting.default = {
+        "hyperhelp_date_format": "%x",
+    }
+
+
+###----------------------------------------------------------------------------
+
+
 def log(message, *args, status=False, dialog=False):
     """
     Log the provided message to the console, optionally also sending it to the
@@ -33,6 +46,14 @@ def hh_syntax(base_file):
         return syn_list[0]
 
     log("Unable to locate unique syntax '%s'", base_file)
+
+
+def hh_setting(key):
+    """
+    Get a HyperHelpAuthor setting from a cached settings object.
+    """
+    default = hh_setting.default.get(key, None)
+    return hh_setting.obj.get(key, default)
 
 
 def load_resource(res_name):

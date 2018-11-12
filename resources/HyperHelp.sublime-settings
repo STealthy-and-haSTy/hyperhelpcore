@@ -1,0 +1,6 @@
+{
+    // Specify the date format to be used for help dates in the loaded help
+    // view. This uses the standard Python date format string formatting codes.
+    "hyperhelp_date_format": "%x",
+
+}

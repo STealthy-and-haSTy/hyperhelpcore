@@ -7,8 +7,8 @@ from .core import parse_help_header, parse_anchor_body, parse_link_body
 from .core import help_index_list, lookup_help_topic
 from .core import is_topic_file, is_topic_file_valid
 from .help import _get_link_topic
-from .common import current_help_package
-from .common import current_help_file
+from .common import hh_setting
+from .common import current_help_package, current_help_file
 
 
 ###----------------------------------------------------------------------------
@@ -43,7 +43,7 @@ class HyperhelpInternalProcessHeaderCommand(sublime_plugin.TextCommand):
             return
 
         _hdr_width = 80
-        _time_fmt = self.view.settings().get("hyperhelp_date_format", "%x")
+        _time_fmt = hh_setting("hyperhelp_date_format")
 
         file_target = "*%s*" % help_file
         title = header.title

@@ -2,5 +2,23 @@
     { "caption": "HyperHelp: Help on Help",           "command": "hyperhelp_topic",    "args": { "package": "HyperHelp", "topic": "help_on_help.txt" } },
     { "caption": "HyperHelp: Browse Available Help",  "command": "hyperhelp_contents", "args": { "prompt": true } },
     { "caption": "HyperHelp: Table of Contents",      "command": "hyperhelp_contents", "args": { "prompt": false } },
-    { "caption": "HyperHelp: Help Index",             "command": "hyperhelp_index",    "args": { "prompt": false } }
+    { "caption": "HyperHelp: Help Index",             "command": "hyperhelp_index",    "args": { "prompt": false } },
+
+    {
+        "caption": "Preferences: HyperHelp", "command": "edit_settings",
+        "args":
+        {
+            "base_file": "${packages}/hyperhelp/resources/HyperHelp.sublime-settings",
+            "default": "{\n\t$0\n}\n"
+        }
+    },
+    {
+        "caption": "Preferences: HyperHelp Key Bindings",
+        "command": "edit_settings",
+        "args":
+        {
+            "base_file": "${packages}/hyperhelp/resources/Default (${platform}).sublime-keymap",
+            "default": "[\n\t$0\n]\n"
+        }
+    },
 ]
