@@ -116,7 +116,7 @@ def _display_help_file(pkg_info, help_file):
     help_text = _load_help_file(pkg_info, help_file)
     if help_text is not None:
         view = update_help_view(help_text, pkg_info.package, help_file,
-                                hh_syntax("HyperHelp.sublime-syntax"))
+                                hh_syntax("HyperHelp-Help.sublime-syntax"))
 
         # if there is no history yet, add one selection the start of the file.
         if not view.settings().has("_hh_hist_pos"):
