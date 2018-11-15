@@ -4,6 +4,8 @@
     { "caption": "HyperHelp: Table of Contents",      "command": "hyperhelp_contents", "args": { "prompt": false } },
     { "caption": "HyperHelp: Help Index",             "command": "hyperhelp_index",    "args": { "prompt": false } },
 
+    { "caption": "HyperHelp: Open Bookmarked help topic", "command": "hyperhelp_open_bookmark" },
+
     {
         "caption": "Preferences: HyperHelp", "command": "edit_settings",
         "args":
