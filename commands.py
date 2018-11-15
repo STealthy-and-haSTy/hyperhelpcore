@@ -3,13 +3,66 @@ import sublime_plugin
 
 import os
 
-from .common import log, current_help_package, help_package_prompt
+from .common import log, hh_setting, current_help_package, help_package_prompt
 from .view import find_help_view
-from .core import help_index_list
+from .core import help_index_list, lookup_help_topic
 from .core import show_help_topic, navigate_help_history
 from .core import parse_anchor_body
 from .help import HistoryData, _get_link_topic
 
+
+###----------------------------------------------------------------------------
+
+
+def _get_bookmarks():
+    """
+    Get the list of user bookmarks from the settings file as a list of bookmark
+    dictionaries. This list may be empty if the user has not defined any
+    bookmarks yet.
+    """
+    return hh_setting("bookmarks")
+
+
+def _bookmark_name(bookmark):
+    """
+    Given a bookmark dictionary, return back the name of that bookmark. If the
+    bookmark has no defined name, one will be returned.
+    """
+    if bookmark is None:
+        return "No bookmark"
+
+    if "name" in bookmark:
+        return bookmark["name"]
+
+    pkg_info = help_index_list().get(bookmark.get("package"))
+    topic = lookup_help_topic(pkg_info, bookmark.get("topic", ''))
+
+    if topic is None:
+        return "Bookmark specifies invalid topic"
+
+    if topic["topic"] in pkg_info.help_files:
+        return pkg_info.help_files[topic["topic"]]
+
+    return topic.get("caption", "Caption is missing")
+
+
+
+def _bookmark_at_index(bookmark_idx, displayError=False):
+    """
+    Return the bookmark dictionary for the user bookmark at the given index, if
+    any. None is returned if the index is invalid. The optional argument can be
+    used to signal an error in the status line if the bookmark index is
+    invalid.
+    """
+    all_bookmarks = _get_bookmarks()
+    try:
+        return all_bookmarks[bookmark_idx]
+
+    except IndexError:
+        if displayError:
+            log("Bookmark index was out of range", status=True)
+
+        return None
 
 
 ###----------------------------------------------------------------------------

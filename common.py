@@ -16,6 +16,7 @@ def plugin_loaded():
     hh_setting.obj = sublime.load_settings("HyperHelp.sublime-settings")
     hh_setting.default = {
         "hyperhelp_date_format": "%x",
+        "bookmarks": []
     }
 
 
