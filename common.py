@@ -51,10 +51,20 @@ def hh_syntax(base_file):
 
 def hh_setting(key):
     """
-    Get a HyperHelpAuthor setting from a cached settings object.
+    Get a HyperHelp setting from a cached settings object.
     """
     default = hh_setting.default.get(key, None)
     return hh_setting.obj.get(key, default)
+
+
+def hh_update_setting(key, value, save=False):
+    """
+    Set the value of a HyperHelp setting to the value provided. Optionally, the
+    call can also persist the change to disk.
+    """
+    hh_setting.obj.set(key, value)
+    if save:
+        sublime.save_settings("HyperHelp.sublime-settings")
 
 
 def load_resource(res_name):
