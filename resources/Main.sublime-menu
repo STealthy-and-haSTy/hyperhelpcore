@@ -62,6 +62,10 @@
                     },
 
                     {
+                        "caption": "Create Bookmark…",
+                        "command": "hyperhelp_prompt_create_bookmark"
+                    },
+                    {
                         "caption": "Open bookmarked help topic…",
                         "command": "hyperhelp_open_bookmark"
                     },
