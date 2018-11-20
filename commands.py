@@ -79,6 +79,119 @@ def _bookmark_at_index(bookmark_idx, displayError=False):
 ###----------------------------------------------------------------------------
 
 
+class BookmarkIdxInputHandler(sublime_plugin.ListInputHandler):
+    """
+    Allow the user to select an appropriate bookmark index by displaying a list
+    of all bookmarks by name.
+    """
+    def list_items(self):
+        return [(_bookmark_name(bmark), idx)
+                for idx, bmark in enumerate(_get_bookmarks())]
+
+
+class BookmarkTypeInputHandler(sublime_plugin.ListInputHandler):
+    """
+    Allow the user to select what type of bookmark they want to create by
+    displaying a list of the available bookmark types that are valid in the
+    current context.
+    """
+    names = {
+        "file": "Current file",
+        "topic": "Current topic",
+        "view": "Current view"
+    }
+    descs = {
+        "file": "Bookmark the current help file",
+        "topic": "Bookmark the topic currently under the cursor",
+        "view": "Bookmark the current help view"
+    }
+
+    def __init__(self, help_view):
+        super().__init__()
+        self.view = help_view
+
+    def name(self):
+        return "bmark_type"
+
+    def placeholder(self):
+        return "bookmark type"
+
+    def preview(self, value):
+        return sublime.Html("<strong>{}</strong>: <em>{}</em>".format(
+            self.names.get(value, "unknown"),
+            self.descs.get(value, "unknown")
+        ))
+
+    def list_items(self):
+        items = [
+            ("this file", "file"),
+            ("this view", "view")
+        ]
+
+        if len(self.view.sel()) > 0:
+            pt = self.view.sel()[0].b
+            if self.view.match_selector(pt, "meta.link"):
+                items.insert(1, ("this topic", "topic"))
+
+        return items
+
+    def validate(self, value):
+        self.bmark_type = value
+        return True
+
+    def next_input(self, args):
+        if args.get("bmark_name") is None:
+            return BookmarkNameInputHandler(find_help_view(), self.bmark_type)
+
+
+class BookmarkNameInputHandler(sublime_plugin.TextInputHandler):
+    """
+    Allow the user to select a name for their bookmark, showing a default name
+    based on the current context and bookmark type.
+    """
+    def __init__(self, help_view, bmark_type):
+        super().__init__()
+        self.view = help_view
+        self.bmark_type = bmark_type
+
+    def name(self):
+        return "bmark_name"
+
+    def placeholder(self):
+        return "bookmark name"
+
+    def preview(self, text):
+        return "The name for this bookmark"
+
+    def initial_text(self):
+        v = self.view
+
+        link_info = None
+        if len(v.sel()) > 0 and v.match_selector(v.sel()[0].b, "meta.link"):
+            link_info = _get_link_topic(v, v.extract_scope(v.sel()[0].b))
+
+        if self.bmark_type == "topic" and link_info is not None:
+            pkg_info = help_index_list().get(link_info["pkg"])
+            if pkg_info is not None:
+                topic = lookup_help_topic(pkg_info, link_info["topic"])
+                return topic["caption"]
+
+        file = current_help_file()
+        name = "File {} in help package {}".format(file, current_help_package())
+        pkg_info = help_index_list().get(current_help_package())
+
+        if pkg_info is not None and file in pkg_info.help_files:
+            name = pkg_info.help_files[file]
+
+        if self.bmark_type == "view":
+            name = name + " (view)"
+
+        return name
+
+
+###----------------------------------------------------------------------------
+
+
 class HyperhelpFocusCommand(sublime_plugin.TextCommand):
     """
     Alter the selection in the given view (which should be a help view but
@@ -116,16 +229,6 @@ class HyperhelpTopicCommand(sublime_plugin.ApplicationCommand):
                 topic, status=True)
 
         show_help_topic(package, topic, history=True)
-
-
-class BookmarkIdxInputHandler(sublime_plugin.ListInputHandler):
-    """
-    Provide a list input handler that allows the user to select a bookmark by
-    showing them a list of all bookmarks by name.
-    """
-    def list_items(self):
-        return [(_bookmark_name(bmark), idx)
-                for idx, bmark in enumerate(_get_bookmarks())]
 
 
 class HyperhelpOpenBookmarkCommand(sublime_plugin.ApplicationCommand):
