@@ -3,7 +3,8 @@ import sublime_plugin
 
 import os
 
-from .common import log, hh_setting, current_help_package, help_package_prompt
+from .common import log, hh_setting, hh_update_setting, help_package_prompt
+from .common import current_help_file, current_help_package
 from .view import find_help_view
 from .core import help_index_list, lookup_help_topic
 from .core import show_help_topic, navigate_help_history
@@ -21,6 +22,16 @@ def _get_bookmarks():
     bookmarks yet.
     """
     return hh_setting("bookmarks")
+
+
+def _add_bookmark(bookmark):
+    """
+    Given a valid bookmark dictionary, add it to the list of user bookmarks in
+    the settings file.
+    """
+    bookmarks = _get_bookmarks()
+    bookmarks.append(bookmark)
+    hh_update_setting("bookmarks", bookmarks, save=True)
 
 
 def _bookmark_name(bookmark):
