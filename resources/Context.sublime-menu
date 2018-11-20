@@ -1,0 +1,5 @@
+[
+    { "caption": "-", "id": "end" },
+    { "command": "hyperhelp_context_create_bookmark" },
+    { "caption": "-"  },
+]
