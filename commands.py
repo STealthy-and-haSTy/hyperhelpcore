@@ -594,6 +594,8 @@ class HyperhelpCurrentHelpCommand(sublime_plugin.WindowCommand):
         if package is None:
             return no_help_fmt
 
+        pkg_info = help_index_list().get(package)
+        package = package if pkg_info is None else pkg_info.description
         return help_fmt % package
 
 
