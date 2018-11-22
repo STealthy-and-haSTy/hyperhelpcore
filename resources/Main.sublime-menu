@@ -98,6 +98,13 @@
                     { "caption": "-" },
 
                     {
+                        "caption": "Jump to item in history…",
+                        "command": "hyperhelp_history",
+                        "args": {
+                            "action": "jump"
+                        }
+                    },
+                    {
                         "command": "hyperhelp_history",
                         "args": {
                             "action": "prev",

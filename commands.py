@@ -7,7 +7,8 @@ from .common import log, hh_setting, hh_update_setting, help_package_prompt
 from .common import current_help_file, current_help_package
 from .view import find_help_view
 from .core import help_index_list, lookup_help_topic
-from .core import show_help_topic, navigate_help_history, clear_help_history
+from .core import show_help_topic, navigate_help_history, jump_help_history
+from .core import clear_help_history
 from .core import parse_anchor_body
 from .help import HistoryData, _get_link_topic
 
@@ -575,21 +576,35 @@ class HyperhelpHistoryCommand(sublime_plugin.WindowCommand):
     """
     available_actions = ["next", "prev", "jump", "clear"]
 
-    def run(self, action, index=0):
+    def run(self, action, index=-1):
         if action in ["next", "prev"]:
             navigate_help_history(find_help_view(),
                                   True if action == "prev" else False)
         elif action == "clear":
             clear_help_history(find_help_view())
 
-    def is_enabled(self, action, prev=False):
+        else:
+            self.show_history(index)
+
+    def get_history_info(self, help_view=None):
+        help_view = help_view or find_help_view()
+
+        if help_view is not None:
+            settings = help_view.settings()
+            return (
+                settings.get("_hh_hist_pos"),
+                settings.get("_hh_hist")
+            )
+
+        return (None, None)
+
+    def is_enabled(self, action, index=-1):
         help_view = find_help_view()
         if help_view is None or action not in self.available_actions:
             return False
 
-        settings = help_view.settings()
-        h_pos = settings.get("_hh_hist_pos")
-        h_len = len(settings.get("_hh_hist"))
+        h_pos, h_info = self.get_history_info(help_view)
+        h_len = len(h_info)
 
         if action in ["next", "prev"]:
             prev = True if action == "prev" else False
@@ -601,7 +616,7 @@ class HyperhelpHistoryCommand(sublime_plugin.WindowCommand):
 
         return True
 
-    def description(self, action, prev=False):
+    def description(self, action, index=-1):
         # Docs say to return None, but that makes Sublime log an error.
         if action not in ["next", "prev"]:
             return ""
@@ -609,14 +624,9 @@ class HyperhelpHistoryCommand(sublime_plugin.WindowCommand):
         prev = True if action == "prev" else False
 
         template = "Back" if prev else "Forward"
-        help_view = find_help_view()
-
-        if help_view is None:
+        h_pos, h_info = self.get_history_info()
+        if h_pos is None:
             return template
-
-        settings = help_view.settings()
-        h_pos = settings.get("_hh_hist_pos")
-        h_info = settings.get("_hh_hist")
 
         if (prev and h_pos == 0) or (not prev and h_pos == len(h_info) - 1):
             return template
@@ -629,6 +639,38 @@ class HyperhelpHistoryCommand(sublime_plugin.WindowCommand):
             title = pkg_info.help_files[entry.file]
 
         return "%s: %s" % (template, title)
+
+    def show_history(self, index):
+        h_pos, h_info = self.get_history_info()
+
+        if index >= 0 and index < len(h_info):
+            return self.jump_to_entry(index)
+
+        items = []
+        for idx, info in enumerate(h_info):
+            entry = HistoryData._make(info)
+
+            pkg_info = help_index_list().get(entry.package)
+            if pkg_info is not None and entry.file in pkg_info.help_files:
+                title = pkg_info.help_files[entry.file]
+                description = "%s in %s" % (entry.file, pkg_info.description)
+            else:
+                title = "%s in %s" % (entry.file, entry.package)
+                description = ""
+
+            if idx == h_pos:
+                title = title + "\t\t[currently viewing]"
+
+            items.append([title, description])
+
+        self.window.show_quick_panel(items,
+                                     lambda idx: self.jump_to_entry(idx))
+
+    def jump_to_entry(self, entry_index):
+        h_pos, h_info = self.get_history_info()
+
+        if entry_index >= 0:
+            jump_help_history(None, entry_index)
 
 
 ###----------------------------------------------------------------------------
