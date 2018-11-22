@@ -335,6 +335,65 @@ def navigate_help_history(help_view, prev):
     return False
 
 
+def jump_help_history(help_view, new_pos):
+    """
+    Jump to a specific point in the help history for the provided help view.
+
+    If no help view is provided, the current help view is used instead, if any.
+
+    Returns a boolean to tell you if the history position changed or not; it
+    may not change if the history index is not valid, for example.
+    """
+    help_view = help_view or find_help_view()
+    if help_view is None:
+        return False
+
+    hist_pos = help_view.settings().get("_hh_hist_pos")
+    hist_info = help_view.settings().get("_hh_hist")
+
+    if new_pos < 0 or new_pos >= len(hist_info) or new_pos == hist_pos:
+        return False
+
+    entry = HistoryData._make(hist_info[new_pos])
+
+    # Update the current history entry's viewport and caret location
+    _update_help_history(help_view)
+
+    # Navigate to the destination file in the history; need to manually set
+    # the cursor position
+    if show_help_topic(entry.package, entry.file, history=False) is not None:
+        help_view.sel().clear()
+        help_view.sel().add(sublime.Region(entry.caret[0], entry.caret[1]))
+        help_view.set_viewport_position(entry.viewport, False)
+
+        help_view.settings().set("_hh_hist_pos", new_pos)
+        return True
+
+
+def clear_help_history(help_view):
+    """
+    Clear the help history for the provided help file, leaving only the current
+    entry in the list as the sole history entry.
+
+    If no help view is provided, the current help view is used instead, if any.
+
+    Returns a boolean to tell you if history changed or not.
+    """
+    help_view = help_view or find_help_view()
+    if help_view is None:
+        return False
+
+    hist_pos = help_view.settings().get("_hh_hist_pos")
+    hist_info = help_view.settings().get("_hh_hist")
+
+    entry = HistoryData._make(hist_info[hist_pos])
+
+    help_view.settings().set("_hh_hist_pos", 0)
+    help_view.settings().set("_hh_hist", [entry])
+
+    return True
+
+
 def parse_help_header(help_file, header_line):
     """
     Given the first line of a help file, check to see if it looks like a help

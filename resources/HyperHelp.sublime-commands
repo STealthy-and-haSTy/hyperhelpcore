@@ -7,6 +7,9 @@
     { "caption": "HyperHelp: Open Bookmarked help topic", "command": "hyperhelp_open_bookmark" },
     { "caption": "HyperHelp: Create Bookmark", "command": "hyperhelp_prompt_create_bookmark" },
 
+    { "caption": "HyperHelp: Clear topic history list", "command": "hyperhelp_history", "args": {"action": "clear" } },
+    { "caption": "HyperHelp: Jump to topic in history list", "command": "hyperhelp_history", "args": {"action": "jump" } },
+
     {
         "caption": "Preferences: HyperHelp", "command": "edit_settings",
         "args":

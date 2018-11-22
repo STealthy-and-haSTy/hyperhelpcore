@@ -17,6 +17,17 @@
         ]
     },
 
+    // Show the history of the help view in a quick panel and allow the user to
+    // jump to a specific entry directly.
+    {
+        "keys": ["h"], "command": "hyperhelp_history",
+        "args": {"action": "jump"},
+        "context": [
+            { "key": "selector", "operator": "equal", "operand": "text.hyperhelp.help" },
+            { "key": "hyperhelp.is_authoring", "operator": "equal", "operand": false }
+        ]
+    },
+
     // Navigate forward and backward through anchors in the current help file.
     {
         "keys": ["tab"], "command": "hyperhelp_navigate", "args": {
@@ -61,9 +72,8 @@
 
     // Navigate through the topic history
     {
-        "keys": ["alt+left"], "command": "hyperhelp_navigate", "args": {
-            "nav": "follow_history",
-            "prev": true,
+        "keys": ["alt+left"], "command": "hyperhelp_history", "args": {
+            "action": "prev"
         },
         "context": [
             { "key": "selector", "operator": "equal", "operand": "text.hyperhelp.help" },
@@ -71,9 +81,8 @@
         ]
     },
     {
-        "keys": ["alt+right"], "command": "hyperhelp_navigate", "args": {
-            "nav": "follow_history",
-            "prev": false,
+        "keys": ["alt+right"], "command": "hyperhelp_history", "args": {
+            "action": "next"
         },
         "context": [
             { "key": "selector", "operator": "equal", "operand": "text.hyperhelp.help" },

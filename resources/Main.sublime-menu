@@ -88,18 +88,32 @@
                     { "caption": "-" },
 
                     {
-                        "command": "hyperhelp_navigate",
+                        "caption": "Clear topic history list",
+                        "command": "hyperhelp_history",
                         "args": {
-                            "nav": "follow_history",
-                            "prev": true
+                            "action": "clear"
+                        }
+                    },
+
+                    { "caption": "-" },
+
+                    {
+                        "caption": "Jump to item in history…",
+                        "command": "hyperhelp_history",
+                        "args": {
+                            "action": "jump"
                         }
                     },
                     {
-                        "command": "hyperhelp_navigate",
+                        "command": "hyperhelp_history",
                         "args": {
-                            "nav": "follow_history",
-                            "prev": false
+                            "action": "prev",
                         }
+                    },
+                    {
+                        "command": "hyperhelp_history",
+                        "args": {
+                            "action": "next",                        }
                     }
                 ]
             }
