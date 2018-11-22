@@ -88,6 +88,16 @@
                     { "caption": "-" },
 
                     {
+                        "caption": "Clear topic history list",
+                        "command": "hyperhelp_history",
+                        "args": {
+                            "action": "clear"
+                        }
+                    },
+
+                    { "caption": "-" },
+
+                    {
                         "command": "hyperhelp_history",
                         "args": {
                             "action": "prev",

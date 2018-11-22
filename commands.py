@@ -7,7 +7,7 @@ from .common import log, hh_setting, hh_update_setting, help_package_prompt
 from .common import current_help_file, current_help_package
 from .view import find_help_view
 from .core import help_index_list, lookup_help_topic
-from .core import show_help_topic, navigate_help_history
+from .core import show_help_topic, navigate_help_history, clear_help_history
 from .core import parse_anchor_body
 from .help import HistoryData, _get_link_topic
 
@@ -579,21 +579,25 @@ class HyperhelpHistoryCommand(sublime_plugin.WindowCommand):
         if action in ["next", "prev"]:
             navigate_help_history(find_help_view(),
                                   True if action == "prev" else False)
+        elif action == "clear":
+            clear_help_history(find_help_view())
 
     def is_enabled(self, action, prev=False):
         help_view = find_help_view()
         if help_view is None or action not in self.available_actions:
             return False
 
+        settings = help_view.settings()
+        h_pos = settings.get("_hh_hist_pos")
+        h_len = len(settings.get("_hh_hist"))
+
         if action in ["next", "prev"]:
             prev = True if action == "prev" else False
-
-            settings = help_view.settings()
-            h_pos = settings.get("_hh_hist_pos")
-            h_len = len(settings.get("_hh_hist"))
-
             if (prev and h_pos == 0) or (not prev and h_pos == h_len - 1):
                 return False
+
+        if action in ["clear", "jump"] and h_len == 1:
+            return False
 
         return True
 

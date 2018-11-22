@@ -335,6 +335,30 @@ def navigate_help_history(help_view, prev):
     return False
 
 
+def clear_help_history(help_view):
+    """
+    Clear the help history for the provided help file, leaving only the current
+    entry in the list as the sole history entry.
+
+    If no help view is provided, the current help view is used instead, if any.
+
+    Returns a boolean to tell you if history changed or not.
+    """
+    help_view = help_view or find_help_view()
+    if help_view is None:
+        return False
+
+    hist_pos = help_view.settings().get("_hh_hist_pos")
+    hist_info = help_view.settings().get("_hh_hist")
+
+    entry = HistoryData._make(hist_info[hist_pos])
+
+    help_view.settings().set("_hh_hist_pos", 0)
+    help_view.settings().set("_hh_hist", [entry])
+
+    return True
+
+
 def parse_help_header(help_file, header_line):
     """
     Given the first line of a help file, check to see if it looks like a help
