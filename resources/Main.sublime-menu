@@ -88,18 +88,15 @@
                     { "caption": "-" },
 
                     {
-                        "command": "hyperhelp_navigate",
+                        "command": "hyperhelp_history",
                         "args": {
-                            "nav": "follow_history",
-                            "prev": true
+                            "action": "prev",
                         }
                     },
                     {
-                        "command": "hyperhelp_navigate",
+                        "command": "hyperhelp_history",
                         "args": {
-                            "nav": "follow_history",
-                            "prev": false
-                        }
+                            "action": "next",                        }
                     }
                 ]
             }

@@ -61,9 +61,8 @@
 
     // Navigate through the topic history
     {
-        "keys": ["super+["], "command": "hyperhelp_navigate", "args": {
-            "nav": "follow_history",
-            "prev": true,
+        "keys": ["super+["], "command": "hyperhelp_history", "args": {
+            "action": "prev"
         },
         "context": [
             { "key": "selector", "operator": "equal", "operand": "text.hyperhelp.help" },
@@ -71,9 +70,8 @@
         ]
     },
     {
-        "keys": ["super+]"], "command": "hyperhelp_navigate", "args": {
-            "nav": "follow_history",
-            "prev": false,
+        "keys": ["super+]"], "command": "hyperhelp_history", "args": {
+            "action": "next"
         },
         "context": [
             { "key": "selector", "operator": "equal", "operand": "text.hyperhelp.help" },
