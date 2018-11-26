@@ -157,7 +157,7 @@ def lookup_help_topic(pkg_info, topic):
         pkg_info = help_index_list().get(pkg_info, None)
 
     if pkg_info is not None:
-        topic = topic.casefold().replace(" ", "\u00a0")
+        topic = " ".join(topic.casefold().split())
         alias = pkg_info.help_aliases.get(topic, None)
         return pkg_info.help_topics.get(alias or topic, None)
 
