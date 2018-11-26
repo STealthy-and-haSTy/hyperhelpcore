@@ -7,8 +7,6 @@ hidden: true
 variables:
   block_markup: '^\s*(`{3})(?![^`]*`)'
   block_markup_end: '^\s*(`{3})\s*$'
-  anchor: '(\*)([^*\| \x{00a0}][^*\| ]*)(\*)'
-  hidden_anchor: '(\*\|)([^\*\|\t \x{00a0}][^*\| ]*)(\|\*)'
   separator: '(?:\+?([=-])\1{3,}(\+|\|)?)|(?:\|\x{00a0})|(?:\x{00a0}\|)'
 
 contexts:
@@ -18,7 +16,7 @@ contexts:
     - match: ''
       set: body
   help-header:
-    - match: '^{{anchor}}\s+(.*?)\s{2,}(.*)'
+    - match: '^(\*)([^*\|]+)(\*)\s+(.*?)\s{2,}(.*)'
       captures:
         0: meta.help.header
         1: string.unquoted punctuation.anchor.begin
@@ -55,8 +53,12 @@ contexts:
             1: punctuation.definition.comment.end.help
           pop: true
   key-bindings:
-    - match: '<[^> ]*>[^> ]?>?'
-      scope: variable.language meta.keybind
+    - match: '<(?=[>\w])'
+      scope: variable.language punctuation.definition.keybind.begin.help
+      push:
+        - meta_scope: variable.language meta.keybind
+        - match: '>(?=[^>])'
+          pop: true
   inline-code-block:
     - match: '`'
       scope: punctuation.definition.raw.begin
@@ -112,22 +114,28 @@ contexts:
             1: punctuation.definition.code-fence.end
           pop: true
   links:
-    - match: '(\|)([^|\* \x{00a0}][^|\* ]*)(\|)'
-      captures:
-        1: storage punctuation.link.begin
-        2: storage meta.link
-        3: storage punctuation.link.end
+    - match: '\|(?=[\w:])'
+      scope: storage punctuation.link.begin
+      push:
+        - meta_content_scope: storage meta.link
+        - match: '\|'
+          scope: storage punctuation.link.end
+          pop: true
   anchors:
-    - match: '{{anchor}}'
-      captures:
-        1: string.unquoted punctuation.anchor.begin
-        2: string.unquoted meta.anchor
-        3: string.unquoted punctuation.anchor.end
-    - match: '{{hidden_anchor}}'
-      captures:
-        1: string.unquoted punctuation.anchor.hidden.begin
-        2: string.unquoted meta.anchor.hidden
-        3: string.unquoted punctuation.anchor.hidden.end
+    - match: '\*(?=[\w:])'
+      scope: string.unquoted punctuation.anchor.begin
+      push:
+        - meta_content_scope: string.unquoted meta.anchor
+        - match: '\*'
+          scope: string.unquoted punctuation.anchor.end
+          pop: true
+    - match: '\*\|(?=[\w:])'
+      scope: string.unquoted punctuation.anchor.hidden.begin
+      push:
+        - meta_content_scope: string.unquoted meta.anchor.hidden
+        - match: '\|\*'
+          scope: string.unquoted punctuation.anchor.hidden.end
+          pop: true
     - match: '^\s*(?=#)'
       push: header-anchors
   header-anchor-terminator:
