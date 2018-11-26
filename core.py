@@ -440,7 +440,7 @@ def parse_anchor_body(anchor_body):
     else:
         id_val = anchor_body
 
-    return (id_val.casefold(), anchor_body)
+    return (id_val.casefold().rstrip(), anchor_body.strip())
 
 
 def parse_link_body(link_body):
@@ -454,7 +454,7 @@ def parse_link_body(link_body):
     """
     parts = link_body.split(':')
     if len(parts) == 1:
-        return None, link_body, link_body
+        return None, link_body.rstrip(), link_body.rstrip()
 
     if len(parts) >= 3:
         pkg = parts[0]
@@ -465,7 +465,7 @@ def parse_link_body(link_body):
 
     pkg = pkg or None
     topic = topic or text
-    return (pkg, topic, text)
+    return (pkg, topic.strip(), text.strip())
 
 
 ###----------------------------------------------------------------------------
