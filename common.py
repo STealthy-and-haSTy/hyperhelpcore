@@ -9,20 +9,6 @@ from .view import find_help_view
 ###----------------------------------------------------------------------------
 
 
-def plugin_loaded():
-    """
-    Do package setup at packge load time.
-    """
-    hh_setting.obj = sublime.load_settings("HyperHelp.sublime-settings")
-    hh_setting.default = {
-        "hyperhelp_date_format": "%x",
-        "bookmarks": []
-    }
-
-
-###----------------------------------------------------------------------------
-
-
 def log(message, *args, status=False, dialog=False):
     """
     Log the provided message to the console, optionally also sending it to the
@@ -53,6 +39,13 @@ def hh_setting(key):
     """
     Get a HyperHelp setting from a cached settings object.
     """
+    if not hasattr(hh_setting, "obj"):
+        hh_setting.obj = sublime.load_settings("HyperHelp.sublime-settings")
+        hh_setting.default = {
+            "hyperhelp_date_format": "%x",
+            "bookmarks": []
+        }
+
     default = hh_setting.default.get(key, None)
     return hh_setting.obj.get(key, default)
 
