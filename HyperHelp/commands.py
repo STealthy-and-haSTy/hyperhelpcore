@@ -3,14 +3,14 @@ import sublime_plugin
 
 import os
 
-from .common import log, hh_setting, hh_update_setting, help_package_prompt
-from .common import current_help_file, current_help_package
-from .view import find_help_view
-from .core import help_index_list, lookup_help_topic
-from .core import show_help_topic, navigate_help_history, jump_help_history
-from .core import clear_help_history
-from .core import parse_anchor_body
-from .help import HistoryData, _get_link_topic
+from hyperhelpcore.common import log, hh_setting, hh_update_setting, help_package_prompt
+from hyperhelpcore.common import current_help_file, current_help_package
+from hyperhelpcore.view import find_help_view
+from hyperhelpcore.core import help_index_list, lookup_help_topic
+from hyperhelpcore.core import show_help_topic, navigate_help_history, jump_help_history
+from hyperhelpcore.core import clear_help_history
+from hyperhelpcore.core import parse_anchor_body
+from hyperhelpcore.help import HistoryData, _get_link_topic
 
 
 ###----------------------------------------------------------------------------

@@ -4,8 +4,6 @@ import sublime_plugin
 import re
 import time
 
-import hyperhelp.core
-
 from .view import find_help_view, update_help_view
 from .common import log, hh_syntax, current_help_file, current_help_package
 from .common import load_resource

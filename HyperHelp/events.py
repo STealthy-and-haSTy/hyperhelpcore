@@ -1,11 +1,11 @@
 import sublime
 import sublime_plugin
 
-from .core import help_index_list, lookup_help_topic
-from .core import is_topic_file, is_topic_file_valid
-from .core import is_topic_url
-from .view import find_help_view
-from .help import _get_link_topic
+from hyperhelpcore.core import help_index_list, lookup_help_topic
+from hyperhelpcore.core import is_topic_file, is_topic_file_valid
+from hyperhelpcore.core import is_topic_url
+from hyperhelpcore.view import find_help_view
+from hyperhelpcore.help import _get_link_topic
 
 
 ###----------------------------------------------------------------------------
