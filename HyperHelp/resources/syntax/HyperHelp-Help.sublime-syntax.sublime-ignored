@@ -114,7 +114,7 @@ contexts:
             1: punctuation.definition.code-fence.end
           pop: true
   links:
-    - match: '\|(?=[\w:])'
+    - match: '\|(?=[\w:$])'
       scope: storage punctuation.link.begin
       push:
         - meta_content_scope: storage meta.link
@@ -122,14 +122,14 @@ contexts:
           scope: storage punctuation.link.end
           pop: true
   anchors:
-    - match: '\*(?=[\w:])'
+    - match: '\*(?=[\w:$])'
       scope: string.unquoted punctuation.anchor.begin
       push:
         - meta_content_scope: string.unquoted meta.anchor
         - match: '\*'
           scope: string.unquoted punctuation.anchor.end
           pop: true
-    - match: '\*\|(?=[\w:])'
+    - match: '\*\|(?=[\w:$])'
       scope: string.unquoted punctuation.anchor.hidden.begin
       push:
         - meta_content_scope: string.unquoted meta.anchor.hidden
