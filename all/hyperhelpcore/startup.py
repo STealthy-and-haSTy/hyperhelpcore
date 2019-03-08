@@ -31,11 +31,11 @@ def _should_bootstrap(settings):
         bootstrapped_version = mod.__dict__["__version__"]
 
         if bootstrapped_version == mp_sys_version:
-            msg = "hyperhelpcore {sys} up to date"
+            msg = "hyperhelpcore system package {pkg_name} is up to date (v{sys})"
         else:
-            msg = "upgrading hyperhelpcore from {boot} to {sys}"
+            msg = "upgrading hyperhelpcore system package {pkg_name} from v{boot} to v{sys}"
 
-        log(msg, sys=mp_sys_version, boot=bootstrapped_version)
+        log(msg, sys=mp_sys_version, boot=bootstrapped_version, pkg_name=bootstrap_pkg)
         return not bootstrapped_version == mp_sys_version
 
     except:
