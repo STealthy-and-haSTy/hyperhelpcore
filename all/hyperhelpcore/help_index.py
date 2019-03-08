@@ -293,7 +293,29 @@ def _resolve_index_conflict(existing_idx, new_idx):
     return None
 
 
-def _scan_help_packages(help_list=None):
+def _filter_index(resources, name_filter):
+    """
+    Filter a list of package index resources so that only indexes contained in
+    the package(s) named are returned. When the filter is empty, the entire
+    resource list is returned untouched. The filter can be a single package
+    name or a list of packages.
+    """
+    if not name_filter:
+        return resources
+
+    if not isinstance(name_filter, list):
+        name_filter = [name_filter]
+
+    retVal = []
+    for index_file in resources:
+        path_parts = path.split(index_file)[0].split("/")
+        if path_parts[0] == "Packages" and path_parts[1] in name_filter:
+            retVal.append(index_file)
+
+    return retVal
+
+
+def _scan_help_packages(help_list=None, name_filter=None):
     """
     Scan for packages with a help index and load them. If a help list is
     provided, only the help for packages not already in the list will be
@@ -303,7 +325,7 @@ def _scan_help_packages(help_list=None):
 
     # Find all of the index file resources and the list of those that are
     # currently loaded in the provided help list (if any).
-    indexes = sublime.find_resources("hyperhelp.json")
+    indexes = _filter_index(sublime.find_resources("hyperhelp.json"), name_filter)
     loaded = [help_list[pkg].index_file for pkg in help_list.keys()]
 
     # The list of packages that are considered broken because they have at
