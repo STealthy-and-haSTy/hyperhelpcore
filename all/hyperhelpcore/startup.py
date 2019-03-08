@@ -31,11 +31,11 @@ def _should_bootstrap(settings):
         bootstrapped_version = mod.__dict__["__version__"]
 
         if bootstrapped_version == mp_sys_version:
-            msg = "hyperhelpcore {sys} up to date"
+            msg = "hyperhelpcore system package {pkg_name} is up to date (v{sys})"
         else:
-            msg = "upgrading hyperhelpcore from {boot} to {sys}"
+            msg = "upgrading hyperhelpcore system package {pkg_name} from v{boot} to v{sys}"
 
-        log(msg, sys=mp_sys_version, boot=bootstrapped_version)
+        log(msg, sys=mp_sys_version, boot=bootstrapped_version, pkg_name=bootstrap_pkg)
         return not bootstrapped_version == mp_sys_version
 
     except:
@@ -89,29 +89,29 @@ def initialize():
             file to remove this warning message at startup.
             """, pkg_name=bootstrap_pkg, error=True)
 
-    # Checks to see if the bootstrapped package is unpacked and complains if it
-    # is unless the user has also purposefully set a setting telling us not to.
+    # If the boostrapped paxckage is overridden, the user will block themselves
+    # from getting updates when the dependency updates. So check if that is the
+    # case and generate an error and refuse to proceed.
     #
-    # If the bootstrapped package is overridden by someone that doesn't
-    # understand the ramifications, they will block themselves from getting
-    # updates when  the dependency is updated.
+    # An undocumented setting exists to turn this from an error to just a log
+    # warning instead, in which case we proceed.
     pkg_folder = os.path.join(sublime.packages_path(), bootstrap_pkg)
     if os.path.lexists(pkg_folder):
-        if settings.get("hyperhelp_allow_unpacked", False):
-            return log("{pkg_name} package is unpacked; issues may arise",
-                        pkg_name=bootstrap_pkg)
+        if settings.get("hyperhelp_allow_unpacked", False) == False:
+            return log(
+                """
+                The {pkg_name} package is unpacked.
 
-        return log(
-            """
-            The {pkg_name} package is unpacked.
+                This package should not be overridden as it
+                blocks updates and causes problems with
+                bootstrapping.
 
-            This package should not be overridden as it
-            blocks updates and causes problems with
-            bootstrapping.
+                Please remove the {pkg_name} folder from
+                the Packages folder and restart sublime.
+                """, pkg_name=bootstrap_pkg, error=True)
 
-            Please remove the {pkg_name} folder from
-            the Packages folder and restart sublime.
-            """, pkg_name=bootstrap_pkg, error=True)
+        log("hyperhelpcore system package {pkg_name} is unpacked; issues may arise",
+            pkg_name=bootstrap_pkg)
 
     if _should_bootstrap(settings):
         BootstrapThread().start()
