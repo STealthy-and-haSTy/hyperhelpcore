@@ -62,6 +62,43 @@ def help_index_list(reload=False, package=None):
     return help_index_list.index
 
 
+def load_indexes_from_packages(packages):
+    """
+    Given a physical package name or list of names, load all help indexes that
+    appear in that package and add them to the list of known help indexes. This
+    implicitly loads all help indexes if they have never been loaded before.
+    The new list of known help indexes is returned.
+    """
+    if not packages:
+        return log("Cannot demand load package indexes; no packages provided")
+
+    return _scan_help_packages(help_index_list(), packages)
+
+
+def unload_help_indexes_from_packges(packages):
+    """
+    Given a physical package name or list of names, unload any help indexes
+    that are contained within that package. This implicitlly loads all help
+    indexes if they have never been loaded before, and messages are printed to
+    the console for each unloaded package. The new list of known help indexes
+    is returned.
+    """
+    if not packages:
+        return log("Cannot demand unload package indexes; no packages provided")
+
+    if not isinstance(packages, list):
+        packages = [packages]
+
+    indexes = help_index_list()
+    for pkg_info in list(indexes.values()):
+        package = os.path.split(pkg_info.index_file)[0].split("/")[1]
+        if package in packages:
+            del indexes[pkg_info.package]
+            log("Unloading help index for package '%s'", pkg_info.package)
+
+    return indexes
+
+
 def reload_help_index(help_list, package):
     """
     Reload the help index for the provided package from within the given help
