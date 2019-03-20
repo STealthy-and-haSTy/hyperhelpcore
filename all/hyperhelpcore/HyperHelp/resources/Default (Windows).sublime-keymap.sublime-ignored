@@ -3,8 +3,7 @@
     {
         "keys": ["?"], "command": "hyperhelp_contents",
         "context": [
-            { "key": "selector", "operator": "equal", "operand": "text.hyperhelp.help" },
-            { "key": "hyperhelp.is_authoring", "operator": "equal", "operand": false }
+            { "key": "hyperhelp.is_help_view", "operator": "equal", "operand": true },
         ]
     },
 
@@ -12,8 +11,7 @@
     {
         "keys": ["i"], "command": "hyperhelp_index",
         "context": [
-            { "key": "selector", "operator": "equal", "operand": "text.hyperhelp.help" },
-            { "key": "hyperhelp.is_authoring", "operator": "equal", "operand": false }
+            { "key": "hyperhelp.is_help_view", "operator": "equal", "operand": true },
         ]
     },
 
@@ -23,8 +21,7 @@
         "keys": ["h"], "command": "hyperhelp_history",
         "args": {"action": "jump"},
         "context": [
-            { "key": "selector", "operator": "equal", "operand": "text.hyperhelp.help" },
-            { "key": "hyperhelp.is_authoring", "operator": "equal", "operand": false }
+            { "key": "hyperhelp.is_help_view", "operator": "equal", "operand": true },
         ]
     },
 
@@ -35,8 +32,7 @@
             "prev": false,
         },
         "context": [
-            { "key": "selector", "operator": "equal", "operand": "text.hyperhelp.help" },
-            { "key": "hyperhelp.is_authoring", "operator": "equal", "operand": false }
+            { "key": "hyperhelp.is_help_view", "operator": "equal", "operand": true },
         ],
     },
     {
@@ -45,8 +41,7 @@
             "prev": true,
         },
         "context": [
-            { "key": "selector", "operator": "equal", "operand": "text.hyperhelp.help" },
-            { "key": "hyperhelp.is_authoring", "operator": "equal", "operand": false }
+            { "key": "hyperhelp.is_help_view", "operator": "equal", "operand": true },
         ],
     },
 
@@ -76,8 +71,7 @@
             "action": "prev"
         },
         "context": [
-            { "key": "selector", "operator": "equal", "operand": "text.hyperhelp.help" },
-            { "key": "hyperhelp.is_authoring", "operator": "equal", "operand": false }
+            { "key": "hyperhelp.is_help_view", "operator": "equal", "operand": true },
         ]
     },
     {
@@ -85,8 +79,7 @@
             "action": "next"
         },
         "context": [
-            { "key": "selector", "operator": "equal", "operand": "text.hyperhelp.help" },
-            { "key": "hyperhelp.is_authoring", "operator": "equal", "operand": false }
+            { "key": "hyperhelp.is_help_view", "operator": "equal", "operand": true },
         ]
     },
 
