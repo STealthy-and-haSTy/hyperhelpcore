@@ -664,7 +664,8 @@ class HyperhelpHistoryCommand(sublime_plugin.WindowCommand):
             items.append([title, description])
 
         self.window.show_quick_panel(items,
-                                     lambda idx: self.jump_to_entry(idx))
+                                     lambda idx: self.jump_to_entry(idx),
+                                     selected_index=h_pos)
 
     def jump_to_entry(self, entry_index):
         h_pos, h_info = self.get_history_info()
