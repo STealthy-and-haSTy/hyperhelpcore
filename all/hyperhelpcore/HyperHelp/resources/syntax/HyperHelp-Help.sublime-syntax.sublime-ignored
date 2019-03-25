@@ -7,7 +7,7 @@ hidden: true
 variables:
   block_markup: '^\s*(`{3})(?![^`]*`)'
   block_markup_end: '^\s*(`{3})\s*$'
-  separator: '(?:\+?([=-])\1{3,}(\+|\|)?)|(?:\|\x{00a0})|(?:\x{00a0}\|)'
+  separator: '(?:(?:\+|\|)?([=-])\1{3,}(?:\+|\|)?)|(?:\|)'
 
 contexts:
   main:
@@ -53,7 +53,7 @@ contexts:
             1: punctuation.definition.comment.end.help
           pop: true
   key-bindings:
-    - match: '<(?=[>\w])'
+    - match: '<(?=[>\w?])'
       scope: variable.language punctuation.definition.keybind.begin.help
       push:
         - meta_scope: variable.language meta.keybind
@@ -169,7 +169,7 @@ contexts:
       pop: true
   separators:
     - match: '{{separator}}'
-      scope: storage.what meta.separator
+      scope: storage meta.separator
   body:
     - include: comments
     - include: key-bindings
