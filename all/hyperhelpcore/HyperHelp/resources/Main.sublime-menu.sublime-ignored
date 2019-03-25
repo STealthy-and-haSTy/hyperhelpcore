@@ -52,7 +52,7 @@
                         "command": "hyperhelp_topic",
                         "args": {
                             "package": "HyperHelp",
-                            "topic": "index.txt"
+                            "topic": "help_on_help.txt"
                         }
                     },
                     {
