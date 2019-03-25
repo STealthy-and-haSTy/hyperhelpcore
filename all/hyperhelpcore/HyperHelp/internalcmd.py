@@ -78,7 +78,7 @@ class HyperhelpInternalProcessCommentsCommand(sublime_plugin.TextCommand):
     file.
     """
     def run(self, edit):
-        for region in reversed(self.view.find_by_selector("comment")):
+        for region in reversed(self.view.find_by_selector("comment.block.help")):
             self.view.erase(edit, region)
 
     def is_enabled(self):
