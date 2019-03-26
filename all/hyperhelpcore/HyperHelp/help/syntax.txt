@@ -1,32 +1,43 @@
-%hyperhelp title="HyperHelp Help Syntax" date="2018-02-22"
+%hyperhelp title="HyperHelp: Help Syntax" date="2019-03-25"
+
+
+# _none:Help Syntax Overview
+======================
 
 Help files in HyperHelp are plain text files with an extension of `.txt` that
 support a minimal |markup| language to provide emphasis and navigation hints to
-the help system.
+the help system. Each help file in a help package must be referenced in the
+|hyperhelp.json| help index for the package so that HyperHelp knows that it
+exists.
+
+    `NOTE:` Every help package should contain a file named `index.txt`, which
+            is used as the default entry point for help in the package similar
+            to how `index.html` is used for folders in web pages.
 
 
-*|File Header|*
-===========
+# File Header
+=============
 
 Every HyperHelp help file should start with a header structured as follows:
 
-    `%hyperhelp title="Help File Title" date="YYYY-MM-DD"`
+    ```
+    %hyperhelp title="Help File Title" date="YYYY-MM-DD"
+    ```
 
 
-When the help file is loaded into the |help view|, the header will be parsed
+When the help file is loaded into the |help view|, the header will be parsed
 and converted into a standard header line in the buffer. The title of the file
-is always centered within the 80 column width of the help view, and the date
-is displayed in a user-selectable format via the |hyperhelp_date_format|
-setting.
+is always centered within the 80 column width of the help view, and the date is
+displayed in a user-selectable format via the |hyperhelp_date_format| setting.
 
 The file header is not mandatory, but it is highly recommended that your help
 files contain one. This helps to ensure that all help displayed to the user is
-in a consistent format and ensures that every help file can be easily opened
-by name (since the expanded header contains the file name as an |anchor|).
+in a consistent format and ensures that every help file can be easily opened by
+name (since the expanded header contains the file name as an |anchor|).
 
 
-*|Markup|*
-======
+# Markup
+========
 
 Although HyperHelp is primarily plain text, there is a small markup language
 provided to add navigation information and visual emphasis where needed.
@@ -35,100 +46,194 @@ Bu design, all markup is simple, contextual and non-ambiguous due to how
 Sublime Text syntax highlighting is performed.
 
 
-    *|Key Bindings|*
-    ------------
-
-    Simple key bindings are supported, which are highlighted in the view to
-    call attention to them. Key bindings are denoted by placing the binding
-    inside of `<` and `>` characters, such as:
-
-        <Shift+Page Up>
-        <Command+P>
-        <Alt+Shift+>>
-
-    Key bindings can not contain space characters, but `Tab` characters are
-    allowed.
-
-
-    *|Code Blocks|*
-    -----------
-
-    Simple code blocks such as those in markdown are implemented as a way to
-    help you draw some simple contextual highlighting around key terms and
-    elements.
-
-    `Code Blocks` are wrapped in back ticks and may contain whitespace, but
-    must always start and end on the same line in order to be considered valid
-    and cannot contain back ticks.
-
-    ```
-    Code blocks are also allowed by providing `code fences` that wrap the
-    text.
-    ```
-
-
-    *Anchors*
-    ---------
-
-    Anchors represent points of interest in help documents. HyperHelp natively
-    allows you to jump through all of the anchors in the current help document
-    via the <Tab> and <Shift+Tab> key bindings.
-
-    Pressing <Enter> while the cursor is in a |link| will jump the cursor to
-    the matching anchor point, even if it is in a different help document. This
-    action is also available by a <Double Left Clicking> on a link.
-
-    Anchors are defined by wrapping text in asterisks, such as the heading of
-    this section of the documentation. Such anchors remain visible in the
-    document to provide visual clues that it is a point of interest.
-
-    Spaces are not allowed inside of anchor text, although `Tab` characters are
-    allowed. Note that only interior tabs are supported; an anchor with a
-    leading or trailing tab is not allowed.
-
-    Alternatively you may also use other conventions as you see fit, such as
-    *snake_case* or *periods.as.spaces* (or some other method that does not
-    include whitespace).
-
-    To allow for points of interest in documents that are not visually
-    distinguishable from regular text, you can wrap the text of the anchor in
-    pipe characters, such as `*|this sample|*`. Such anchors are treated the
-    same as other anchors, but are invisible in the buffer.
-
-    This variety of hidden anchor is generally employed as section headers in
-    documentation.
-
-
-    *|Links|*
-    -----
-
-    Links are defined by wrapping the link text in pipe characters. The text in
-    a link must match an |anchor| or one of its |aliases| and must appear in
-    the |help index|.
-
-    Links follow the same rules as |anchors| do in that white space is not
-    allowed in link text but tabs are (except leading and trailing tabs).
-
-
-    *|Separators|*
+    ## Anchors
     ----------
 
-    Separators allow you to draw lines and boxes in help, such as to underline
-    section headings (as is done in this help).
+        Normal: `*topic:anchor text*`
+                `*:anchor text*`
+                `*anchor text*`
 
-    Vertical separators consist of a `|` character that is preceded or
-    succeeded with a tab character. This distinguishes them from the characters
-    used to define links, which are not allowed to have leading or trailing tab
-    characters.
+        Hidden: `*|topic:anchor text|*`
+                `*|:anchor text|*`
+                `*|anchor text|*`
 
-    Horizontal separators consist of four or more consecutive `=` or `-`
-    characters. Additionally the sequence can begin with an `+` character and
-    end with a `+` or `|` character.
+        `NOTE:` All anchors must have a unique `topic` (|headings| and anchors
+                share the same topic name space). The special topic `_none` can
+                be used to indicate an anchor can be navigated to by keyboard
+                but not by a link (for example a section header).
 
-    This allows you to do things like underline section headers, draw boxes or
-    create tables.
+
+    Anchors represent points of interest in help documents; they declare the
+    point where a |topic| navigates to. Navigation to an anchor can occur as
+    the result of following a link, as well as via keyboard navigation in a
+    file; by default this is the <Tab> and <Shift+Tab> keys.
+
+    The body of the anchor itself is of the form `topic:text`, which indicates
+    that this anchor represents a topic named `topic`, but presents in the file
+    as `text` instead.
+
+    Since it is a common idiom for an anchor to use a topic and text that are
+    identical, `*topic:topic*`, `*:topic*` and `*topic*` are treated as being
+    the same; an anchor whose topic is identical to it's text. The second form
+    is required when the topic text contains a literal `:` character, since in
+    that case the result would be ambiguous.
+
+    There are two styles of anchor, `Normal` and `Hidden`; the only functional
+    difference between the two is that `normal` anchors are represented in the
+    resulting text file wrapped in `*asterisks`, while a hidden anchor is not
+    visibly distinct from the surrounding text in any way.
+
+
+    ## Headings
+    -----------
+
+        `# topic:text`
+        `## topic:text`
+        `### topic:text`
+
+        `NOTE:` All anchors must have a unique `topic` (headings and |anchors|
+                share the same topic name space). The special topic `_none` can
+                be used to indicate an anchor can be navigated to by keyboard
+                but not by a link (for example a section header).
+
+
+    A heading is a special case of a normal |anchor|, which is prefixed by one
+    or more `#` characters to indicate what level of heading that it is. As
+    they are treated as anchors, topics can link to them.
+
+    Headers are visually distinct from normal anchors due to their `#` prefix.
+    Their purpose is to allow for easier navigation within the sections of a
+    file by using `Goto > Goto Symbol`.
+
+    In the symbol list, headers are displayed with an indentation level that
+    corresponds to the number of `#` prefix characters they have, up to an
+    indentation level of three.
+
+
+    ## Links
+    -------
+
+        `|package:topic:text|`
+        `|:topic:text|`
+        `|package::text|`
+        `|::text|`
+        `|text|`
+
+        `NOTE:` The target of a link is resolved at the time the help file is
+                loaded into the |help view| and is visible by hovering your
+                mouse over a link. If the target of a link can not be found,
+                the link will be visually styled with a different colored
+                underline to indicate that it is broken.
+
+
+    Links are the main method by which a user can interactively jump to another
+    location in the current or some other help file. You can follow a link by
+    doing a <Double Left Click> on the link, or placing the cursor on the link
+    text and pressing <Enter>.
+
+    The general form of a link is `package:topic:text`, which indicates that
+    the link targets the given |topic| in the given help package, and will
+    display using the provided text.
+
+    The `package` portion is optional and only required for links that target a
+    topic in a different package; when it is not specified, the default is the
+    current package. This is demonstrated in the second, fourth and fifth
+    examples above.
+
+    As with |anchors|, it is a common idiom to link to a topic by using the
+    topic as the text of the link. In such a case, the topic is also optional
+    and defaults to the link text, as in the last three examples above.
+
+    In order to avoid ambiguity, if the link text contains a literal `:`
+    character, all sections must be provided (though you can allow them to
+    default).
+
+
+    ## Code Blocks
+    -------------
+
+        `Inline Code Block`
+
+        ```
+        Multi Line Code Block
+        ```
+
+
+    HyperHelp supports both inline code blocks and multi line code blocks in a
+    manner similar to that used in Markdown. Unlike in standard markdown, it is
+    not possible to include or quote a back tick inside of an inline code
+    block.
+
+    Multi line code blocks allow the ability to specify the syntax highlighting
+    to use. Any value will be accepted, but syntax highlighting will only be
+    performed for `python`, `py`, `xml`, `plist` and `json`, since these are
+    the core file formats used by Sublime internally.
+
+
+    ## Key Bindings
+    --------------
+
+        `<Shift+Page Up>`
+        `<Command+P>`
+        `<Alt+Shift+>>`
+
+
+    HyperHelp include a simple key binding markup by wrapping text in pairs of
+    less than and greater than signs. Although intended primarily for use as a
+    key binding (as the name suggets), there is no internal functionality that
+    relies on this fact, so you are free to use them for any emphasis that you
+    want.
+
+    <****>
+
+    ## Comments
+    -----------
+
+        `<** Comment Text **>`
+
+            `NOTE:` Due to a potential ambiguity, it is not possible to denote
+                    a key binding of four consecutive asterisk characters
+                    without including whitespace of some form; such a binding
+                    will be recognized as a comment instead.
+
+
+    A simple comment syntax is allowed in HyperHelp by wrapping text in
+    `<**` and `**>` sequences.
+
+    When the help file is rendered in the |help view|, the comment is
+    completely redacted from the contents of the file so that it doesn't appear
+    to the user at all.
+
+    When the `**>` is followed by the end of the line (with no intervening
+    characters or whitespace), the end of line character will also be removed
+    when the comment is redacted.
+
+    This allows you to include comments in locations without adding extra
+    blank lines to the output.
+
+
+    ## Separators
+    ------------
+
+        `----`
+        `====`
+        `+----|----+`
+        `|`
+
+
+    Separators allow for drawing simple horizontal and vertical lines, allowing
+    you to emphasize text by underlining it (as is done in this help system) as
+    well as to draw tables:
 
 
         +------------|----------+
-        | Sample Box | Column 2 |
+        | Sample Box | Column 2 |
         +============+==========+
+
+
+    Horizontal separators consist of four or more consecutive `=` or `-`
+    characters. Additionally the sequence can begin with an `+` character and
+    end with a `+` or `|` character to aid in line drawing.
+
+    In addition, any `|` characters which are not a part of a |link| are
+    considered to be vertical separators and are treated as such.

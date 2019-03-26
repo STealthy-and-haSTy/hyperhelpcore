@@ -1,56 +1,105 @@
-%hyperhelp title="Authoring Help" date="2018-02-22"
-
-*|Authoring Overview|*
-==================
-
-In order to provide help for a package, there are two key types of files that
-need to be provided, a |help index| and a |help source|.  Each package that
-provides help must contain an index, which tells HyperHelp about the help that
-is available in that package. Additionally, one or more help files need to be
-provided in order to provide the actual help content.
-
-Both types of files are simple text files, with the index being a specially
-structures |JSON| file and the source files being plain text along with some
-simple |markup|.
+%hyperhelp title="HyperHelp: Authoring Help" date="2019-03-25"
 
 
-*|Help Index|*
-----------
+# Authoring Overview
+====================
 
-This section would talk about the structure of the help index and the required
-keys. It should link to a file with more complete information and an example.
+HyperHelp is designed to make the barrier to entry as easy as possible in order
+to get help up and running. In order to create help for your package, you need
+to author:
+
+    * A |hyperhelp.json| file to act as a help index file. This file tells
+      HyperHelp what files in your package represent help files, and what
+      topics appear in each file.
+
+      As the name suggests, this is a |JSON| file; HyperHelp uses the internal
+      JSON loader in Sublime, which is less strict than standard JSON and
+      allows for comments, which can be of help in documenting your index.
+
+    * One or more |help files| to provide the actual help content. These are
+      regular text files which can make use of some simple |markup| to define
+      the navigation elements in the file as well as some simple visual
+      styling. There are some |:style.txt:style guidelines| to follow in your help files
+      to ensure that everything is consistent for users.
+
+This help includes an |example hyperhelp.json| file and an |example index.txt|
+help file that demonstrate a simplistic help system and how everything ties
+together.
+
+Although you can create the needed files manually if desired, the
+|HyperHelpAuthor| package allows for easy creation of help indexes and files by
+doing some of the heavy lifting for you.
+
+    `NOTE:` Like HyperHelp itself, HyperHelpAuthor is still under active
+            development, so not all planned features exist yet.
+
+Once you have |:integration.txt:integrated| HyperHelp in your package and authored help, your
+job is done; HyperHelp will automatically find and present your help files to
+the user with no further setup.
 
 
-*|Table of Contents|*
------------------
+# Help Index Loading
+====================
 
-This section would talk about the table of contents sections of the help index
-to tell you what it's for. It should also be a separate file with more complete
-information.
+When the HyperHelp package loads, it scans the package directory for all of the
+|hyperhelp.json| files that exist, and loads them all in order to determine
+what help is currently available. These index files contain all of the meta
+information needed to know what packages contain help, and what that help
+consists of.
 
+In addition, as packages move in and out of the `ignored_packages` setting,
+any help indexes they contain will be either loaded or unloaded to keep the
+help information current.
 
-*|Help Source|*
------------
-
-This section would talk about help files. I think it's enough to discuss them
-briefly and then link to the |markup| page, since that tells you the structure
-of these files.
-
-
-*|Topics|*
-------
-
-This section would talk about topics and how they are created by |anchors| and
-navigated to by keyboard and by |links|. This should also perhaps link to an
-extra file that talks about the structure of a topic, which the above topics
-could link to.
-
-This should also discuss how to set up |externals| as well.
+Note that it's possible for one physical package to contain multiple logical
+help packages within itself. Each index is treated as a separate package and
+presented as such. The |SnAPI| package that displays the official Sublime Text
+help is an example of this.
 
 
-*|Aliases|*
--------
+# Navigating Topics
+===================
 
-This section is just a simple explanation that aliases provide an extra name
-for help topics that are equivalent, so that you can alter the link text used
-and still target a specific |anchor|.
+HyperHelp navigates help topics by looking up a |topic| in the index in order
+to determine what help file needs to be displayed. In order to do this, two
+pieces of information are required:
+
+    * The help `topic` to view
+    * The help `package` that the topic should be looked up in
+
+When no package is provided, the package whose help is currently being
+displayed is used by default. Similarly, if no help topic is provided, it is
+assumed to be `index.txt`.
+
+By looking up the help topic in the index for the appropriate package,
+HyperHelp can determine what help file it needs to display in the |help view|.
+Once that file is displayed, the |anchor| that matches the topic is found and
+focused.
+
+Based on this, some rules apply:
+
+    * Only |help files| that appear in their package's help index can be opened
+      and displayed because otherwise HyperHelp does not know where they are.
+
+    * |:topic:Topics| within a help package must be unique; if there is more than one
+      identical topic, HyperHelp is unable to determine which one to display.
+
+    * An |anchor| must be present in a help file that matches the topic;
+      otherwise once the help file is opened, HyperHelp can't know where in the
+      file to look.
+
+By convention, all |help files| contain a |file header| which provides
+information on the  title and last modification date of that particular file.
+When the help file is rendered, it contains an implicit anchor that specifies
+the name of the help file itself.
+
+This makes it possible to navigate to any help file in any package by using
+it's name as a help topic.
+
+Based on this convention and the fact that the default topic is `index.txt`
+when one is not provided, all help packages should contain an `index.txt` help
+file that specifies the entry point to the help in much the same way as the
+`index.html` file does for a folder on a web page.
+
+This allows a convenient way to open the help for any package by merely
+specifying that you which to browse that package directly.

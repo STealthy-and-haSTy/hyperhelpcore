@@ -1,0 +1,285 @@
+%hyperhelp title="Help Index Files" date="2019-03-23"
+
+
+# hyperhelp.json:The hyperhelp.json file
+=========================
+
+
+Every package which contains help must include a `hyperhelp.json` file which
+provides all of the meta information to allow HyperHelp to know what help is
+available in that particular package.
+
+The name of the file is important; HyperHelp only looks specifically for files
+with the name `hyperhelp.json`. As the name suggests, the file is a |JSON|
+formatted file, with a schema that outlines all of the information that
+HyperHelp needs in order to present the help.
+
+The sections below specify the structure of the index as a series of keys that
+can be used and what they are used for. See the |example hyperhelp.json| file
+for a complete example of a minimal help index; you can use this as a starting
+point for your own help index if you're not using |HyperHelpAuthor| to author
+your help files.
+
+
+    ## Package Description
+    ----------------------
+
+    These keys are used in the `hyperhelp.json` file to tell HyperHelp how to
+    present the help in this index file to the user and what files it contains.
+    With the exception of the `package` key, all of these keys are optional;
+    you only need to specify them when you want to override the default value.
+
+    *package* `[REQUIRED]`
+
+        The name of the package that this help index is for. This does not need
+        to be the same as the physical package that the index is stored inside;
+        for example if you are creating a package that contains help for some
+        other package.
+
+        If multiple index files present themselves as being the help for the
+        same package, one index will be selected as the one to use. The index
+        stored in the physical package of the same name is chosen as the
+        canonical index and used; otherwise the last loaded index is used
+        instead.
+
+
+    *description*
+
+        The human readable description of the help in this package. This is
+        presented to the user in places where they are allowed to select a
+        help package, such as when using `HyperHelp: Browse Available Help`.
+
+        If this key is not present, a default value is used:
+
+        ```json
+        "description": "Help for PackageName"
+        ```
+
+
+    *doc_root*
+
+        A relative path inside of the package containing the index file that
+        indicates where the help files for this package are located. When this
+        is not specified, the default is to assume that the help files are
+        stored alongside the index.
+
+
+    *default_caption*
+
+        The default caption to apply to a |:help topics:help topic| that doesn't have one
+        explicitly defined. This is a string which can contain the placeholder
+        values `{topic}`, `{source}` and `{package}`  to indicate the help
+        topic, source help file and containing package, respectively.
+
+        When this is not provided, the following default is used:
+
+        ```json
+        "default_caption": "Topic {topic} in help source {source}"
+        ```
+
+
+    ## help_files:Package Help Files
+    ---------------------
+
+    The top level key `help_files` is used to specify the list of help files
+    that make up the help in this help index. The value is a dictionary in
+    which the keys are the names of help files and the values are lists of help
+    topics that exist in that help file.
+
+    The contents of this key and the |externals| key are used to collate the
+    complete list of all help topics that exist within the help package, and by
+    extension in what file those help topics can be found.
+
+    Help files that don't appear here as well as help topics that aren't listed
+    in their related file cannot be viewed or loaded. |HyperHelpAuthor|
+    contains linting tools to ensure that all help topics and files in a
+    package are addressable.
+
+    ```json
+    "help_files": {
+        "index.txt": [ /* help topics */ ],
+        "other.txt": [ /* help topics */ ],
+    }
+    ```
+
+
+        ### Help Topics
+
+        Each help file listed in the |help_files| key is a JSON list that
+        contains all of the help topics contained within that particular help
+        file.
+
+        In this list, the first item must be a string which represents the
+        title of the help file itself; this is used to display the name of the
+        help file itself in various places.
+
+        Every help file in a help package is an implicit topic which uses the
+        title of the help file as the caption, and every rendered help file
+        includes an |anchor| in the header line that represents the file name.
+        Thus, all help files are readily addressable by name.
+
+        The remainder of the items in the list are a list of dictionaries which
+        represent each topic which is contained in that file.
+
+        *topic*  `[REQUIRED]`
+
+            A string which represents a help topic that can be found in this
+            help file. Help topics must be unique within a single package. In
+            addition, the help file should have an |anchor| that matches this
+            topic, or the user will be unable to navigate there.
+
+            `NOTE:` Topics that begin with leading underscores are reserved for
+                    use by HyperHelp itself (see for example the `_none` topic
+                    as outlined in the |markup| section on |:anchor:anchors|).
+
+                    In addition, due to the syntax of |anchors| and |links|, a
+                    `:` character is not allowed in a topic (although it can
+                    appear in the anchor or link text).
+
+        *caption*
+
+            A textual caption for this particular topic. This is used in places
+            where the user is prompted to select a help topic, such as in the
+            |table of contents|.
+
+            When no caption is provided for a help topic, the |default_caption|
+            is applied instead.
+
+
+        *aliases*
+
+            A list of other topic aliases that represent this particular topic.
+            This allows you to associate multiple potential topics to a single
+            topic in cases where that makes logical sense.
+
+            Aliases share the same namespace as topics, and as such must also
+            be unique amongst all other topics and aliases within the same
+            help package.
+
+
+        ```json
+        "help_files": {
+            // This help file contains two topics; one implicitly defined by
+            // its file name and one explicit topic. In addition, the explicit
+            // topic is also known by an alias.
+            "index.txt": [
+                "Title of the Index File",
+
+                {
+                    "topic": "sample topic",
+                    "caption": "The sample topic in index.txt",
+                    "aliases": ["sample"]
+                }
+            ]
+        }
+        ```
+
+
+        ### External Resources
+        ----------------------
+
+        In addition to standard help files, HyperHelp can also automatically
+        open package files and web URLs through the use of `externals`. This
+        allows you the freedom to do things such as open other resource files
+        (e.g. a README file) as well as link to external web documentation as
+        needed.
+
+        *externals*
+
+            This key operates similar to the |help_files| key, except that
+            where that key specifies the names of help files, this key
+            specifies the names of external resources.
+
+            As in that key, every external is implicitly defined as a topic
+            with it's title as a caption. In addition, any topics inside of
+            an external definition are implicit aliases and will share the
+            same caption unless one is specified.
+
+        ```json
+        "externals": {
+            // An external to open my home page. This defines a topic that is
+            // the explicit URL with a caption of "OdatNurd's Home Page". It
+            // also defines a topic named "homepage" with a caption of  "My
+            // Homepage". Either topic will result in the web page being
+            // opened.
+            "https://odatnurd.net/": [
+                "OdatNurd's Home Page",
+
+                {
+                    "topic": "homepage",
+                    "caption": "My Homepage"
+                }
+            ],
+
+            // An external to open a package file. As above, there are two
+            // topics defined here; one that is the package file name and one
+            // that is just "exec.py". This time both have the same caption.
+            // Both will open the package file.
+            "Packages/Default/exec.py": [
+                "The default exec command",
+
+                {
+                    "topic": "exec.py"
+                }
+            ]
+        }
+        ```
+
+
+        ### Table of Contents
+        ---------------------
+
+        Every help index can define a custom table of contents via the
+        `help_contents` key if desired, to allow the user to see and browse the
+        help in a hierarchy defined by the help author. If this key is not
+        present in the help index, a table of contents is generated
+        automatically by gathering every help topic contained in the packge.
+
+        *help_contents*
+
+            This key specifies a list of help topics which should be presented
+            to the user when they open the table of contents (by default this
+            is done via the <?> key). The table of contents is presented as a
+            structured list of help topics, and displays the topic captions for
+            clarity.
+
+            For simplicity, items in the list can be strings that represent
+            help topics. This will perform a lookup of the topic and use that
+            to infer the caption to use.
+
+            For more control items in the list can also be |:help topics:topic dictionaries|
+            as well. In this case the topics must already exist, but the
+            caption used can be altered.
+
+            The *children** key can be used in topic dictionaries contained in
+            the `help_contents` in order to specify that when selected this
+            topic should present a list of other related help topics in a
+            hierarchy. This allows for more complex contents without making the
+            list overwhelming.
+
+        ```json
+        // This table of contents specifies four top level items. The first
+        // two topics use their default captions and the third has a custom
+        // caption. The "options.txt" topic presents a list of three child
+        // topics, with the last one having a custom caption.
+        "help_contents": [
+            "index.txt",
+            "syntax.txt",
+            {
+                "topic": "other.txt",
+                "caption": "Replaced Caption"
+            },
+            {
+                "topic": "options.txt",
+                "children": [
+                    "option1",
+                    "option2",
+                    {
+                        "topic": "option3",
+                        "caption": "Customized Option 3 Caption"
+                    }
+                ]
+            }
+
+        ]
+        ```

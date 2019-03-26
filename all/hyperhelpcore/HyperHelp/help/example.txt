@@ -1,0 +1,147 @@
+%hyperhelp title="Help Examples" date="2019-03-25"
+
+
+# Example hyperhelp.json
+------------------------
+
+This is an example help index for a package containing a single help file. The
+metadata at the top instructs HyperHelp that this is the index for a package
+named `Sample`, and that inside of that package, the help files (i.e.
+`index.txt`) are inside of a folder named `help/`.
+
+The topics in a single file are declared, along with captions and aliases. In
+addition some externals are also defined to open the `exec.py` file in the
+default package and the home page for `hyperhelpcore` itself.
+
+The `help_contents` provides a simple hierarchical table of contents that lets
+you jump to the top level of the file and also sections. This also demonstrates
+overriding the captions for some items.
+
+
+```json
+{
+    "package": "Sample",
+    "description": "Help for Sample Package",
+    "doc_root": "help/",
+
+    "help_files": {
+        "index.txt": [
+            "Index file for Sample package",
+
+            {
+                "topic": "index.txt",
+                "caption": "Index file",
+                "aliases": ["index file"]
+            },
+            {
+                "topic": "introduction",
+                "caption": "Introduction Section"
+            },
+            {
+                "topic": "anchor",
+                "caption": "Sample Anchor"
+            },
+            {
+                "topic": "section two",
+                "caption": "Second Section"
+            },
+            {
+                "topic": "hidden anchor",
+                "caption": "An anchor that is not visible in the document"
+            },
+            {
+                "topic": "section three",
+                "caption": "The third and last section"
+            },
+        ]
+    },
+
+    "externals": {
+        "Packages/Default/exec.py": [
+            "The exec plugin",
+
+            {
+                "topic": "exec.py",
+            },
+        ],
+
+        "https://github.com/STealthy-and-haSTy/hyperhelpcore": [
+            "The HyperHelp core dependency",
+
+            {
+                "topic": "hyperhelpcore",
+                "caption": "Core Dependency"
+            },
+        ]
+
+    },
+
+    "help_contents": [
+        "index.txt",
+        {
+            "topic": "index.txt",
+            "caption": "The Sections",
+            "children": [
+                {
+                    "topic": "introduction",
+                    "caption": "Section One"
+                },
+                "section two",
+                "section three"
+            ]
+        },
+    ]
+}
+```
+
+
+# Example index.txt
+-------------------
+
+This is the help file that goes with the sample above. It should be placed in
+the same package as the above index, in a folder named `help/` (or you can
+change the |doc_root| in the sample to suit).
+
+This shows some of the simpler |markup| elements, such as |anchors|, |links|
+and |:headings:section headings|.
+
+
+```help
+%hyperhelp title="Index file for Sample package" date="2019-03-22"
+
+This is the root help file for the 'Sample' package.
+
+If you use `Goto > Goto Symbol` in the main menu, the symbol list will show you
+the section heading, indented based on the level of the section header itself.
+You can also press <Tab> and <Shift+Tab> to jump back and forth  between the
+sections.
+
+Follow links by double clicking on them or pressing <Enter> while the cursor is
+on them.
+
+
+# Introduction
+--------------
+
+This part of the file would be a simple introduction. It also has an inline
+*anchor* for a link to jump to.
+
+
+## Section Two
+--------------
+
+This is a second section in the sample file. Along with a link to the |anchor|
+in the previous section, this also contains a *|hidden anchor|*, which
+functions the same as a regular one but is not visible in the document.
+
+
+### Section Three
+-----------------
+
+This is the third section. Apart from being here to show that three levels of
+section header are possible, it also shows that you can link to a |hidden
+anchor| the same as a regular one.
+
+In addition, you can also open the |exec.py| plugin by following this link or
+view the code for |hyperhelpcore|, the dependency that powers HyperHelp.
+```

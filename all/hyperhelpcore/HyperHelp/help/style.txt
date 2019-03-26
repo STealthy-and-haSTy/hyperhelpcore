@@ -1,19 +1,32 @@
-%hyperhelp title="HyperHelp Style Conventions" date="2018-02-22"
+%hyperhelp title="HyperHelp: Style Conventions" date="2019-03-25"
 
-*|Style Conventions|*
-=================
 
-In order to remain as consistent as possible for all users of help,  HyperHelp
-imposes some limitations on the layout of help in the |help view| in the form
-of custom settings applied that override user settings.
+# _none:Style Conventions
+===================
 
-    * `word_wrap` is disabled, so all help should optimally be presentable in
-      no more than 80 characters of text. This matches the width of the
-      generated |file header| in the displayed help.
+In order to remain as consistent as possible for all users of help, HyperHelp
+includes customized syntax specific settings for the |help view|.
 
-    * `tab_size` is set to `1`. This is to ensure that help does not display
-      indent widths that are not what the author intended.
+    * `word_wrap` is disabled, so all help should optimally be presentable in
+      no more than 80 characters of text. This matches the width of the
+      generated |file header| in the displayed help.
 
-    * `convert_tabs_to_spaces` is disabled so that raw tab characters can be
-      inserted into the buffer. These are used to provide white space inside
-      of |anchors| and |links|, as well as to define |separators|.
+    * `translate_tabs_to_spaces` is enabled for help files to ensure identical
+      formatting for both the help author and the person viewing the help.
+
+
+# _none:View Conventions
+==================
+
+In addition to the style rules outlined above, several settings are included in
+the syntax specific settings of the |help view| in order to provide a cleaner
+appearance.
+
+    * `rulers` are disabled
+
+    * `fade_fold_buttons` and `draw_indent_guides` are enabled and disabled
+      respectively, since help text tends to be more free form and less code
+      based, where indentation levels are less ordered.
+
+    * `match_selection` is turned off to avoid visual noise when text is
+      selected, such as when navigating between |anchors|
