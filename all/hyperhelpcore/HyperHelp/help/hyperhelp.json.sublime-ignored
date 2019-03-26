@@ -1,59 +1,35 @@
 {
-    // Required: The name of the package that this help is for.
-    //
-    // This is used to associate this help index with a particular package.
-    // Only one index can be in use for a package at once.
     "package": "HyperHelp",
-
-    // Optional; A descriptive string that describes what this help is for.
-    //
-    // If not given, a default will be used instead.
     "description": "HyperHelp System Documentation",
-
-    // Optional; A relative path inside the package containing this index where
-    // the help files referenced in this index are stored.
-    //
-    // If not given, the package location of the help index is used.
     "doc_root": "help/",
-
-    // Optional; the caption to use for any help topic that doesn't have one
-    // explicitly defined. The value seen here is the default, and the place
-    // holders {topic}, {source} and {package} are allowed.
     "default_caption": "Topic {topic} in help source {source}",
 
-    // Required; A dictionary that represents all of the help files that can be
-    // referenced from within this package.
     "help_files": {
-        // Required: The name of the help file (relative to the document root)
-        // that this entry is for.
         "index.txt": [
-            // Required; The title of the help file, for use in various display
-            // locations.
-            "HyperHelp: What is it?",
+            "HyperHelp: About HyperHelp",
 
-            // Optional: One or more dictionaries that indicate a topic that
-            // appears in this help file along with a descriptive caption for
-            // the item.
-            //
-            // The topic is required, but the caption is optional; a default
-            // will be created if it is missing.
-            //
-            // A help file always has an implicit topic based on it's name and
-            // title if you don't specify one.
             {
                 "topic": "what is hyperhelp",
                 "caption": "HyperHelp: What is it?"
             },
             {
                 "topic": "how it works",
-                "caption": "How it works"
+                "caption": "HyperHelp: How it works"
             },
             {
-                "topic": "integration with packages",
-                "caption": "Integrating HyperHelp in your Package",
-                "aliases": ["integration"]
+                "topic": "bootstrapping",
+                "caption": "HyperHelp: Bootstrapping"
+            },
+            {
+                "topic": "help files",
+                "caption": "HyperHelp: Help Files"
+            },
+            {
+                "topic": "example",
+                "caption": "Example Anchor"
             }
         ],
+
         "help_on_help.txt": [
             "How to use HyperHelp",
 
@@ -63,16 +39,7 @@
             },
             {
                 "topic": "navigating help",
-                "caption": "Navigating Help",
-                "aliases": ["navigating"]
-            },
-            {
-                "topic": "links and anchors",
-                "caption": "Links and Anchors"
-            },
-            {
-                "topic": "here",
-                "caption": "Sample anchor"
+                "caption": "Navigating Help"
             },
             {
                 "topic": "help view",
@@ -80,115 +47,180 @@
             },
             {
                 "topic": "opening help",
-                "caption": "Opening HyperHelp",
-                "aliases": ["opening"]
+                "caption": "Opening HyperHelp"
             },
             {
                 "topic": "history",
                 "caption": "Help History"
-            },
-            {
-                "topic": "next steps",
-                "caption": "Next Steps"
-            },
+            }
         ],
+
         "syntax.txt": [
-            "HyperHelp Help Syntax",
+            "HyperHelp: Help Syntax",
 
             {
                 "topic": "file header",
-                "caption": "Help Header Definition"
+                "caption": "Help Header Definition",
+                "aliases": ["header"]
             },
             {
                 "topic": "markup",
-                "caption": "HyperHelp Markup"
+                "caption": "Markup - Overview"
             },
             {
                 "topic": "key bindings",
-                "caption": "HyperHelp Markup - Key Bindings"
+                "caption": "Markup - Key Bindings"
             },
             {
                 "topic": "code blocks",
-                "caption": "HyperHelp Markup - Code Blocks"
+                "caption": "Markup - Code Blocks"
             },
             {
                 "topic": "anchors",
-                "caption": "HyperHelp Markup - Anchors",
+                "caption": "Markup - Anchors",
                 "aliases": ["anchor"]
             },
             {
+                "topic": "headings",
+                "caption": "Markup - Headings",
+                "aliases": ["heading"]
+            },
+            {
                 "topic": "links",
-                "caption": "HyperHelp Markup - Links",
+                "caption": "Markup - Links",
                 "aliases": ["link"]
             },
             {
                 "topic": "separators",
-                "caption": "HyperHelp Markup - Visual Separators"
+                "caption": "Markup - Visual Separators"
             },
             {
-                "topic": "snake_case",
-                "caption": "Sample snake_cased Anchor"
-            },
-            {
-                "topic": "periods.as.spaces",
-                "caption": "Sample periods.as.spaces Anchor"
-            },
-        ],
-        "style.txt": [
-            "HyperHelp Style Conventions",
-
-            {
-                "topic": "style conventions",
-                "caption": "HyperHelp Style Conventions"
+                "topic": "comments",
+                "caption": "Markup - Comments"
             }
         ],
+
+        "style.txt": [
+            "HyperHelp: Style Conventions",
+        ],
+
         "authoring.txt": [
-            "Authoring Help",
+            "HyperHelp: Authoring Help",
 
             {
-                "topic": "authoring Overview",
-                "caption": "Authoring Help"
+                "topic": "authoring overview",
+                "caption": "Authoring Overview"
             },
             {
-                "topic": "help index",
-                "caption": "Help Index Files"
+                "topic": "help index loading",
+                "caption": "Help Index Loading"
+            },
+            {
+                "topic": "navigating topics",
+                "caption": "Navigating Topics"
+            }
+        ],
+
+        "help_index.txt": [
+            "Help Index Files",
+
+            {
+                "topic": "help_index.txt",
+                "caption": "hyperhelp.json",
+                "aliases": ["hyperhelp.json"]
+            },
+            {
+                "topic": "package description",
+                "caption": "Help Index: Package Description"
+            },
+            {
+                "topic": "package",
+                "caption": "hyperhelp.json: package key"
+            },
+            {
+                "topic": "description",
+                "caption": "hyperhelp.json: description key"
+            },
+            {
+                "topic": "doc_root",
+                "caption": "hyperhelp.json: doc_root key"
+            },
+            {
+                "topic": "default_caption",
+                "caption": "hyperhelp.json: default_caption key"
+            },
+            {
+                "topic": "help_files",
+                "caption": "hyperhelp.json: help_files key"
+            },
+            {
+                "topic": "help_contents",
+                "caption": "hyperhelp.json: help_contents key"
+            },
+            {
+                "topic": "children",
+                "caption": "help_contents: children key"
+            },
+            {
+                "topic": "external resources",
+                "caption": "hyperhelp.json: External Resources"
+            },
+            {
+                "topic": "externals",
+                "caption": "hyperhelp.json: externals key"
+            },
+            {
+                "topic": "help topics",
+                "caption": "hyperhelp.json: Help Topics"
+            },
+            {
+                "topic": "topic",
+                "caption": "Help Topics: topic key"
+            },
+            {
+                "topic": "caption",
+                "caption": "Help Topics: caption key"
+            },
+            {
+                "topic": "aliases",
+                "caption": "Help Topics: aliases key"
             },
             {
                 "topic": "table of contents",
                 "caption": "Table of Contents"
-            },
-            {
-                "topic": "help source",
-                "caption": "Help Source Files"
-            },
-            {
-                "topic": "topics",
-                "caption": "Help Topics",
-                "aliases": ["topic"]
-            },
-            {
-                "topic": "aliases",
-                "caption": "Help Topic Aliases"
             }
         ],
-        "integration.txt": [
-            "Developer Info: Integrating HyperHelp",
 
-            // This is an example of the default topic for a file being given
-            // a caption different than the title for the help page.
+        "integration.txt": [
+            "Integrating HyperHelp",
+
             {
                 "topic": "integration.txt",
                 "caption": "Integrating HyperHelp into your Package"
             }
         ],
+
         "settings.txt": [
-            "HyperHelp settings",
+            "HyperHelp Settings",
 
             {
-                "topic": "hyperhelp_date_format",
-                "caption": "Help Caption Date Format"
+                "topic": "package settings",
+                "caption": "HyperHelp Package Settings"
             },
+            {
+                "topic": "dependency settings",
+                "caption": "HyperHelp Dependency Settings"
+            },
+            {
+                "topic": "hyperhelp_date_format",
+                "caption": "Setting: hyperhelp_date_format"
+            },
+            {
+                "topic": "hyperhelp_ignore_disabled",
+                "caption": "Setting: hyperhelp_ignore_disabled"
+            }
         ],
+
         "commands.txt": [
             "HyperHelp Commands",
 
@@ -199,77 +231,192 @@
             },
             {
                 "topic": "hyperhelp_topic",
-                "caption": "hyperhelp_topic"
+                "caption": "Command: hyperhelp_topic"
             },
             {
                 "topic": "hyperhelp_contents",
-                "caption": "hyperhelp_contents"
+                "caption": "Command: hyperhelp_contents"
             },
             {
                 "topic": "hyperhelp_index",
-                "caption": "hyperhelp_index"
+                "caption": "Command: hyperhelp_index"
             },
             {
                 "topic": "hyperhelp_navigate",
-                "caption": "hyperhelp_navigate"
+                "caption": "Command: hyperhelp_navigate"
             },
             {
                 "topic": "hyperhelp_current_help",
-                "caption": "hyperhelp_current_help"
+                "caption": "Command: hyperhelp_current_help"
             },
+            {
+                "topic": "hyperhelp_history",
+                "caption": "Command: hyperhelp_history"
+            },
+            {
+                "topic": "hyperhelp_create_bookmark",
+                "caption": "Command: hyperhelp_create_bookmark"
+            },
+            {
+                "topic": "hyperhelp_prompt_create_bookmark",
+                "caption": "Command: hyperhelp_prompt_create_bookmark"
+            },
+            {
+                "topic": "hyperhelp_open_bookmark",
+                "caption": "Command: hyperhelp_open_bookmark"
+            }
         ],
+
+        "key_contexts.txt": [
+            "HyperHelp Key Contexts",
+
+            {
+                "topic": "key_contexts.txt",
+                "caption": "HyperHelp Key Contexts",
+                "aliases": ["key contexts"]
+            },
+            {
+                "topic": "context overview",
+                "caption": "Context: context overview"
+            },
+            {
+                "topic": "hyperhelp.is_help_view",
+                "caption": "Context: hyperhelp.is_help_view"
+            },
+            {
+                "topic": "hyperhelp.is_help_visible",
+                "caption": "Context: hyperhelp.is_help_visible"
+            },
+            {
+                "topic": "hyperhelp.is_help",
+                "caption": "Context: hyperhelp.is_help"
+            },
+            {
+                "topic": "hyperhelp.is_help_source",
+                "caption": "Context: hyperhelp.is_help_source"
+            },
+            {
+                "topic": "hyperhelp.is_help_index",
+                "caption": "Context: hyperhelp.is_help_index"
+            },
+            {
+                "topic": "hyperhelp.is_help_package",
+                "caption": "Context: hyperhelp.is_help_package"
+            },
+            {
+                "topic": "hyperhelp.is_help_file",
+                "caption": "Context: hyperhelp.is_help_file"
+            }
+        ],
+
+        "api.txt": [
+            "HyperHelp API",
+
+            {
+                "topic": "api.txt",
+                "caption": "HyperHelp API",
+                "aliases": ["api"]
+            },
+            {
+                "topic": "api overview",
+                "caption": "API Overview"
+            }
+        ],
+
+        "bookmarks.txt": [
+            "HyperHelp Bookmarks",
+
+            {
+                "topic": "bookmarks",
+                "caption": "About Bookmarks",
+                "aliases": ["bookmark"]
+            },
+            {
+                "topic": "creating bookmarks",
+                "caption": "Bookmarks: Creation"
+            },
+            {
+                "topic": "file bookmark",
+                "caption": "Bookmarks: File Bookmark"
+            },
+            {
+                "topic": "view bookmark",
+                "caption": "Bookmarks: View Bookmark"
+            },
+            {
+                "topic": "topic bookmark",
+                "caption": "Bookmarks: Topic Bookmark"
+            }
+        ],
+
+        "example.txt": [
+            "Help Examples",
+
+            {
+                "topic": "example hyperhelp.json",
+                "caption": "Example hyperhelp.json Index File"
+            },
+            {
+                "topic": "example index.txt",
+                "caption": "Example index.txt Help File"
+            }
+        ]
     },
 
-    // Optional; A dictionary that represents all of the external resources
-    // that can be referenced from within this package.
     "externals": {
-        // Required; the name of the external resource. This may be an http or
-        // https URL or a package file. Package files must be specified as a
-        // package resource, e.g. "Packages/Default/exec.py"
+        "https://github.com/STealthy-and-haSTy/HyperHelpAuthor": [
+            "HyperHelpAuthor: Help Authoring Package",
+
+            { "topic": "HyperHelpAuthor"}
+        ],
+
+        "https://github.com/STealthy-and-haSTy/SnAPI": [
+            "SnAPI: Sublime Text Documentation",
+
+            { "topic": "SnAPI" }
+        ],
+
+        "https://github.com/STealthy-and-haSTy/hyperhelpcore": [
+            "hyperhelpcore: The HyperHelp core Dependency",
+
+            { "topic": "hyperhelpcore" }
+        ],
+
+
+        "https://packagecontrol.io/docs/dependencies": [
+            "Package Control Dependency Documentation",
+
+            { "topic": "Package Control Dependency Documentation" }
+        ],
+
         "https://odatnurd.net/overrideaudit/": [
-            // Required; The title of the external resource, for use in various
-            // display locations.
             "OverrideAudit Home Page",
 
-            // Optional; One or more dictionaries that indicate a topic that
-            // will link to this external resource along with a descriptive
-            // caption. The title of the resource is used if a caption is not
-            // provided.
-            {
-                "topic": "OverrideAudit",
-            },
+            { "topic": "OverrideAudit" }
         ],
 
         "https://json.org/": [
             "Introducing JSON",
 
-            {
-                "topic": "json"
-            }
+            { "topic": "json" }
         ],
 
         "https://docs.python.org/3.3/": [
             "Python 3.3.7 documentation",
 
-            {
-                "topic": "python 3.3 docs",
-            },
+            { "topic": "python 3.3 docs" }
         ],
 
         "https://docs.python.org/3.3/library/datetime.html#strftime-and-strptime-behavior": [
             "strftime() and strptime() Behavior",
 
-            {
-                "topic": "strftime() and strptime() Behavior",
-            },
+            { "topic": "strftime() and strptime() Behavior" }
         ],
 
         "Packages/Default/exec.py": [
             "The default exec command",
 
-            {
-                "topic": "exec.py"
-            }
+            { "topic": "exec.py" }
         ],
 
         "Packages/User/Preferences.sublime-settings": [
@@ -282,62 +429,22 @@
         ]
     },
 
-    // Optional; A dictionary that represents the table of contents for this
-    // help package.
-    //
-    // This is a list of the topics that can appear, in order. This is either a
-    // string to represent a topic that exists in the help file, or an object
-    // that represents a help topic.
-    //
-    // In this structure, the caption key is optional and will inherit the main
-    // topic caption from the help_files entry, so you only need to specify it
-    // if you want to use a different caption in the table of contents.
-    //
-    // The object can also contain a "children" key that specifies a similar
-    // list of topics in order to create a hierarchical table of contents.
-    //
-    // If this key is not present, a default is created which contains all of
-    // the available help topics.
     "help_contents": [
-        {
-            "topic": "index.txt",
-            "caption": "HyperHelp: What is it?"
-        },
         "help_on_help.txt",
-        "introduction",
-        "navigating",
+        "what is hyperhelp",
         "settings.txt",
         {
             "topic": "syntax.txt",
             "children": [
-                {
-                    "topic": "syntax.txt",
-                    "caption": "Overview"
-                },
-                {
-                    "topic": "file header",
-                    "caption": "File Header"
-                },
-                {
-                    "topic": "key bindings",
-                    "caption": "Key Bindings"
-                },
-                {
-                    "topic": "code blocks",
-                    "caption": "Code Blocks"
-                },
-                {
-                    "topic": "anchors",
-                    "caption": "Anchors"
-                },
-                {
-                    "topic": "links",
-                    "caption": "Links"
-                },
-                {
-                    "topic": "separators",
-                    "caption": "Visual Separators"
-                },
+                "syntax.txt",
+                "markup",
+                "anchors",
+                "headings",
+                "links",
+                "code blocks",
+                "key bindings",
+                "comments",
+                "separators"
             ]
         },
         "commands.txt",

@@ -1,40 +1,111 @@
-%hyperhelp title="HyperHelp: What is it?" date="2018-02-22"
-
-*|What is HyperHelp|*
-=================
-
-HyperHelp is a package that provides a simple text based help system to Sublime
-Text. If you consider the spectrum of package documentation to run from
-creating a simple text file (e.g. a `README` file) to creating a complete
-documentation site in HTML, HyperHelp falls somewhere between the two.
-
-The system employed by HyperHelp uses plain text files to provide help content
-(with some minimal |markup| allowed) but provides some of the power of web
-based documentation by allowing you to navigate easily from help file to help
-file and topic to topic.
+%hyperhelp title="HyperHelp: About HyperHelp" date="2019-03-25"
 
 
-*|How it works|*
+# What is HyperHelp
+===================
+
+HyperHelp is a hypertext help system for Sublime Text 3 in a vein similar to
+the help system in other text editors such as `vim` and `emacs`. The goal is to
+bridge the gap between providing just a simple text file (e.g. a `README` file)
+and a full HTML based documentation site.
+
+HyperHelp employs simple plain text files (with some |markup|) but also
+provides the power of web based documentation by allowing you to easily find
+and navigate from help file to help file and topic to topic, including the
+ability to navigate through the history of your help viewing and bookmarking
+often used topics.
+
+If you're new to HyperHelp, more immediate help on how to use it is available
+in |heLp_on_help.txt|. To view it, follow the link by either double clicking it
+or putting the text cursor on the underlined text and pressing enter.
+
+
+# How it works
+==============
+
+HyperHelp is special in that it consists of two parts; a `dependency` library
+that Sublime Text packages can depend on and which provides the core API of the
+help system itself, and a `package` that provides the commands and extensions
+that use the API to allow you to navigate help.
+
+Due to this hybrid nature, you cannot directly install HyperHelp. Instead, it
+will automatically be installed when you use a package that wants to provide
+help using HyperHelp.
+
+When HyperHelp is first installed, it |:bootstrapping:bootstraps| itself in order to finalize
+the setup process. This bootstrap process also happens whenever HyperHelp is
+upgraded, in order to finalize the upgrade.
+
+These operations are transparent to you; you'll see a popup whenever they occur
+to let you know what's going on, but otherwise you can just get on with
+business as usual.
+
+
+# Help Files
 ============
 
-Help files in HyperHelp are plain text with a small amount of |markup| allowed
-to add some visual distinction as well as to allow navigation by way of
-|anchors| and |links|.
+Your interaction with HyperHelp takes place in the context of Help Files. These
+files are plain text files with minimal |markup| and are grouped together
+according to the `package` they provide help for.
 
-`Anchors` are set navigation points within help files that the help user can
-navigate between, and define |topics|. As you might expect, `links` allow the
-user to shift the help display to any `anchor`.
+The available help markup is somewhat similar to `Markdown`, but is designed to
+be more easily human readable since there is no extra display steps other than
+syntax highlighting.
+
+    `NOTE:` Although Sublime Text does allow for display of HTML in documents
+            by using |SublimeAPI:phantom:phantoms|, HyperHelp does not use them for help content
+            because you cannot copy the content of a phantom for use elsewhere.
+
+The two main aspects of help files are *example:anchors* and |:example:links|. An `anchor` is a
+navigation point in a document that is considered to be a point of interest in
+that document (a section title, information on a topic, and so on), while a
+`link` allows you to jump directly to any anchor. The first sentence of this
+paragraph contains an |anchor| followed by a |link| that links to it.
 
 In order to be as easy to use as possible, HyperHelp is almost entirely
-transparent to both package authors that want to add help to their packages, as
-well as the end user of the help system.
+transparent to both package authors that want to add help to their packages as
+well as to the end user of the help system.
 
-This means that as a package developer you only need to follow the simple steps
-in |integration.txt| to ensure that HyperHelp will be available to your package
-users, and then focus on writing your help.
+This means that as a package developer, you only need to follow the simple
+steps in |integration.txt| to ensure that HyperHelp will be available  to your
+package users, and then focus on writing your help.
 
-Once you've followed the integration steps, you can use Sublime itself to create
-your help content, or use the `HyperHelpAuthor` package to help you create the
-appropriate files.
+Once you've followed the integration steps, you can use Sublime itself to
+create your help content, or use the |HyperHelpAuthor| package to help you
+create the appropriate files. More information on creating help files can be
+found in |authoring.txt|. A simple example of the required files is also
+available in |example.txt|.
 
-More information on creating help files can be found in |authoring.txt|.
+HyperHelp is designed to be used not only as a system for displaying generic
+help but also context specific help. To that end you can optionally also use
+the |api|, |commands| and |key contexts| provided to customize the help
+experience your users have with your package and HyperHelp.
+
+
+# Bootstrapping
+===============
+
+HyperHelp is different than standard packages that you might have used with
+Sublime Text in that it consists of two parts; a `dependency` library that
+provides the core of the help API, and a `package` that exposes the API and
+acts as you would expect a package to act.
+
+The HyperHelp package itself is shipped inside of the dependency, and the act
+of copying it out and deploying it as a standard package is known as
+`bootstrapping` the package.
+
+The bootstrap is seamless and happens automatically when required:
+
+    * When the first package that uses HyperHelp is installed, the dependency
+      will be installed and will bootstrap the HyperHelp package
+
+    * If the dependency is updated, a new version of the HyperHelp package will
+      be bootstrapped in order to keep things up to date
+
+    * If the HyperHelp package is missing, a new copy will be created to put the
+      system back into working order
+
+Whenever a bootstrap occurs, a dialog box will pop up to tell you that it
+happened. In some cases (such as when the dependency has been updated), you may
+be required to restart Sublime Text in order for the update to finish; the
+dialog will tell you when this is the case.

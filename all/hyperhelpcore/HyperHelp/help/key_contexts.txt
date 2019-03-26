@@ -1,0 +1,99 @@
+%hyperhelp title="HyperHelp Key Contexts" date="2019-03-23"
+
+
+# Context Overview
+==================
+
+HyperHelp provides several |commands|, key contexts and an |api| that allow you
+to customize the help experience for yourself or for users of your package by
+creating your own custom key bindings, menu entries or plugins.
+
+The key contexts listed here can be used in key bindings in order to ensure
+that your bindings only take effect in the appropriate circumstances.
+
+
+## hyperhelp.is_help_view
+-------------------------
+
+key: `"hyperhelp.is_help_view"`
+operator: `"equal"`, `"not_equal"`
+operand: `true`, `false`
+
+This context yields `true` when the currently focused view in the current
+window is a |help view|.
+
+
+## hyperhelp.is_help_visible
+-------------------------
+
+key: `"hyperhelp.is_help_visible"`
+operator: `"equal"`, `"not_equal"`
+operand: `true`, `false`
+
+This context yields `true` when the current window has a |help view| already
+created within it. This is not an indication that the help view is currently
+focused, only that it exists.
+
+
+## hyperhelp.is_help
+-------------------------
+
+key: `"hyperhelp.is_help"`
+operator: `"equal"`, `"not_equal"`
+operand: `true`, `false`
+
+This context yields `true` when the currently focused view in the current
+window contains a hyperhelp source file; that is, a file whose syntax indicates
+that it is a HyperHelp help file.
+
+This is true for any file using the appropriate syntax, which includes not only
+the contents of the |help view| but also a help file that you might be
+|:authoring.txt:authoring|.
+
+
+
+## hyperhelp.is_help_source
+-------------------------
+
+key: `"hyperhelp.is_help_source"`
+operator: `"equal"`, `"not_equal"`
+operand: `true`, `false`
+
+This context extends |hyperhelp.is_help| by only yielding `true` when the
+current help file is a help file that is not being authored; that is, it is
+marked as read-only.
+
+
+## hyperhelp.is_help_index
+-------------------------
+
+key: `"hyperhelp.is_help_index"`
+operator: `"equal"`, `"not_equal"`
+operand: `true`, `false`
+
+This context yields `true` when the currently focused view in the current
+window contains a hyperhelp index file; that is, a file whose syntax indicates
+that it is a HyperHelp index file.
+
+
+## hyperhelp.is_help_package
+-------------------------
+
+key: `"hyperhelp.is_help_package"`
+operator: `"equal"`, `"not_equal"`
+operand: a string that is a package name
+
+This context yields `true` when the current window contains a |help view| and
+the currently displayed help file is displaying a help file for the given
+package.
+
+
+## hyperhelp.is_help_file
+-------------------------
+
+key: `"hyperhelp.is_help_file"`
+operator: `"equal"`, `"not_equal"`
+operand: a string that is a package name
+
+This context yields `true` when the current window contains a |help view| and
+the currently displayed help file has the same name as the help file given.

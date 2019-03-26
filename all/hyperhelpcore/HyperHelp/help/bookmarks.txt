@@ -1,0 +1,63 @@
+%hyperhelp title="HyperHelp Bookmarks" date="2019-03-23"
+
+
+# Bookmarks
+===========
+
+HyperHelp allows you to create bookmarks for help topics that you often use,
+allowing you to jump back to them at any point. From within a |help view| you
+can create a bookmark by pressing <b> or jump to an existing bookmark by
+pressing <g>.
+
+The command palette command `HyperHelp: Open Bookmarked Help Topic` is also
+available from any view, and will navigate to a bookmarked help topic, creating
+the help view if it doesn't already exist.
+
+
+# Creating Bookmarks
+--------------------
+
+When you invoke the command to create a bookmark, HyperHelp will prompt you to
+provide details on the bookmark to create; it's `type` and it's `name`.
+
+The `type` of the bookmark determines what happens when you navigate to that
+particular bookmark, while the `name` determines how it is displayed in the
+bookmark list.
+
+
+    ## File Bookmark
+    ----------------
+
+    A `file` bookmark bookmarks the file that you're currently viewing in the
+    |help view|. When you navigate back to this bookmark, the cursor will be
+    placed at the |anchor| in the |header| of the file after it's loaded.
+
+    This is useful to bookmark a general help file, such as a reference
+    document.
+
+
+    ## View Bookmark
+    ----------------
+
+    A `view`bookmark bookmarks the current state of the |help view|. When you
+    navigate back to this bookmark later, not only will the file open but the
+    cursor and viewport will be put back into the exact same state as they were
+    when the bookmark was created.
+
+    This is useful to take a snapshot of the help before leaving to do other
+    things and still being able to find your way back to where you left off.
+
+
+    ## Topic Bookmark
+    -----------------
+
+    A `topic` bookmark is like a `file` bookmark, except that where the `file`
+    bookmark creates a bookmark that opens a particular file, a `topic`
+    bookmark bookmarks a specific topic instead.
+
+    This type of bookmark is context sensitive; in order to be given this
+    option for your bookmark, the cursor needs to be placed on top of a link to
+    that topic first.
+
+HyperHelp supports three different kinds of bookmarks that allow you to create
+a bookmark

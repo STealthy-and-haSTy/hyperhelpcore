@@ -1,29 +1,89 @@
-%hyperhelp title="Integrating HyperHelp" date="2017-12-30"
+%hyperhelp title="Integrating HyperHelp" date="2019-03-25"
 
-*|Integration|*
-===========
+
+# _none:Integrating  HyperHelp into your Package
+==========================================
 
 One of the core design goals of HyperHelp is to be as easy as possible to
 integrate with any package in order to promote a simple, easily accessible and
-useful help system that provided consistency for users.
+useful help system that provides consistency for the user.
 
-In the future, HyperHelp will be a dependency package that your package can
-depend on. This requires a simple change to the entry for your package in the
-Package Control Channel in order to ensure that Package Control installs
-HyperHelp if it is not already installed.
+Follow this simple set of steps in order to add HyperHelp support to your
+package:
 
-There will also be a small amount of boiler plate bootstrap code to include
-somewhere in your package in order to ensure that everything is set up as it
-should be.
 
-For the time being, HyperHelp is still in active development, and so it is
-still being developed as a regular package in order to facilitate development.
+    ## _none:Step 1: Add a dependency on `hyperhelpcore`
+    ----------------------------------------------
 
-This file will be modified to include the full integration instructions when
-development has proceeded far enough to warrant it.
+    As HyperHelp is shipped as a dependency, you need to modify your package to
+    indicate to Package Control that it depends on `hyperhelpcore`; doing so
+    will cause Package Control to automatically install HyperHelp for you as
+    needed.
 
-In the meantime, HyperHelp remains a user facing package. You can still use it
-to create help for your package; while it remains a regular package it is
-always available with no bootstrapping required.
+    See the |Package Control Dependency Documentation| for full details, but
+    to get started, add a file named `dependencies.json` to your package with
+    the following contents:
 
-For more information on writing help text in HyperHelp, see |authoring.txt|.
+    ```json
+    {
+        "*": {
+            "*": [
+                "hyperhelpcore"
+            ]
+        }
+    }
+    ```
+
+    Once you've done this, select `Package Control: Satisfy Dependencies` from
+    the command palette to tell Package Control to install the dependency for
+    you.
+
+
+    ## _none:Step 2: Initialize the help system in `plugin_loaded()`
+    ----------------------------------------------------------
+
+    Since HyperHelp is a dependency and needs to |:bootstrapping:bootstrap| the user facing
+    package if it hasn't already, all packages that want active HyperHelp
+    support need to tell it to perform that step if needed.
+
+    To do this, add the following code to one of the plugins in your package.
+    If that plugin already has a `plugin_loaded()` endpoint, don't create a
+    second one; add the line of code here to yours:
+
+    ```python
+    import hyperhelpcore
+
+    def plugin_loaded():
+        hyperhelpcore.initialize()
+
+    ```
+
+    Once you save the plugin, `hyperhelpcore.initialize()` will be invoked,
+    which will cause the first boostrap to occur, finalizing the install. Going
+    forward, on every startup `hyperhelpcore` will check to verify that the
+    bootstrapped package exists and is up to date.
+
+
+    ## _none:Step 3: Author your Help
+    ---------------------------
+
+    You've now told Package Control that your package depends on HyperHelp so
+    that it will be installed, and you've told HyperHelp at load time that it
+    should check and verify that everything is running, so all that's left is
+    to write your help.
+
+    This is likely the hardest part of the entire operation. There is more
+    information on creating help in |authoring.txt|. You may also find
+    |syntax.txt| useful as a guide to the help file syntax.
+
+
+    ## _none:Step 4: Implement context sensitive help (optional)
+    ------------------------------------------------------
+
+    Although not strictly required, the power of HyperHelp allows you to create
+    customized, context sensitive help for your package or help system by using
+    the built in |commands|, |key contexts| and |api|.
+
+    These allow you to include things like a custom key bindings or commands
+    that jump directly from something in your package directly to associated
+    help, and so on.

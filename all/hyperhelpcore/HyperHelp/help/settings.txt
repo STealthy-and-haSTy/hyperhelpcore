@@ -1,23 +1,58 @@
-%hyperhelp title="HyperHelp Settings" date="2018-02-22"
-
-There are a small handful of settings that you can use to alter how HyperHelp
-works to customize it to your needs better. As HyperHelp is a dependency
-package, the settings should go in |your user preferences| file.
+%hyperhelp title="HyperHelp Settings" date="2019-03-25"
 
 
-*|hyperhelp_date_format|*
----------------------
+# _none:Settings Overview
+===================
 
-This setting controls the format of the last modification date that appears in
-the header line of all help files. Changes to this setting will be applied when
-the next help file is loaded.
+Like most packages, HyperHelp allows you to customize its behaviour by
+providing various settings for you to configure as you see fit. However, unlike
+most packages, HyperHelp consists of both a dependency that powers the help
+system and a regular package that allows you to interact with it.
 
-The default value for this is setting is `%x`, which sets a date format that's
-appropriate for the area of the world in which you live.
+For this reason, some settings are specific to the HyperHelp package and work
+like normal package settings, while others are specific to the dependency and
+go in the global |Preferences.sublime-settings| preferences file instead.
 
-You can use any of the format specifiers given in the |Python 3.3 docs| on the
-|strftime() and strptime() behavior| page.
 
-Note however that no time stamps are stored for file times, only dates. As such
-you should avoid any fields that tell you the time of the day.
+## Package Settings
+-------------------
 
+The settings here go in the HyperHelp specific settings file, which you can get
+to by selecting `Preferences > Package Settings > HyperHelp > Settings` from
+the main menu.
+
+    *hyperhelp_date_format*
+
+        This setting controls the format of the last modification date that
+        appears in the |header| line of all help files. Changes to this setting
+        will be applied when the next help file is loaded.
+
+        The default value for this is setting is `%x`, which sets a date format
+        that's appropriate for the area of the world in which you live.
+
+        You can use any of the format specifiers given in the |Python 3.3 docs|
+        on the |strftime() and strptime() behavior| page.
+
+        Note however that no time stamps are stored for file times, only dates.
+        As such you should avoid any fields that tell you the time of the day.
+
+
+## Dependency Settings
+----------------------
+
+The settings here are referenced by the dependency portion of HyperHelp and go
+in the |Preferences.sublime-settings| file because they need to be available
+even if the HyperHelp package is ignored or unavailable.
+
+    *hyperhelp_ignore_disabled*
+
+        Normally, the hyperhelp core dependency performs a check at startup to
+        ensure that the HyperHelp package itself is not in the list of ignored
+        packages.
+
+        This is to ensure that problems caused by partial |:bootstrapping:bootstraps| don't go
+        unnoticed, which can cause confusing issues.
+
+        Should you actually want to have HyperHelp in the list of ignored
+        packages, this setting should be added to your user preferences to tell
+        the core that you intentionally ignored HyperHelp.
