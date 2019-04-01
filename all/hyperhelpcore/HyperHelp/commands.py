@@ -2,6 +2,7 @@ import sublime
 import sublime_plugin
 
 import os
+import textwrap
 
 from hyperhelpcore.common import log, hh_setting, hh_update_setting, help_package_prompt
 from hyperhelpcore.common import current_help_file, current_help_package
@@ -11,6 +12,10 @@ from hyperhelpcore.core import show_help_topic, navigate_help_history, jump_help
 from hyperhelpcore.core import clear_help_history
 from hyperhelpcore.core import parse_anchor_body
 from hyperhelpcore.help import HistoryData, _get_link_topic
+
+
+from .bootstrap import __version__ as local_version
+from hyperhelpcore import __version__ as sys_version
 
 
 ###----------------------------------------------------------------------------
@@ -548,6 +553,28 @@ class HyperhelpNavigateCommand(sublime_plugin.WindowCommand):
                 package = topic_dat["pkg"] or package
 
             show_help_topic(package, topic, history=True)
+
+
+class HyperHelpAboutCommand(sublime_plugin.ApplicationCommand):
+    """
+    Displays a dialog box that indicates what the current version of HyperHelp
+    and the core are, for diagnostic purposes.
+    """
+    def run(self):
+        # Until the log code in the bootstrap and the log code in the core are
+        # synchronized, manually do a dedent. I don't want to break anything
+        # too close to the initial package announcement.
+        msg = textwrap.dedent("""
+            About HyperHelp
+
+            HyperHelp Version: {local}
+            hyperhelpcore Version: {sys}
+
+            HyperHelp is a text based, hyper linked help system for
+            Sublime Text 3 that allows packages to display their
+            help directly within Sublime Text.
+        """).format(local=local_version, sys=sys_version).strip()
+        log(msg, dialog=True)
 
 
 class HyperhelpCurrentHelpCommand(sublime_plugin.WindowCommand):

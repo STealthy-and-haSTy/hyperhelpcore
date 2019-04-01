@@ -114,6 +114,13 @@
                         "command": "hyperhelp_history",
                         "args": {
                             "action": "next",                        }
+                    },
+
+                    { "caption": "-" },
+
+                    {
+                        "caption": "About HyperHelp",
+                        "command": "hyper_help_about",
                     }
                 ]
             }
