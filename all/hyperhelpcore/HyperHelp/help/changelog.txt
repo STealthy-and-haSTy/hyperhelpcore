@@ -1,0 +1,48 @@
+%hyperhelp title="HyperHelp ChangeLog" date="2019-05-13"
+
+
+## _none:Version 0.0.5 (2019-03-31)
+-------------------------------
+
+  * Include a command to display the package version of the bootstrapped
+    package and of the dependency in preparation for the initial public
+    announcement on April 1.
+
+
+## _none:Version 0.0.4 (2019-03-27)
+-----------------------------
+
+  * Bump the internal version number which was accidentally skipped from the
+    0.0.3 release, stopping existing installs from seeing the changes.
+
+
+## _none:Version 0.0.3 (2019-03-25)
+-----------------------------
+
+  * Enhance key contexts used in key bindings
+
+  * Ensure that when the history index panel is opened, the current help item
+    is initially selected.
+
+  * While post processing, removal of comments would also remove comments from
+    in-line code blocks; this has been fixed.
+
+  * Rewrite the internal help to be more up to date with how the package has
+    been rewritten in the last year.
+
+
+## _none:Version 0.0.2 (2019-03-07)
+-----------------------------
+
+  * Watch `ignored_packages` to determine when packages are being ignored or
+    unignored and load or drop their indexes as needed to keep help in sync
+    with packages.
+
+  * Fix a bug in bootstrapping that would block it from happening if the
+    package was unpacked.
+
+
+## _none:Version 0.0.1 (2019-02-17)
+-----------------------------
+
+  * Initial release

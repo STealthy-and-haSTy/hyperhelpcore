@@ -360,7 +360,13 @@
                 "topic": "example index.txt",
                 "caption": "Example index.txt Help File"
             }
-        ]
+        ],
+
+        "changelog.txt": [
+            "HyperHelp ChangeLog",
+
+
+        ],
     },
 
     "externals": {
@@ -430,6 +436,10 @@
     },
 
     "help_contents": [
+        {
+            "caption": "Change History",
+            "topic": "changelog.txt"
+        },
         "help_on_help.txt",
         "what is hyperhelp",
         "settings.txt",
