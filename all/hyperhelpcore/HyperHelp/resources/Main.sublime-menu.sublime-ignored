@@ -16,6 +16,25 @@
                         "children":
                         [
                             {
+                                "caption": "Documentation",
+                                "command": "hyperhelp_topic",
+                                "args": {
+                                    "package": "HyperHelp",
+                                    "topic": "help_on_help.txt"
+                                }
+                            },
+                            {
+                                "caption": "View ChangeLog",
+                                "command": "hyperhelp_topic",
+                                "args": {
+                                    "package": "HyperHelp",
+                                    "topic": "changelog.txt"
+                                }
+                            },
+                            {
+                                "caption": "-"
+                            },
+                            {
                                 "caption": "Settings",
                                 "command": "edit_settings",
                                 "args": {
@@ -107,13 +126,14 @@
                     {
                         "command": "hyperhelp_history",
                         "args": {
-                            "action": "prev",
+                            "action": "prev"
                         }
                     },
                     {
                         "command": "hyperhelp_history",
                         "args": {
-                            "action": "next",                        }
+                            "action": "next"
+                        }
                     },
 
                     { "caption": "-" },
@@ -121,6 +141,14 @@
                     {
                         "caption": "About HyperHelp",
                         "command": "hyper_help_about",
+                    },
+                    {
+                        "caption": "View ChangeLog",
+                        "command": "hyperhelp_topic",
+                        "args": {
+                            "package": "HyperHelp",
+                            "topic": "changelog.txt"
+                        }
                     }
                 ]
             }

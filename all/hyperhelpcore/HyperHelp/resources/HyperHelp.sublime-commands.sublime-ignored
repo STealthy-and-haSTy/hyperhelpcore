@@ -1,5 +1,6 @@
 [
-    { "caption": "About HyperHelp", "command": "hyper_help_about" },
+    { "caption": "About HyperHelp",     "command": "hyper_help_about" },
+    { "caption": "HyperHelp ChangeLog", "command": "hyperhelp_topic", "args": { "package": "HyperHelp", "topic": "changelog.txt" } },
 
     { "caption": "HyperHelp: Help on Help",           "command": "hyperhelp_topic",    "args": { "package": "HyperHelp", "topic": "help_on_help.txt" } },
     { "caption": "HyperHelp: Browse Available Help",  "command": "hyperhelp_contents", "args": { "prompt": true } },

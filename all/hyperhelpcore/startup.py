@@ -89,7 +89,7 @@ def initialize():
             file to remove this warning message at startup.
             """, pkg_name=bootstrap_pkg, error=True)
 
-    # If the boostrapped paxckage is overridden, the user will block themselves
+    # If the boostrapped package is overridden, the user will block themselves
     # from getting updates when the dependency updates. So check if that is the
     # case and generate an error and refuse to proceed.
     #
