@@ -17,7 +17,7 @@ def _should_bootstrap(settings):
     # For debugging/testing/troubleshooting purposes, this allows you to set a
     # setting that forces the bootstrap to occur, even if it doesn't need to be
     # done.
-    if settings.get("hyperhelp_force_bootstrap", False):
+    if settings.get("hyperhelp.force_bootstrap", False):
         log("hyperhelp bootstrap forced; skipping check")
         return True
 
@@ -72,7 +72,7 @@ def initialize():
     # install the bootstrapped package directly and might not know what it's
     # for.
     if bootstrap_pkg in ignored_packages:
-        if settings.get("hyperhelp_ignore_disabled", False):
+        if settings.get("hyperhelp.ignore_disabled", False):
             return log("{pkg_name} package ignored; hyperhelp disabled",
                         pkg_name=bootstrap_pkg)
 
@@ -84,7 +84,7 @@ def initialize():
             `ignored_packages` setting and restart Sublime.
 
             If your intention was to disable {pkg_name},
-            set the value of the 'hyperhelp_ignore_disabled'
+            set the value of the 'hyperhelp.ignore_disabled'
             setting to True in your Preferences.sublime-settings
             file to remove this warning message at startup.
             """, pkg_name=bootstrap_pkg, error=True)
@@ -97,7 +97,7 @@ def initialize():
     # warning instead, in which case we proceed.
     pkg_folder = os.path.join(sublime.packages_path(), bootstrap_pkg)
     if os.path.lexists(pkg_folder):
-        if settings.get("hyperhelp_allow_unpacked", False) == False:
+        if settings.get("hyperhelp.allow_unpacked", False) == False:
             return log(
                 """
                 The {pkg_name} package is unpacked.

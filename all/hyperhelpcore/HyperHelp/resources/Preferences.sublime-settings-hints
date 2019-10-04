@@ -1,0 +1,25 @@
+{
+    // In normal operation, the help system will perform a bootstrap of the
+    // HyperHelp package at startup if the package is missing or out of date.
+    // In order to subvert this check and force a bootstrap to happen at every
+    // startup, set this setting to true.
+    //
+    // This is intended for debugging and troubleshooting purposes.
+    "hyperhelp.force_bootstrap": false,
+
+    // The help system generates a warning at startup if the HyperHelp package
+    // is in the list of ignored_packages, since this is an indications that the
+    // last bootstrap did not complete successfully.
+    //
+    // You can disable the warning by changing the value of this setting to
+    // true.
+    "hyperhelp.ignore_disabled": false,
+
+    // The help system generates a warning at startup if it detects a HyperHelp
+    // folder in the Packages folder, since such a folder may contain overrides
+    // that can cause issues such as masking updates.
+    //
+    // If you understand the ramifications of overriding the help system, you
+    // can disable the warning by setting this setting to true.
+    "hyperhelp.allow_unpacked": false,
+}

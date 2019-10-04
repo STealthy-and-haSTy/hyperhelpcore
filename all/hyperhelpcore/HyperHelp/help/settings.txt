@@ -1,4 +1,4 @@
-%hyperhelp title="HyperHelp Settings" date="2019-03-25"
+%hyperhelp title="HyperHelp Settings" date="2019-10-03"
 
 
 # _none:Settings Overview
@@ -44,7 +44,7 @@ The settings here are referenced by the dependency portion of HyperHelp and go
 in the |Preferences.sublime-settings| file because they need to be available
 even if the HyperHelp package is ignored or unavailable.
 
-    *hyperhelp_ignore_disabled*
+    *hyperhelp.ignore_disabled*
 
         Normally, the hyperhelp core dependency performs a check at startup to
         ensure that the HyperHelp package itself is not in the list of ignored

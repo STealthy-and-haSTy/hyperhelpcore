@@ -216,8 +216,8 @@
                 "caption": "Setting: hyperhelp_date_format"
             },
             {
-                "topic": "hyperhelp_ignore_disabled",
-                "caption": "Setting: hyperhelp_ignore_disabled"
+                "topic": "hyperhelp.ignore_disabled",
+                "caption": "Setting: hyperhelp.ignore_disabled"
             }
         ],
 
