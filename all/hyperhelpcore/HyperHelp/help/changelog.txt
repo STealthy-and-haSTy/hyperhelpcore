@@ -1,4 +1,21 @@
-%hyperhelp title="HyperHelp ChangeLog" date="2019-05-13"
+%hyperhelp title="HyperHelp ChangeLog" date="2019-10-31"
+
+
+## _none:Version 0.0.6 (2019-10-31)
+-------------------------------
+
+  * This changelog file now exists to indicate the version history of the
+    package over time. The help index, command palette and the main menu can
+    all be used to navigate to the file.
+
+  * The |dependency settings| have been changed to use a prefix of `hyperhelp.`
+    instead of `hyperhelp_`, as |PackageDev| syntax highlights that format
+    directly. In addition, a hint file was added so that PackageDev can show
+    you default values and auto-complete the settings directly.
+
+  * The commands that create and navigate to bookmarks from the command palette
+    have been modified to use the `show_overlay` command rather than invoking
+    the command directly.
 
 
 ## _none:Version 0.0.5 (2019-03-31)

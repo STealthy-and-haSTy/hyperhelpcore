@@ -401,6 +401,12 @@
             { "topic": "OverrideAudit" }
         ],
 
+        "https://packagecontrol.io/packages/PackageDev": [
+            "PackageDev: Sublime Text utility package",
+
+            { "topic": "PackageDev"}
+        ],
+
         "https://json.org/": [
             "Introducing JSON",
 
