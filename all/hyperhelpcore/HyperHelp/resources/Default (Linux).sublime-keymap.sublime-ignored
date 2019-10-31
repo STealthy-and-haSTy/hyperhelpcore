@@ -27,7 +27,12 @@
 
     // Prompt the user to bookmark the current file or topic.
     {
-        "keys": ["b"], "command": "hyperhelp_prompt_create_bookmark",
+        "keys": ["b"],
+        "command": "show_overlay",
+        "args": {
+            "overlay": "command_palette",
+            "command": "hyperhelp_prompt_create_bookmark"
+        },
         "context": [
             { "key": "hyperhelp.is_help_view", "operator": "equal", "operand": true },
         ]
@@ -35,7 +40,12 @@
 
     // Prompt the user to select a bookmark, then navigate there.
     {
-        "keys": ["g"], "command": "hyperhelp_open_bookmark",
+        "keys": ["g"],
+        "command": "show_overlay",
+        "args": {
+            "overlay": "command_palette",
+            "command": "hyperhelp_open_bookmark"
+        },
         "context": [
             { "key": "hyperhelp.is_help_view", "operator": "equal", "operand": true },
         ]
