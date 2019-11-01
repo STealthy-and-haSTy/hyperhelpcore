@@ -1,6 +1,17 @@
 %hyperhelp title="HyperHelp ChangeLog" date="2019-10-31"
 
 
+## latest_update:Version 0.0.7 (2019-10-31)
+-------------------------------
+
+  * On install or upgrade, the HyperHelp system package will now display
+    either the `changelog.txt` file or the `help_on_help.txt` file, so
+    that you either learn how to use the help system or see what is new.
+
+    The new setting `show_changelog` controls whether this is active or
+    not; it defaults to `True`.
+
+
 ## _none:Version 0.0.6 (2019-10-31)
 -------------------------------
 

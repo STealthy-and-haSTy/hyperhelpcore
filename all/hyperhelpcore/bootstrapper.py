@@ -45,6 +45,27 @@ def log(msg, *args, dialog=False, error=False, **kwargs):
         sublime.message_dialog(msg)
 
 
+def set_initial_topic(package, topic):
+    """
+    Set a setting in the active window that tells the bootstrapped package to
+    open an initial help topic the next time the package loads.
+    """
+    settings = sublime.active_window().settings()
+    settings.set("hyperhelp.initial_topic", "%s:%s" % (package, topic))
+
+
+def display_topic(package, topic):
+    """
+    Invoke the appropriate command to display the given help topic. The topic
+    is presumed to be from our own package. This uses a timeout so that it can
+    be invoked from within the bootstrap code.
+    """
+    sublime.set_timeout(lambda: sublime.run_command("hyperhelp_topic", {
+        "package": package,
+        "topic": topic
+    }))
+
+
 ### ---------------------------------------------------------------------------
 
 
@@ -215,6 +236,7 @@ class BootstrapThread(Thread):
                 """, error=True)
 
         if pkg_existed:
+            set_initial_topic("HyperHelp", "latest_update")
             log(
                 """
                 HyperHelp has been updated!
@@ -223,9 +245,15 @@ class BootstrapThread(Thread):
                 Text.
                 """, dialog=True)
         else:
+            # TODO: A restart should not be required here, but there are
+            # currently bootstrap issues.
+            set_initial_topic("HyperHelp", "help_on_help.txt")
             log(
                 """
                 HyperHelp has been installed!
+
+                In order to complete the install, restart Sublime
+                Text.
                 """, dialog=True)
 
 

@@ -216,6 +216,10 @@
                 "caption": "Setting: hyperhelp_date_format"
             },
             {
+                "topic": "show_changelog",
+                "caption": "Setting: show_changelog"
+            },
+            {
                 "topic": "hyperhelp.ignore_disabled",
                 "caption": "Setting: hyperhelp.ignore_disabled"
             }
@@ -365,7 +369,10 @@
         "changelog.txt": [
             "HyperHelp ChangeLog",
 
-
+            {
+                "topic": "latest_update",
+                "caption": "ChangeLog: Recent Changes"
+            },
         ],
     },
 

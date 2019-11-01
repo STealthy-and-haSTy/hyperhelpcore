@@ -36,6 +36,16 @@ the main menu.
         Note however that no time stamps are stored for file times, only dates.
         As such you should avoid any fields that tell you the time of the day.
 
+    *show_changelog*
+
+        When this setting is enabled (which is the default), when HyperHelp is
+        first installed it will display the |help_on_help.txt| file to help you
+        learn how to use it.
+
+        Similarly, whenever the package is upgraded the |:latest_update:latest entry| in the
+        |changelog.txt| file will be displayed to keep you informed on the most
+        recent changes and bug fixes.
+
 
 ## Dependency Settings
 ----------------------

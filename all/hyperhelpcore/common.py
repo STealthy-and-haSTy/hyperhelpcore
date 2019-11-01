@@ -43,6 +43,7 @@ def hh_setting(key):
         hh_setting.obj = sublime.load_settings("HyperHelp.sublime-settings")
         hh_setting.default = {
             "hyperhelp_date_format": "%x",
+            "show_changelog": True,
             "bookmarks": []
         }
 

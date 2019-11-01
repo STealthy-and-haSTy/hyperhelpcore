@@ -3,7 +3,7 @@
 
 from .startup import initialize
 
-__version_tuple = (0, 0, 5)
+__version_tuple = (0, 0, 7)
 __version__ = ".".join([str(num) for num in __version_tuple])
 
 

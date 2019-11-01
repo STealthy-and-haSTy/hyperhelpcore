@@ -1,3 +1,9 @@
+import sublime
+
+from hyperhelpcore.bootstrapper import display_topic
+from hyperhelpcore.common import hh_setting
+
+
 ### ---------------------------------------------------------------------------
 
 
@@ -23,6 +29,25 @@ def version():
     created.
     """
     return __version_tuple
+
+
+def plugin_loaded():
+    """
+    On plugin load, see if we should display an initial help topic or not.
+    This relies on a window setting that the bootstrapper applies to whatever
+    the current window is, and will display an appropriate topic based on what
+    the bootstrap did.
+    """
+    topic = None
+    for window in sublime.windows():
+        settings = window.settings()
+        if settings.has("hyperhelp.initial_topic"):
+            topic = topic or settings.get("hyperhelp.initial_topic")
+            settings.erase("hyperhelp.initial_topic")
+
+    if topic is not None and hh_setting("show_changelog"):
+        package, topic = topic.split(":")
+        display_topic(package, topic)
 
 
 ### ---------------------------------------------------------------------------
