@@ -1,7 +1,22 @@
-%hyperhelp title="HyperHelp ChangeLog" date="2019-10-31"
+%hyperhelp title="HyperHelp ChangeLog" date="2020-04-06"
 
 
-## latest_update:Version 0.0.7 (2019-10-31)
+## latest_update:Version 0.0.8 (2020-04-06)
+-------------------------------
+
+  * This introduces a new setting `focus_links_at_top`. This controls where the
+    anchor of a link is focused in the window when you follow one. The default
+    value is `true`, which forces the link anchor to the top of the window (as
+    a traditional browser would).
+
+    To get the legacy behaviour of centering the link in the window, set this
+    to `false`.
+
+    Note that this does not affect using the <Tab> key to navigate between the
+    anchors in a help file.
+
+
+## _none:Version 0.0.7 (2019-10-31)
 -------------------------------
 
   * On install or upgrade, the HyperHelp system package will now display
