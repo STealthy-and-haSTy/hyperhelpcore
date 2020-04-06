@@ -14,6 +14,17 @@
     // previously installed the package).
     "show_changelog": true,
 
+    // When following a link, HyperHelp needs to display the correct help file
+    // and ensure that the anchor is visible in the window. This setting
+    // controls where the anchor will end up.
+    //
+    // When the value is true, the focused anchor will appear at the top of the
+    // window, maximizing how much of the associated text you can see.
+    //
+    // When false, the anchor will be centered in the help view instead. This
+    // was the default behaviour prior to this setting being introduced.
+    "focus_links_at_top": true,
+
     // Specify a list of bookmarked help topics. These topics can be quickly
     // navigated to via the bookmark command in the command palette and the
     // main menu.

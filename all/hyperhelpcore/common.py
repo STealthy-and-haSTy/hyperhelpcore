@@ -44,6 +44,7 @@ def hh_setting(key):
         hh_setting.default = {
             "hyperhelp_date_format": "%x",
             "show_changelog": True,
+            "focus_links_at_top": True,
             "bookmarks": []
         }
 

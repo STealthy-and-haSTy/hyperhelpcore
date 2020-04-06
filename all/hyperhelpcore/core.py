@@ -7,7 +7,7 @@ import webbrowser
 
 from urllib.parse import urlparse
 
-from .common import log, hh_syntax
+from .common import log, hh_syntax, hh_setting
 from .view import find_help_view, update_help_view
 
 from .help_index import _load_help_index, _scan_help_packages
@@ -316,7 +316,8 @@ def show_help_topic(package, topic, history):
         help_view.run_command("hyperhelp_focus",
             {
                 "position": [anchor_pos.b, anchor_pos.a],
-                "at_center": True
+                "at_top": hh_setting("focus_links_at_top"),
+                "at_center": not hh_setting("focus_links_at_top")
             })
         found = True
 

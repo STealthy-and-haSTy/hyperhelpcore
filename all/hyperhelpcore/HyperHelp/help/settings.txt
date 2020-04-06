@@ -1,4 +1,4 @@
-%hyperhelp title="HyperHelp Settings" date="2019-10-31"
+%hyperhelp title="HyperHelp Settings" date="2020-04-06"
 
 
 # _none:Settings Overview
@@ -45,6 +45,15 @@ the main menu.
         Similarly, whenever the package is upgraded the |:latest_update:latest entry| in the
         |changelog.txt| file will be displayed to keep you informed on the most
         recent changes and bug fixes.
+
+    *focus_links_at_top*
+
+        When this setting is enabled (which is the default), HyperHelp will
+        focus the anchor of the link at the top of the help view. When
+        disabled, the link achor will be centered in the help view instead.
+
+        This setting does not affect the focus of anchors during anchor
+        navigation through the file.
 
 
 ## Dependency Settings
