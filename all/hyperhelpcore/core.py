@@ -143,16 +143,6 @@ def help_file_resource(pkg_info, help_file):
     return _resource_for_help(pkg_info, help_file)
 
 
-def load_help_file(pkg_info, help_file):
-    """
-    Load the contents of a help file contained in the provided help package.
-    The help file should be relative to the document root of the package.
-
-    Returns None if the help file cannot be loaded.
-    """
-    return _load_help_file(pkg_info, help_file)
-
-
 def display_help_file(pkg_info, help_file):
     """
     Load and display the help file contained in the provided help package. The
